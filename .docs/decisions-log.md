@@ -17,3 +17,19 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Form Settings | `FormActions` di dalam `FormSection` (tidak sticky). | Formnya pendek; tombol sudah terlihat. |
 | `PageHeader`, `HeadingSmall` | Dihapus dari kode. | Tidak dipakai lagi; mencegah judul ganda muncul kembali. |
 | Breadcrumb Settings | `Settings / Profile` dan `Settings / Password`, judul topbar "Profile settings" / "Password settings". | Konsisten dengan pola create/edit. |
+
+## S1 — Hak Akses (Roles & Permissions)
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Daftar permission | Enum `App\Enums\Permission` + action `SyncPermissions` (dipakai migration, seeder, command `app:sync-permissions`). | Satu sumber kebenaran di kode; role & centangannya tetap diatur dari UI. Permission yang dihapus dari enum ikut dihapus dari database. |
+| Nama permission | `modul.aksi`: `users.view`, `users.create`, `users.update`, `users.delete`, `roles.view`, `roles.manage`. | Konvensi umum spatie, mudah dibaca dan dikelompokkan per modul. |
+| Role bawaan | `admin` (semua akses lewat `Gate::before`, terkunci), `manager` (lihat/tambah/ubah users + lihat roles), `staff` (tanpa akses admin). | Admin tidak bisa terkunci keluar walau permission baru ditambah. Manager/staff hanya diberi default saat pertama dibuat; setelah itu diatur dari UI. |
+| Role bawaan tidak bisa dihapus/diganti nama | Ya (admin, manager, staff). | Dipakai di kode (default role user baru, seeder, test). |
+| Hapus role yang masih dipakai | Ditolak (409) — pindahkan user dulu. | Mencegah user kehilangan role tanpa sengaja. |
+| Nama role | Disimpan sebagai slug (`finance-lead`), ditampilkan "Finance Lead". | Aman dipakai di kode/URL, tetap enak dibaca. |
+| Satu role per user | Form user memilih satu role. | Sesuai kebutuhan saat ini dan lebih mudah dipahami; spatie tetap mendukung multi-role bila kelak dibutuhkan. |
+| Migrasi data | Role lama di kolom `users.role` dipindah ke tabel spatie lalu kolom dihapus; jika tidak ada admin, akun pertama dijadikan admin. | Sesuai izin migrasi data. |
+| Akun pemilik di DB development | `waladi.widarno@…` (id 1) dijadikan **admin** setelah migrasi. | DB development sudah berisi admin dummy dari seeder, sehingga aturan "akun pertama jadi admin" tidak berlaku dan pemilik akan kehilangan akses ke Users/Roles. |
+| Menu | Grup baru **Administration**: Users & Roles & Permissions, tersembunyi tanpa permission. | Memisahkan menu pengelolaan dari menu bisnis. |
+| Seeder | `admin@example.com` / `password` sebagai admin awal. | Instalasi baru langsung bisa login sebagai admin. Ganti password setelah login pertama. |

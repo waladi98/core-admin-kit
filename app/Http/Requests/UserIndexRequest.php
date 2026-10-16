@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -32,7 +32,7 @@ class UserIndexRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('viewAny', User::class) ?? false;
     }
 
     /**
@@ -46,7 +46,7 @@ class UserIndexRequest extends FormRequest
 
         return [
             'search' => ['nullable', 'string', 'max:100'],
-            'role' => ['nullable', 'string', Rule::enum(UserRole::class)],
+            'role' => ['nullable', 'string', Rule::exists('roles', 'name')],
             'status' => ['nullable', 'string', Rule::enum(UserStatus::class)],
             'per_page' => ['nullable', 'integer', Rule::in(self::PER_PAGE_OPTIONS)],
             'sort' => ['nullable', 'string', Rule::in($sorts)],
@@ -60,9 +60,9 @@ class UserIndexRequest extends FormRequest
         return $search === '' ? null : $search;
     }
 
-    public function role(): ?UserRole
+    public function role(): ?string
     {
-        return UserRole::tryFrom((string) $this->validated('role'));
+        return $this->validated('role') ?: null;
     }
 
     public function status(): ?UserStatus

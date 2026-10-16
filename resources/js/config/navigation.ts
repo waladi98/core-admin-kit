@@ -8,6 +8,7 @@ import {
     LayoutGrid,
     LifeBuoy,
     LineChart,
+    LockKeyhole,
     MessageSquare,
     PiggyBank,
     Settings,
@@ -20,6 +21,7 @@ import {
  * Finance Core sidebar menu.
  *
  * Entries without `href` are placeholders until their pages exist.
+ * Entries with `permission` are hidden from users who lack it (see App\Enums\Permission).
  */
 export const mainNavigation: AdminNavGroup[] = [
     {
@@ -32,7 +34,6 @@ export const mainNavigation: AdminNavGroup[] = [
                 children: [{ title: 'All / My Queue' }, { title: 'Overdue Risk' }, { title: 'Escalations' }],
             },
             { title: 'Clients', icon: Building2 },
-            { title: 'Users', icon: UserCog, href: '/users' },
             {
                 title: 'Accounts & Teams',
                 icon: Users,
@@ -53,6 +54,13 @@ export const mainNavigation: AdminNavGroup[] = [
             { title: 'Reports', icon: FileText },
             { title: 'Cashflow Analytics', icon: LineChart },
             { title: 'Budgeting', icon: PiggyBank },
+        ],
+    },
+    {
+        label: 'Administration',
+        items: [
+            { title: 'Users', icon: UserCog, href: '/users', permission: 'users.view' },
+            { title: 'Roles & Permissions', icon: LockKeyhole, href: '/roles', permission: 'roles.view' },
         ],
     },
 ];

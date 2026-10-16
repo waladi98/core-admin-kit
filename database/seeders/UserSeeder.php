@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserRole;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
@@ -17,12 +17,12 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->seedUsers(5, UserRole::Admin);
-        $this->seedUsers(20, UserRole::Manager);
-        $this->seedUsers(75, UserRole::Staff);
+        $this->seedUsers(5, Role::ADMIN);
+        $this->seedUsers(20, Role::MANAGER);
+        $this->seedUsers(75, Role::STAFF);
     }
 
-    private function seedUsers(int $count, UserRole $role): void
+    private function seedUsers(int $count, string $role): void
     {
         User::factory()
             ->count($count)

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -15,7 +15,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('create', User::class) ?? false;
     }
 
     /**
@@ -28,7 +28,7 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')],
-            'role' => ['required', Rule::enum(UserRole::class)],
+            'role' => ['required', 'string', Rule::exists('roles', 'name')],
             'status' => ['required', Rule::enum(UserStatus::class)],
             'password' => ['required', 'confirmed', Password::defaults()],
         ];

@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -32,19 +32,28 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'role' => UserRole::Staff,
             'status' => UserStatus::Active,
         ];
     }
 
     /**
-     * Indicate that the user has the given role.
+     * Every user gets the default role unless a state assigns another one.
      */
-    public function role(UserRole $role): static
+    public function configure(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => $role,
-        ]);
+        return $this->afterCreating(function (User $user): void {
+            if (! $user->roles()->exists()) {
+                $user->assignRole(Role::DEFAULT);
+            }
+        });
+    }
+
+    /**
+     * Indicate that the user has the given role (by name, e.g. Role::MANAGER).
+     */
+    public function role(string $role): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->syncRoles([$role]));
     }
 
     /**
@@ -52,7 +61,7 @@ class UserFactory extends Factory
      */
     public function admin(): static
     {
-        return $this->role(UserRole::Admin);
+        return $this->role(Role::ADMIN);
     }
 
     /**

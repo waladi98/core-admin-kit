@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Admins can do everything, including permissions added later.
+        Gate::before(fn (User $user): ?bool => $user->hasRole(Role::ADMIN) ? true : null);
     }
 }

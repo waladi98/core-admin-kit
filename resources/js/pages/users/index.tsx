@@ -1,3 +1,4 @@
+import { Can } from '@/components/admin/can';
 import { DataTable, type DataTableColumn } from '@/components/admin/data-table';
 import {
     Avatar,
@@ -21,6 +22,7 @@ import {
     type BreadcrumbEntry,
     type FilterTabOption,
 } from '@/components/core';
+import { usePermissions } from '@/hooks/use-can';
 import { useTableQuery } from '@/hooks/use-table-query';
 import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
@@ -33,6 +35,7 @@ import { useState, type ReactNode } from 'react';
 
 const breadcrumbs: BreadcrumbEntry[] = [{ title: 'Users', href: '/users', icon: Users }];
 
+/** Built-in roles get a color; custom roles use neutral. */
 const roleTones: Record<UserRole, BadgeProps['tone']> = {
     admin: 'info',
     manager: 'warning',
@@ -64,7 +67,7 @@ const columns: DataTableColumn<ManagedUser>[] = [
         header: 'Role',
         skeleton: 'badge',
         cell: (user) => (
-            <Badge shape="pill" tone={roleTones[user.role]}>
+            <Badge shape="pill" tone={roleTones[user.role] ?? 'neutral'}>
                 {user.roleLabel}
             </Badge>
         ),
@@ -91,6 +94,9 @@ function parseSort(sort: string): TableSort {
 
 export default function UsersIndex({ users, filters, statusCounts, roleOptions, statusOptions }: UserIndexProps) {
     const { auth } = usePage<SharedData>().props;
+    const can = usePermissions();
+    const canEdit = can('users.update');
+    const canDelete = can('users.delete');
     const [userToDelete, setUserToDelete] = useState<ManagedUser | null>(null);
     const [deletingIds, setDeletingIds] = useState<string[]>([]);
 
@@ -166,10 +172,12 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                     ))}
                 </DropdownContent>
             </Dropdown>
-            <Link href={route('users.create')} prefetch className={buttonVariants({ size: 'sm' })}>
-                <Plus />
-                Add user
-            </Link>
+            <Can permission="users.create">
+                <Link href={route('users.create')} prefetch className={buttonVariants({ size: 'sm' })}>
+                    <Plus />
+                    Add user
+                </Link>
+            </Can>
         </>
     );
 
@@ -198,30 +206,38 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                         onSortChange={table.setSort}
                         isLoading={table.isLoading}
                         pendingRowIds={deletingIds}
-                        rowActions={(user) => (
-                            <Dropdown>
-                                <DropdownTrigger
-                                    aria-label={`Actions for ${user.name}`}
-                                    className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}
-                                >
-                                    <MoreHorizontal />
-                                </DropdownTrigger>
-                                <DropdownContent>
-                                    <DropdownItem icon={<Pencil />} href={route('users.edit', user.id)}>
-                                        Edit
-                                    </DropdownItem>
-                                    <DropdownSeparator />
-                                    <DropdownItem
-                                        icon={<Trash2 />}
-                                        tone="danger"
-                                        disabled={user.id === auth.user.id}
-                                        onSelect={() => setUserToDelete(user)}
-                                    >
-                                        Delete
-                                    </DropdownItem>
-                                </DropdownContent>
-                            </Dropdown>
-                        )}
+                        rowActions={
+                            canEdit || canDelete
+                                ? (user) => (
+                                      <Dropdown>
+                                          <DropdownTrigger
+                                              aria-label={`Actions for ${user.name}`}
+                                              className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}
+                                          >
+                                              <MoreHorizontal />
+                                          </DropdownTrigger>
+                                          <DropdownContent>
+                                              {canEdit && (
+                                                  <DropdownItem icon={<Pencil />} href={route('users.edit', user.id)}>
+                                                      Edit
+                                                  </DropdownItem>
+                                              )}
+                                              {canEdit && canDelete && <DropdownSeparator />}
+                                              {canDelete && (
+                                                  <DropdownItem
+                                                      icon={<Trash2 />}
+                                                      tone="danger"
+                                                      disabled={user.id === auth.user.id}
+                                                      onSelect={() => setUserToDelete(user)}
+                                                  >
+                                                      Delete
+                                                  </DropdownItem>
+                                              )}
+                                          </DropdownContent>
+                                      </Dropdown>
+                                  )
+                                : undefined
+                        }
                         emptyState={
                             <>
                                 <p className="text-ink text-sm font-medium">No users found</p>

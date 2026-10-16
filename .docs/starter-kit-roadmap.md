@@ -1,6 +1,6 @@
 # Finance Core — Starter Kit Roadmap
 
-> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, berikutnya S1)** — keputusan kecil dicatat di `.docs/decisions-log.md`
+> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, berikutnya S1b)** — keputusan kecil dicatat di `.docs/decisions-log.md`
 > Tujuan: template ini dipakai sebagai titik awal project-project berikutnya, sehingga fitur yang hampir selalu dibutuhkan sudah tersedia dan konsisten.
 
 ## 1. Kondisi Saat Ini
@@ -15,7 +15,7 @@
 | Auth & settings (profile, password) | ✅ dimigrasi ke Finance Core |
 | Modul Users | ✅ modul acuan CRUD (S0), pola index & form sesuai referensi |
 | Git | ✅ sudah ada commit, belum ada remote |
-| Hak akses per role | ❌ semua user login bisa akses semua halaman |
+| Hak akses per role | ✅ roles & permissions diatur dari UI (spatie) |
 | Multi-bahasa | ❌ teks UI masih bahasa Inggris tertanam di kode |
 | Toast / flash message | ❌ |
 | Search `⌘K` & lonceng notifikasi | ❌ hanya tampilan |
@@ -45,7 +45,7 @@
 |---|---|---|---|---|
 | 1 | **S0** | Modul Users jadi acuan CRUD | ✅ | ✅ |
 | 2 | **UI0** | Layout compact & minim scroll | ✅ | ✅ |
-| 3 | **S1** | Hak akses: roles & permissions dari UI | ⬜ | ✅ |
+| 3 | **S1** | Hak akses: roles & permissions dari UI | ✅ | ✅ |
 | 4 | **S1b** | Multi-bahasa (ID/EN) | ⬜ | ✅ |
 | 5 | **S2** | Toast, flash message, `useConfirm` | ⬜ | ✅ |
 | 6 | **S3** | Komponen form lengkap | ⬜ | ✅ |
@@ -95,17 +95,17 @@
 - [ ] Uji manual di browser pada ukuran L8 (belum bisa dilakukan oleh asisten; perlu dicek user).
 - [x] `AGENTS.md`: bagian "Layout Rules" L1–L8.
 
-### S1 — Hak Akses: Roles & Permissions dari UI
-- [ ] Install `spatie/laravel-permission` (persetujuan dependency).
-- [ ] Daftar permission di satu tempat (mis. `users.view`, `users.create`, `users.update`, `users.delete`, `roles.manage`), disinkronkan lewat seeder/command.
-- [ ] Migrasi data: enum `UserRole` → role database (Admin, Manager, Staff); kolom `role` lama dihapus setelah data dipindah.
-- [ ] Policy + `authorize` di controller; middleware permission di route.
-- [ ] Halaman **Roles & Permissions**: daftar role, tambah/edit role, centang permission per role (dikelompokkan per modul).
-- [ ] Form Users: pilih role dari database.
-- [ ] Shared prop `auth.permissions` → hook `useCan('users.create')` + komponen `<Can>`.
-- [ ] Sidebar: field `permission` di `config/navigation.ts`, menu otomatis tersembunyi.
-- [ ] Seeder akun admin awal.
-- [ ] Test: 403, menu tersembunyi, perubahan permission dari UI langsung berlaku.
+### S1 — Hak Akses: Roles & Permissions dari UI ✅
+- [x] Install `spatie/laravel-permission` (persetujuan dependency).
+- [x] Daftar permission di satu tempat (mis. `users.view`, `users.create`, `users.update`, `users.delete`, `roles.manage`), disinkronkan lewat seeder/command.
+- [x] Migrasi data: enum `UserRole` → role database (Admin, Manager, Staff); kolom `role` lama dihapus setelah data dipindah.
+- [x] Policy + `authorize` di controller; middleware permission di route.
+- [x] Halaman **Roles & Permissions**: daftar role, tambah/edit role, centang permission per role (dikelompokkan per modul).
+- [x] Form Users: pilih role dari database.
+- [x] Shared prop `auth.permissions` → hook `useCan('users.create')` + komponen `<Can>`.
+- [x] Sidebar: field `permission` di `config/navigation.ts`, menu otomatis tersembunyi.
+- [x] Seeder akun admin awal.
+- [x] Test: 403, menu tersembunyi, perubahan permission dari UI langsung berlaku.
 
 ### S1b — Multi-bahasa (Indonesia & Inggris)
 - [ ] Terjemahan Laravel (`lang/id`, `lang/en`) dibagikan ke frontend via Inertia.

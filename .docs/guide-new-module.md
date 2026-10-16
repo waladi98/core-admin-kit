@@ -38,6 +38,7 @@
    - ubah model jadi array lewat method `present()` (jangan kirim model mentah).
 4. **`store` / `update` / `destroy`** — pakai Form Request, `to_route('clients.index')` setelah simpan, `back()` setelah hapus.
 5. **Route** — di dalam grup `auth` di `routes/web.php`.
+6. **Hak akses** — tambah case di `App\Enums\Permission` (mis. `clients.view`, `clients.create`, `clients.update`, `clients.delete`) dengan `label()` & `group()`, jalankan `php artisan app:sync-permissions`, buat `ClientPolicy` (lihat `UserPolicy`), panggil `Gate::authorize()` di controller dan `can()` di `authorize()` Form Request. Centang permission untuk role yang perlu di halaman **Roles & Permissions**.
 
 ### 2. Frontend
 
@@ -56,12 +57,13 @@
    ClientsIndex.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;
    ```
    Breadcrumb dinamis (mis. nama data di halaman edit): ketik argumen sebagai `ReactElement<Props>` dan baca `page.props` (lihat `pages/users/edit.tsx`).
-5. **Menu** — tambahkan di `config/navigation.ts`.
+5. **Menu** — tambahkan di `config/navigation.ts` dengan `permission: 'clients.view'`.
+6. **Tombol sesuai izin** — bungkus tombol Add dengan `<Can permission="clients.create">`, tampilkan Edit/Delete hanya jika `useCan('clients.update' | 'clients.delete')`.
 
 ### 3. Test (Pest)
 
 Salin struktur `UserManagementTest.php`, minimal:
-- tamu diarahkan ke login;
+- tamu diarahkan ke login; user tanpa permission mendapat 403;
 - daftar + pagination, search, filter, sort, filter tidak valid ditolak, halaman lewat batas diarahkan;
 - create & edit render dengan opsi;
 - simpan valid, validasi gagal, update, hapus.

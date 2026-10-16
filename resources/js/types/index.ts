@@ -1,5 +1,7 @@
 export interface Auth {
     user: User;
+    /** Permission names of the signed-in user (admins get all), e.g. `users.create`. */
+    permissions: string[];
 }
 
 export interface SharedData {

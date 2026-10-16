@@ -8,12 +8,13 @@ import {
     DropdownLabel,
     DropdownTrigger,
 } from '@/components/core';
+import { usePermissions } from '@/hooks/use-can';
 import { useNavigationPending } from '@/hooks/use-navigation-pending';
 import { cn } from '@/lib/utils';
 import { type AdminNavChild, type AdminNavGroup, type AdminNavItem } from '@/types/navigation';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronRight, LoaderCircle } from 'lucide-react';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 
 interface SidebarNavProps {
     groups: AdminNavGroup[];
@@ -216,8 +217,28 @@ function NavEntry({
     );
 }
 
-export function SidebarNav({ groups, isCollapsed, onNavigate }: SidebarNavProps) {
+/**
+ * Removes entries the user has no permission for. A parent whose children are all
+ * hidden disappears, and so does an empty group.
+ */
+export function filterNavigation(groups: AdminNavGroup[], can: (permission: string) => boolean): AdminNavGroup[] {
+    const isAllowed = (entry: { permission?: string }) => !entry.permission || can(entry.permission);
+
+    return groups
+        .map((group) => ({
+            ...group,
+            items: group.items
+                .filter(isAllowed)
+                .map((item) => (item.children ? { ...item, children: item.children.filter(isAllowed) } : item))
+                .filter((item) => !item.children || item.children.length > 0),
+        }))
+        .filter((group) => group.items.length > 0);
+}
+
+export function SidebarNav({ groups: allGroups, isCollapsed, onNavigate }: SidebarNavProps) {
     const { url } = usePage();
+    const can = usePermissions();
+    const groups = useMemo(() => filterNavigation(allGroups, can), [allGroups, can]);
     const { isPending, pendingPath } = useNavigationPending();
     const visiblePendingPath = isPending ? pendingPath : null;
     const navRef = useRef<HTMLElement>(null);

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -15,7 +14,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('update', $this->route('user')) ?? false;
     }
 
     /**
@@ -30,7 +29,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user'))],
-            'role' => ['required', Rule::enum(UserRole::class)],
+            'role' => ['required', 'string', Rule::exists('roles', 'name')],
             'status' => ['required', Rule::enum(UserStatus::class)],
             'password' => ['nullable', 'confirmed', Password::defaults()],
         ];

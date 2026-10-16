@@ -1,6 +1,7 @@
 import { type SelectOption } from '@/components/core';
 
-export type UserRole = 'admin' | 'manager' | 'staff';
+/** Role name from the database, e.g. `admin` or a custom role such as `finance-lead`. */
+export type UserRole = string;
 
 export type UserStatus = 'active' | 'inactive';
 

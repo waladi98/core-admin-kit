@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -59,7 +59,7 @@ test('users index searches by name or email', function () {
 });
 
 test('users index filters by role', function () {
-    User::factory()->count(2)->role(UserRole::Manager)->create();
+    User::factory()->count(2)->role(Role::MANAGER)->create();
     User::factory()->count(3)->create();
 
     $this->actingAs($this->admin)
@@ -121,7 +121,7 @@ test('a user can be created', function () {
     $user = User::where('email', 'eka@example.com')->first();
 
     expect($user)->not->toBeNull()
-        ->and($user->role)->toBe(UserRole::Manager)
+        ->and($user->hasRole(Role::MANAGER))->toBeTrue()
         ->and($user->status)->toBe(UserStatus::Inactive)
         ->and(Hash::check('password', $user->password))->toBeTrue();
 });
@@ -158,7 +158,7 @@ test('a user can be updated without changing the password', function () {
     $user->refresh();
 
     expect($user->name)->toBe('Updated Name')
-        ->and($user->role)->toBe(UserRole::Admin)
+        ->and($user->hasRole(Role::ADMIN))->toBeTrue()
         ->and($user->status)->toBe(UserStatus::Inactive)
         ->and($user->password)->toBe($originalPassword);
 });
@@ -221,9 +221,9 @@ test('users index redirects to the last page when the requested page is past the
 });
 
 test('users index filters by status and counts users per status tab', function () {
-    User::factory()->count(2)->create(['role' => UserRole::Manager]);
-    User::factory()->inactive()->create(['role' => UserRole::Manager]);
-    User::factory()->inactive()->create(['role' => UserRole::Staff]);
+    User::factory()->count(2)->role(Role::MANAGER)->create();
+    User::factory()->inactive()->role(Role::MANAGER)->create();
+    User::factory()->inactive()->create();
 
     $this->actingAs($this->admin)
         ->get(route('users.index', ['status' => 'inactive', 'role' => 'manager']))

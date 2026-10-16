@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -44,7 +47,27 @@ class HandleInertiaRequests extends Middleware
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
+                'permissions' => fn (): array => $this->permissionsOf($request->user()),
             ],
         ]);
+    }
+
+    /**
+     * Permission names the frontend uses to show or hide menus and buttons.
+     * Admins get every permission (they pass all checks through Gate::before).
+     *
+     * @return list<string>
+     */
+    private function permissionsOf(?User $user): array
+    {
+        if ($user === null) {
+            return [];
+        }
+
+        if ($user->hasRole(Role::ADMIN)) {
+            return Permission::values();
+        }
+
+        return $user->getAllPermissions()->pluck('name')->values()->all();
     }
 }

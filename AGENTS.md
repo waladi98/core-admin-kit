@@ -230,6 +230,14 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - **Index (list) pages**: no `PageHeader`; the breadcrumb is the page title. One `<Panel fill>` holds everything (on desktop it fits the screen height so only the table rows scroll; header and pagination stay visible): `Panel.Header` with icon + title on the left and search `Input`, Filter `Dropdown` and the primary action (e.g. "Add user", `buttonVariants({ size: 'sm' })`) on the right; `Panel.Toolbar` with `FilterTabs` (counts from the server) for the main status filter; `Panel.Body padding="none" className="flex flex-col"` with `DataTable stickyHeader` (`rowNumberOffset`, `Badge shape="pill"`, row actions `MoreHorizontal`) and a footer `Pagination` (wrapper `shrink-0`) with `perPage` / `onPerPageChange`. Reference: `resources/js/pages/users/index.tsx`, `.docs/image/index_crud.png`.
 - **Create / edit pages**: pass `title` to `AdminLayout` so the topbar shows a small breadcrumb above the page title; no `PageHeader`. Group fields in `FormSection` (icon, title, description) with `FormField` (`required`, `hint`, `error`) in a `md:grid-cols-2 xl:grid-cols-3` grid, then `FormActions` below the sections (Cancel as secondary link, submit `Button` with `Check` icon). Reference: `resources/js/components/admin/user-form.tsx`, `.docs/image/create.png`.
 
+## Permissions (spatie/laravel-permission)
+
+- Every permission is a case of `App\Enums\Permission` (`users.view`, `users.create`, …) with `label()` and `group()`. After adding a case run `php artisan app:sync-permissions` (also run by the seeder and the roles migration); never create permissions ad hoc.
+- Roles live in the database (`App\Models\Role`, constants `Role::ADMIN|MANAGER|STAFF`) and are managed on the Roles & Permissions page (`/roles`). Admin passes every check via `Gate::before` and cannot be edited; built-in roles cannot be renamed or deleted.
+- Backend: one Policy per model calling `$user->can(Permission::X->value)`; controllers call `Gate::authorize(...)`, Form Requests `authorize()` with `$this->user()->can(...)`. Rules that must hold even for admins (e.g. not deleting yourself) are enforced in the controller.
+- Frontend: `auth.permissions` is shared by `HandleInertiaRequests`. Hide what the user cannot use with `useCan('users.create')`, `usePermissions()` or `<Can permission="…">` (`@/components/admin/can`); add `permission` to entries in `config/navigation.ts`. The UI only hides things — the server always enforces.
+- Tests: users get the `staff` role by default; use `User::factory()->admin()` or `->role(Role::MANAGER)`.
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.
