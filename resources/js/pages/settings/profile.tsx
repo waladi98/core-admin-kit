@@ -1,21 +1,16 @@
-import { type BreadcrumbEntry } from '@/components/core';
+import { Button, FormActions, FormField, FormSection, Input, type BreadcrumbEntry } from '@/components/core';
+import DeleteUser from '@/components/delete-user';
+import AdminLayout from '@/layouts/admin-layout';
+import SettingsLayout from '@/layouts/settings/layout';
 import { type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler, type ReactNode } from 'react';
-
-import { Button, Input, Label } from '@/components/core';
-import DeleteUser from '@/components/delete-user';
-import HeadingSmall from '@/components/heading-small';
-import InputError from '@/components/input-error';
-import AdminLayout from '@/layouts/admin-layout';
-import SettingsLayout from '@/layouts/settings/layout';
+import { Check, UserRound } from 'lucide-react';
+import { type FormEventHandler, type ReactNode } from 'react';
 
 const breadcrumbs: BreadcrumbEntry[] = [
-    {
-        title: 'Profile settings',
-        href: '/settings/profile',
-    },
+    { title: 'Settings', href: '/settings/profile' },
+    { title: 'Profile', href: '/settings/profile' },
 ];
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
@@ -35,68 +30,52 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     return (
         <>
             <Head title="Profile settings" />
-            <div className="space-y-6">
-                <HeadingSmall title="Profile information" description="Update your name and email address" />
 
-                <form onSubmit={submit} className="space-y-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+            <form onSubmit={submit}>
+                <FormSection icon={UserRound} title="Profile information" description="Update your name and email address.">
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <FormField label="Name" htmlFor="name" required error={errors.name}>
+                            <Input
+                                id="name"
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                                required
+                                autoComplete="name"
+                                placeholder="Full name"
+                                invalid={Boolean(errors.name)}
+                            />
+                        </FormField>
 
-                        <Input
-                            id="name"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            required
-                            autoComplete="name"
-                            placeholder="Full name"
-                        />
-
-                        <InputError className="mt-2" message={errors.name} />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
-
-                        <Input
-                            id="email"
-                            type="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            required
-                            autoComplete="username"
-                            placeholder="Email address"
-                        />
-
-                        <InputError className="mt-2" message={errors.email} />
+                        <FormField label="Email address" htmlFor="email" required hint="Used to sign in." error={errors.email}>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
+                                autoComplete="username"
+                                placeholder="Email address"
+                                invalid={Boolean(errors.email)}
+                            />
+                        </FormField>
                     </div>
 
                     {mustVerifyEmail && auth.user.email_verified_at === null && (
-                        <div>
-                            <p className="text-ink-muted mt-2 text-sm">
-                                Your email address is unverified.
-                                <Link
-                                    href={route('verification.send')}
-                                    method="post"
-                                    as="button"
-                                    className="text-ink-muted hover:text-ink rounded-md text-sm underline focus:ring-2 focus:ring-offset-2 focus:outline-hidden"
-                                >
+                        <div className="mt-4 text-sm">
+                            <p className="text-ink-muted">
+                                Your email address is unverified.{' '}
+                                <Link href={route('verification.send')} method="post" as="button" className="text-ink underline underline-offset-4">
                                     Click here to re-send the verification email.
                                 </Link>
                             </p>
 
                             {status === 'verification-link-sent' && (
-                                <div className="text-success mt-2 text-sm font-medium">
-                                    A new verification link has been sent to your email address.
-                                </div>
+                                <p className="text-success mt-2 font-medium">A new verification link has been sent to your email address.</p>
                             )}
                         </div>
                     )}
 
-                    <div className="flex items-center gap-4">
-                        <Button type="submit" disabled={processing}>
-                            Save
-                        </Button>
-
+                    <FormActions className="border-line mt-4 border-t pt-4">
                         <Transition
                             show={recentlySuccessful}
                             enter="transition ease-in-out"
@@ -104,11 +83,15 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             leave="transition ease-in-out"
                             leaveTo="opacity-0"
                         >
-                            <p className="text-ink-muted text-sm">Saved</p>
+                            <p className="text-success text-sm font-medium">Saved</p>
                         </Transition>
-                    </div>
-                </form>
-            </div>
+                        <Button type="submit" isLoading={processing}>
+                            {!processing && <Check />}
+                            Save
+                        </Button>
+                    </FormActions>
+                </FormSection>
+            </form>
 
             <DeleteUser />
         </>
@@ -117,7 +100,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
 /** Persistent layout: the shell stays mounted while navigating between pages. */
 Profile.layout = (page: ReactNode) => (
-    <AdminLayout breadcrumbs={breadcrumbs}>
+    <AdminLayout breadcrumbs={breadcrumbs} title="Profile settings">
         <SettingsLayout>{page}</SettingsLayout>
     </AdminLayout>
 );

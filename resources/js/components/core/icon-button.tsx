@@ -13,8 +13,8 @@ export const iconButtonVariants = cva(
             },
             size: {
                 sm: 'size-7 [&_svg]:size-3.5',
-                md: 'size-8 [&_svg]:size-4',
-                lg: 'size-9 [&_svg]:size-4',
+                md: 'size-control-sm [&_svg]:size-4',
+                lg: 'size-control [&_svg]:size-4',
             },
         },
         defaultVariants: {

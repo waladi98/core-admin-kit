@@ -45,7 +45,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
     }, [activities, period, searchTerm]);
 
     return (
-        <div className="flex h-full flex-col gap-3">
+        <div className="flex min-h-0 flex-1 flex-col gap-3">
             <SegmentedControl options={periodOptions} value={period} onChange={setPeriod} label="Activity period" />
             <Input
                 type="search"
@@ -62,7 +62,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             {visibleActivities.length === 0 ? (
                 <p className="text-ink-subtle py-8 text-center text-sm">No activities found.</p>
             ) : (
-                <ul className="space-y-4">
+                <ul className="scrollbar-thin scroll-fade-y -mr-2 min-h-0 flex-1 space-y-4 overflow-y-auto py-1 pr-2">
                     {visibleActivities.map((activity) => {
                         const style = activityStyles[activity.type];
                         const Icon = style.icon;

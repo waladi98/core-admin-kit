@@ -64,9 +64,26 @@ export function FormField({ label, htmlFor, required = false, hint, error, class
     );
 }
 
+export interface FormActionsProps extends ComponentProps<'div'> {
+    /**
+     * Pins the buttons to the bottom of the screen so Save stays visible on long forms.
+     * Use as the last element of the page content.
+     */
+    sticky?: boolean;
+}
+
 /**
  * Footer row with the form buttons, aligned to the right below the form sections.
  */
-export function FormActions({ className, ...props }: ComponentProps<'div'>) {
-    return <div className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end', className)} {...props} />;
+export function FormActions({ sticky = false, className, ...props }: FormActionsProps) {
+    return (
+        <div
+            className={cn(
+                'flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end',
+                sticky && 'border-line bg-surface/95 -mx-page -mb-page px-page sticky bottom-0 z-20 border-t py-3 backdrop-blur',
+                className,
+            )}
+            {...props}
+        />
+    );
 }

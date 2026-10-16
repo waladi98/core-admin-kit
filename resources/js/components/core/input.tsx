@@ -12,7 +12,7 @@ export function Input({ className, wrapperClassName, leadingIcon, trailing, inva
     return (
         <div
             className={cn(
-                'rounded-field border-line bg-surface focus-within:border-line-strong focus-within:ring-brand/10 flex h-9 w-full items-center gap-2 border px-3 text-sm transition-colors focus-within:ring-2',
+                'rounded-field border-line bg-surface focus-within:border-line-strong focus-within:ring-brand/10 h-control flex w-full items-center gap-2 border px-3 text-sm transition-colors focus-within:ring-2',
                 invalid && 'border-danger focus-within:border-danger focus-within:ring-danger/15',
                 props.disabled && 'cursor-not-allowed opacity-60',
                 wrapperClassName,

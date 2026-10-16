@@ -15,8 +15,8 @@ export const buttonVariants = cva(
                 link: 'text-ink underline-offset-4 hover:underline',
             },
             size: {
-                sm: 'h-8 px-3 text-xs',
-                md: 'h-9 px-3.5 text-sm',
+                sm: 'h-control-sm px-3 text-xs',
+                md: 'h-control px-3.5 text-sm',
                 lg: 'h-10 px-4 text-sm',
             },
         },

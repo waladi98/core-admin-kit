@@ -109,7 +109,7 @@ const rowSpanClasses: Record<Breakpoint, Record<RowSpan, string>> = {
 
 const gapClasses = {
     sm: 'gap-3',
-    md: 'gap-4',
+    md: 'gap-section',
     lg: 'gap-6',
 } as const;
 

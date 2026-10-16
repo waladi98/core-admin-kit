@@ -1,8 +1,8 @@
-import { Button, Input, Label, Modal, ModalFooter } from '@/components/core';
-import HeadingSmall from '@/components/heading-small';
+import { Button, FormSection, Input, Label, Modal, ModalFooter } from '@/components/core';
 import InputError from '@/components/input-error';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useForm } from '@inertiajs/react';
+import { Trash2 } from 'lucide-react';
 import { FormEventHandler, useRef } from 'react';
 
 export default function DeleteUser() {
@@ -28,15 +28,14 @@ export default function DeleteUser() {
     };
 
     return (
-        <div className="space-y-6">
-            <HeadingSmall title="Delete account" description="Delete your account and all of its resources" />
-            <div className="border-danger/20 bg-danger-soft rounded-field space-y-4 border p-4">
+        <FormSection icon={Trash2} title="Delete account" description="Delete your account and all of its resources.">
+            <div className="border-danger/20 bg-danger-soft rounded-field flex flex-col gap-3 border p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="text-danger space-y-0.5">
-                    <p className="font-medium">Warning</p>
+                    <p className="text-sm font-medium">Warning</p>
                     <p className="text-sm">Please proceed with caution, this cannot be undone.</p>
                 </div>
 
-                <Button variant="danger" onClick={confirmation.open}>
+                <Button variant="danger" onClick={confirmation.open} className="shrink-0">
                     Delete account
                 </Button>
             </div>
@@ -76,6 +75,6 @@ export default function DeleteUser() {
                     </ModalFooter>
                 </form>
             </Modal>
-        </div>
+        </FormSection>
     );
 }

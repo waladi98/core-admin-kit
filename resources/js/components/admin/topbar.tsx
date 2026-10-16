@@ -1,6 +1,7 @@
 import { Breadcrumb, IconButton, type BreadcrumbEntry } from '@/components/core';
 import { Link } from '@inertiajs/react';
 import { Bell, CalendarDays, Menu, Settings } from 'lucide-react';
+import { TopbarActionsSlot } from './topbar-actions';
 
 export interface TopbarProps {
     breadcrumbs?: BreadcrumbEntry[];
@@ -16,7 +17,7 @@ const todayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'long', day: 
 
 export function Topbar({ breadcrumbs = [], title, onOpenMenu }: TopbarProps) {
     return (
-        <header className="border-line bg-surface/90 sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b px-4 backdrop-blur lg:px-6">
+        <header className="border-line bg-surface/90 h-topbar sticky top-0 z-30 flex shrink-0 items-center gap-3 border-b px-4 backdrop-blur lg:px-6">
             <IconButton label="Open menu" className="lg:hidden" onClick={onOpenMenu}>
                 <Menu />
             </IconButton>
@@ -29,6 +30,8 @@ export function Topbar({ breadcrumbs = [], title, onOpenMenu }: TopbarProps) {
             ) : (
                 <Breadcrumb items={breadcrumbs} className="min-w-0 flex-1" />
             )}
+
+            <TopbarActionsSlot className="flex shrink-0 items-center gap-2 empty:hidden" />
 
             <div className="flex shrink-0 items-center gap-1">
                 <span className="text-ink-muted mr-2 hidden items-center gap-1.5 text-xs md:inline-flex">

@@ -24,8 +24,8 @@ export function Panel({ isLoading = false, fill = false, className, ...props }: 
             aria-busy={isLoading || undefined}
             className={cn(
                 'group/panel rounded-panel border-line bg-surface-muted flex h-full flex-col border p-1',
-                // 5.5rem = topbar (3.5rem) + main vertical padding (2rem).
-                fill && 'lg:max-h-[calc(100dvh-5.5rem)]',
+                // Visible height below the topbar, minus the page padding above and below.
+                fill && 'lg:max-h-[calc(100dvh-var(--spacing-topbar)-2*var(--spacing-page))]',
                 className,
             )}
             {...props}

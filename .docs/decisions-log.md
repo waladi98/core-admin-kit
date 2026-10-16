@@ -1,0 +1,19 @@
+# Decisions Log
+
+Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadmap.md`) tanpa berhenti bertanya, sesuai arahan "pilih default terbaik". Review dan koreksi bila perlu.
+
+## UI0 — Layout Compact & Minim Scroll
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Shell (L1) | Tetap memakai scroll jendela browser dengan sidebar & topbar `sticky`, **bukan** `<main>` sebagai area scroll sendiri. | Efek yang sama (sidebar & topbar diam), tetapi scroll restoration Inertia, `preserveScroll`, dan scroll di HP tetap bekerja normal tanpa konfigurasi tambahan. |
+| Token kepadatan | Disimpan sebagai `--spacing-*` di `@theme` (`control`, `control-sm`, `row`, `row-head`, `topbar`, `page`, `section`). | Tailwind v4 otomatis membuat utility (`h-control`, `p-page`, `gap-section`); cukup ubah satu tempat. Didaftarkan di `cn()` agar override (`h-8`) tetap menang. |
+| Ukuran kontrol | Input/select/tombol default 36px, kecil 32px; baris tabel 40px; jarak antar panel 12px; padding halaman 16px. | Sesuai aturan L5, tetap ≥ 32px untuk target sentuh. |
+| Judul dashboard | Sapaan "Hello, {nama} 👋" dipindah ke judul topbar; filter periode & tombol ⋯ ke topbar lewat `<TopbarActions>`. | Aturan L7 (tanpa judul ganda) tanpa kehilangan kontrol. |
+| `TopbarActions` | Portal dari halaman ke slot di topbar, bukan prop di layout. | Persistent layout tidak punya akses ke state halaman; portal membuat kontrol tetap bisa memakai state halaman. |
+| Tinggi chart dashboard | `clamp(11rem, 100dvh − 22rem, 18rem)`. | Statistik + chart muat di 1536×864 dan 1366×768; tidak terlalu tinggi di layar besar. |
+| Activity feed | Tinggi mengikuti baris grid (`xl:[contain:size]`), daftar di-scroll di dalam panel. | Feed tidak lagi memanjangkan baris grid & halaman. |
+| Form Users | `FormActions sticky` (tombol menempel di bawah layar). | Form panjang tetap bisa disimpan tanpa scroll ke bawah. |
+| Form Settings | `FormActions` di dalam `FormSection` (tidak sticky). | Formnya pendek; tombol sudah terlihat. |
+| `PageHeader`, `HeadingSmall` | Dihapus dari kode. | Tidak dipakai lagi; mencegah judul ganda muncul kembali. |
+| Breadcrumb Settings | `Settings / Profile` dan `Settings / Password`, judul topbar "Profile settings" / "Password settings". | Konsisten dengan pola create/edit. |

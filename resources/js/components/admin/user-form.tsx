@@ -112,7 +112,7 @@ export function UserForm({ initialValues, method, action, submitLabel, isPasswor
                 </div>
             </FormSection>
 
-            <FormActions>
+            <FormActions sticky>
                 <Link href={route('users.index')} className={buttonVariants({ variant: 'secondary' })}>
                     Cancel
                 </Link>

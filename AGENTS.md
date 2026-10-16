@@ -240,6 +240,19 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Send props with the same camelCase keys as the TypeScript types in `resources/js/types/`.
 - Local tests: this machine has no SQLite PHP extension. Run tests with `composer test:local`, which points at the separate MySQL database `db_pm_v6_testing`. For a single file: set `DB_CONNECTION=mysql` and `DB_DATABASE=db_pm_v6_testing` in the environment, then `php artisan test --compact <path>`. Never run tests against the development database `db_pm_v6`: `RefreshDatabase` wipes it. Do not change the database settings in `phpunit.xml` (CI uses SQLite in-memory).
 
+## Layout Rules (compact, minimal scrolling)
+
+Design target: 1536×864 viewport; must stay comfortable at 1366×768; check 1920×1080, 768×1024 and 390×844.
+
+- L1 Shell: sidebar and topbar stay fixed (sticky); only the page content moves.
+- L2 Index pages: `<Panel fill>` + `DataTable stickyHeader` so the table header and pagination stay visible on desktop; below 1024px the page scrolls normally (no nested scrolling on touch screens).
+- L3 Forms: fields in `md:grid-cols-2 xl:grid-cols-3`; long create/edit forms end with `<FormActions sticky>` so Save stays visible. Short settings forms put `FormActions` inside the `FormSection`.
+- L4 Dashboards fit one desktop viewport: chart heights follow the screen (`h-[clamp(…,calc(100dvh-…),…)]`); long lists scroll inside their panel (`min-h-0 flex-1 overflow-y-auto scrollbar-thin`). A grid item that must not stretch its row uses `xl:[contain:size]`.
+- L5 Density comes from the spacing tokens in `app.css` (`h-control`, `h-control-sm`, `h-row`, `h-row-head`, `h-topbar`, `p-page`, `gap-section`). Use them instead of fixed sizes; change density only there. Custom tokens are registered in `cn()` (`lib/utils.ts`) so overrides merge correctly.
+- L6 Long content scrolls inside its component: `Modal` body, `Dropdown` menus (`max-h-80`), sidebar, feeds.
+- L7 No duplicate titles: no `PageHeader` (removed). Index pages take their title from the breadcrumb; create/edit/settings/dashboard pass `title` to `AdminLayout`. Page-level controls (e.g. a period filter) go in the topbar via `<TopbarActions>` from `@/components/admin/topbar-actions`.
+- L8 The page width never jumps: `html` reserves the scrollbar gutter; do not override `scrollbar-gutter` or the `padding-right` rule on `html`.
+
 ## Readability (users aged 30–70)
 
 - Text must meet WCAG AA contrast (≥ 4.5:1) on `surface` and `surface-muted`. Use only the text tokens: `ink` (headings, values), `ink-soft` (body), `ink-muted` (descriptions, secondary labels, ≥ 7:1), `ink-subtle` (placeholders, hints, timestamps, icons; ≥ 4.5:1). Never lighten text with opacity (`text-ink/50`, `opacity-60` on text) or with lighter grays; `line*` tokens are for borders only, never for text.

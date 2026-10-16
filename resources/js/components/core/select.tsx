@@ -8,8 +8,8 @@ const selectVariants = cva(
     {
         variants: {
             size: {
-                sm: 'h-8 text-xs',
-                md: 'h-9 text-sm',
+                sm: 'h-control-sm text-xs',
+                md: 'h-control text-sm',
             },
         },
         defaultVariants: {

@@ -39,7 +39,7 @@ export function DropdownContent({ align = 'end', side = 'bottom', className, chi
             anchor={anchors[`${side}-${align}`]}
             transition
             className={cn(
-                'rounded-field border-line bg-surface shadow-pop z-50 min-w-44 border p-1 text-sm outline-none [--anchor-gap:6px]',
+                'rounded-field border-line bg-surface shadow-pop scrollbar-thin z-50 max-h-80 min-w-44 overflow-y-auto border p-1 text-sm outline-none [--anchor-gap:6px]',
                 'origin-top transition duration-100 ease-out data-closed:scale-95 data-closed:opacity-0',
                 className,
             )}

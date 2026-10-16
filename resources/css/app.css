@@ -34,6 +34,17 @@
     --color-info: #2563eb;
     --color-info-soft: #eff6ff;
 
+    /*
+     * Density tokens (compact layout). Change these to make the whole app
+     * denser or roomier; components read them via h-control, h-row, p-page, gap-section, …
+     */
+    --spacing-control: 2.25rem; /* default input / select / button height (36px) */
+    --spacing-control-sm: 2rem; /* small controls in toolbars and tables (32px) */
+    --spacing-row: 2.5rem; /* table body row (40px) */
+    --spacing-row-head: 2.25rem; /* table header row (36px) */
+    --spacing-topbar: 3.5rem; /* topbar height (56px) */
+    --spacing-page: 1rem; /* padding around page content (16px) */
+    --spacing-section: 0.75rem; /* gap between panels and grid items (12px) */
     --radius-panel: 0.875rem;
     --radius-field: 0.5rem;
 

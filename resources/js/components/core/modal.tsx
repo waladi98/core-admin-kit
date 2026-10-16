@@ -30,7 +30,7 @@ export function Modal({ isOpen, onClose, title, description, size = 'md', classN
                 <DialogPanel
                     transition
                     className={cn(
-                        'rounded-panel border-line bg-surface shadow-pop relative w-full border p-6 transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0',
+                        'rounded-panel border-line bg-surface shadow-pop relative flex max-h-[calc(100dvh-2rem)] w-full flex-col border p-6 transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0',
                         modalSizes[size],
                         className,
                     )}
@@ -45,7 +45,7 @@ export function Modal({ isOpen, onClose, title, description, size = 'md', classN
                     </button>
                     <DialogTitle className="text-ink pr-8 text-base font-semibold">{title}</DialogTitle>
                     {description && <Description className="text-ink-muted mt-1.5 text-sm">{description}</Description>}
-                    {children && <div className="mt-5">{children}</div>}
+                    {children && <div className="scrollbar-thin -mx-1 mt-5 min-h-0 overflow-y-auto px-1">{children}</div>}
                 </DialogPanel>
             </div>
         </Dialog>

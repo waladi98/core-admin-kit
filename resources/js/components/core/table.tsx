@@ -27,9 +27,9 @@ export function TableRow({ className, ...props }: ComponentProps<'tr'>) {
 }
 
 export function TableHeaderCell({ className, ...props }: ComponentProps<'th'>) {
-    return <th className={cn('text-ink-muted h-9 px-3 text-left align-middle text-xs font-medium whitespace-nowrap', className)} {...props} />;
+    return <th className={cn('text-ink-muted h-row-head px-3 text-left align-middle text-xs font-medium whitespace-nowrap', className)} {...props} />;
 }
 
 export function TableCell({ className, ...props }: ComponentProps<'td'>) {
-    return <td className={cn('text-ink-soft h-10 px-3 align-middle text-[13px] whitespace-nowrap', className)} {...props} />;
+    return <td className={cn('text-ink-soft h-row px-3 align-middle text-[13px] whitespace-nowrap', className)} {...props} />;
 }
