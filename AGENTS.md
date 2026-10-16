@@ -209,7 +209,7 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 
 - shadcn/ui and Radix are removed. Never add them back or introduce another UI kit.
 - Pages and widgets import UI only from `@/components/core` (primitives) and `@/components/admin` (admin widgets). Never import `@headlessui/react` outside `components/core`; it is used only inside wrappers there (Dropdown, Drawer, Modal).
-- Every authenticated admin page uses `AdminLayout` (`@/layouts/admin-layout`) with `breadcrumbs`, followed by `PageHeader`.
+- Every authenticated admin page uses `AdminLayout` (`@/layouts/admin-layout`) as an Inertia **persistent layout**, never by wrapping JSX inside the page: `Page.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;` (settings pages nest `SettingsLayout` inside). For breadcrumbs that depend on props, type the argument as `ReactElement<PageProps>` and read `page.props`. Wrapping the layout inside the page remounts the sidebar on every navigation.
 - Lay out content with `Grid` / `Grid.Item` (12 columns, responsive `span` and `rowSpan`).
 - Wrap every content block in `Panel` > `Panel.Header` + `Panel.Body` (the card-in-card pattern). Use `Panel.Body padding="none"` for tables.
 - Reuse before creating: `DataTable` for tables (see `components/admin/transaction-table.tsx`), `Badge`, `Avatar`, `Dropdown` for row actions, `Modal` + `ModalFooter` for confirmations (see `components/delete-user.tsx`), and `Label` + `Input` + `InputError` + `Button type="submit"` for forms (see `pages/settings/profile.tsx`).

@@ -22,9 +22,10 @@ export function useReloading(propNames: string[], delay = 200): boolean {
         };
 
         const removeStartListener = router.on('start', (event) => {
-            const requestedProps = event.detail.visit.only;
+            const { visit } = event.detail;
 
-            if (!requestedProps.some((prop) => watchedProps.current.includes(prop))) {
+            // Inertia fires "start" for hover prefetches too; those are not reloads.
+            if (visit.prefetch || !visit.only.some((prop) => watchedProps.current.includes(prop))) {
                 return;
             }
 
@@ -33,8 +34,8 @@ export function useReloading(propNames: string[], delay = 200): boolean {
             timer = setTimeout(() => setIsReloading(true), delay);
         });
 
-        const removeFinishListener = router.on('finish', () => {
-            if (isTracking) {
+        const removeFinishListener = router.on('finish', (event) => {
+            if (isTracking && !event.detail.visit.prefetch) {
                 stop();
             }
         });

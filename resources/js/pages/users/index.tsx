@@ -28,7 +28,7 @@ import { type TableSort } from '@/types/table';
 import { type ManagedUser, type UserIndexProps, type UserRole, type UserStatus } from '@/types/user-management';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { LoaderCircle, MoreVertical, Pencil, Plus, Search, Trash2, Users } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 const breadcrumbs: BreadcrumbEntry[] = [{ title: 'Users', href: '/users', icon: Users }];
 
@@ -140,7 +140,7 @@ export default function UsersIndex({ users, filters, roleOptions }: UserIndexPro
     );
 
     return (
-        <AdminLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Users" />
             <div className="space-y-6">
                 <PageHeader
@@ -239,6 +239,9 @@ export default function UsersIndex({ users, filters, roleOptions }: UserIndexPro
                     </Button>
                 </ModalFooter>
             </Modal>
-        </AdminLayout>
+        </>
     );
 }
+
+/** Persistent layout: the shell stays mounted while navigating between pages. */
+UsersIndex.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;

@@ -1,10 +1,10 @@
 import { type BreadcrumbEntry } from '@/components/core';
 import InputError from '@/components/input-error';
-import AppLayout from '@/layouts/admin-layout';
+import AdminLayout from '@/layouts/admin-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { Transition } from '@headlessui/react';
 import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef } from 'react';
+import { FormEventHandler, useRef, type ReactNode } from 'react';
 
 import { Button, Input, Label } from '@/components/core';
 import HeadingSmall from '@/components/heading-small';
@@ -47,79 +47,83 @@ export default function Password() {
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Profile settings" />
+            <div className="space-y-6">
+                <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
 
-            <SettingsLayout>
-                <div className="space-y-6">
-                    <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
+                <form onSubmit={updatePassword} className="space-y-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="current_password">Current password</Label>
 
-                    <form onSubmit={updatePassword} className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="current_password">Current password</Label>
+                        <Input
+                            id="current_password"
+                            ref={currentPasswordInput}
+                            value={data.current_password}
+                            onChange={(e) => setData('current_password', e.target.value)}
+                            type="password"
+                            autoComplete="current-password"
+                            placeholder="Current password"
+                        />
 
-                            <Input
-                                id="current_password"
-                                ref={currentPasswordInput}
-                                value={data.current_password}
-                                onChange={(e) => setData('current_password', e.target.value)}
-                                type="password"
-                                autoComplete="current-password"
-                                placeholder="Current password"
-                            />
+                        <InputError message={errors.current_password} />
+                    </div>
 
-                            <InputError message={errors.current_password} />
-                        </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="password">New password</Label>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">New password</Label>
+                        <Input
+                            id="password"
+                            ref={passwordInput}
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            type="password"
+                            autoComplete="new-password"
+                            placeholder="New password"
+                        />
 
-                            <Input
-                                id="password"
-                                ref={passwordInput}
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                                type="password"
-                                autoComplete="new-password"
-                                placeholder="New password"
-                            />
+                        <InputError message={errors.password} />
+                    </div>
 
-                            <InputError message={errors.password} />
-                        </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="password_confirmation">Confirm password</Label>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm password</Label>
+                        <Input
+                            id="password_confirmation"
+                            value={data.password_confirmation}
+                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                            type="password"
+                            autoComplete="new-password"
+                            placeholder="Confirm password"
+                        />
 
-                            <Input
-                                id="password_confirmation"
-                                value={data.password_confirmation}
-                                onChange={(e) => setData('password_confirmation', e.target.value)}
-                                type="password"
-                                autoComplete="new-password"
-                                placeholder="Confirm password"
-                            />
+                        <InputError message={errors.password_confirmation} />
+                    </div>
 
-                            <InputError message={errors.password_confirmation} />
-                        </div>
+                    <div className="flex items-center gap-4">
+                        <Button type="submit" disabled={processing}>
+                            Save password
+                        </Button>
 
-                        <div className="flex items-center gap-4">
-                            <Button type="submit" disabled={processing}>
-                                Save password
-                            </Button>
-
-                            <Transition
-                                show={recentlySuccessful}
-                                enter="transition ease-in-out"
-                                enterFrom="opacity-0"
-                                leave="transition ease-in-out"
-                                leaveTo="opacity-0"
-                            >
-                                <p className="text-ink-muted text-sm">Saved</p>
-                            </Transition>
-                        </div>
-                    </form>
-                </div>
-            </SettingsLayout>
-        </AppLayout>
+                        <Transition
+                            show={recentlySuccessful}
+                            enter="transition ease-in-out"
+                            enterFrom="opacity-0"
+                            leave="transition ease-in-out"
+                            leaveTo="opacity-0"
+                        >
+                            <p className="text-ink-muted text-sm">Saved</p>
+                        </Transition>
+                    </div>
+                </form>
+            </div>
+        </>
     );
 }
+
+/** Persistent layout: the shell stays mounted while navigating between pages. */
+Password.layout = (page: ReactNode) => (
+    <AdminLayout breadcrumbs={breadcrumbs}>
+        <SettingsLayout>{page}</SettingsLayout>
+    </AdminLayout>
+);

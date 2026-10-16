@@ -5,15 +5,18 @@ import AdminLayout from '@/layouts/admin-layout';
 import { type UserEditProps } from '@/types/user-management';
 import { Head } from '@inertiajs/react';
 import { Users } from 'lucide-react';
+import { type ReactElement } from 'react';
 
-export default function EditUser({ user, roleOptions, statusOptions }: UserEditProps) {
-    const breadcrumbs: BreadcrumbEntry[] = [
+function editBreadcrumbs(user: UserEditProps['user']): BreadcrumbEntry[] {
+    return [
         { title: 'Users', href: '/users', icon: Users },
         { title: user.name, href: route('users.edit', user.id) },
     ];
+}
 
+export default function EditUser({ user, roleOptions, statusOptions }: UserEditProps) {
     return (
-        <AdminLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={`Edit ${user.name}`} />
             <div className="space-y-6">
                 <PageHeader title="Edit user" description={user.email} />
@@ -39,6 +42,9 @@ export default function EditUser({ user, roleOptions, statusOptions }: UserEditP
                     </Grid.Item>
                 </Grid>
             </div>
-        </AdminLayout>
+        </>
     );
 }
+
+/** Persistent layout: the shell stays mounted while navigating between pages. */
+EditUser.layout = (page: ReactElement<UserEditProps>) => <AdminLayout breadcrumbs={editBreadcrumbs(page.props.user)}>{page}</AdminLayout>;

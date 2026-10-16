@@ -117,6 +117,19 @@ export function DataTable<T>({
 
     const exitingRows = useExitingRows(rows, getRowId, pendingRowIds);
 
+    /**
+     * Rows animate in only the first time data appears. Later sort, filter and
+     * page changes swap rows instantly; the dimmed reload state is feedback enough.
+     */
+    const hasShownRows = useRef(false);
+    const shouldAnimateRows = !hasShownRows.current;
+
+    useEffect(() => {
+        if (rows.length > 0) {
+            hasShownRows.current = true;
+        }
+    }, [rows]);
+
     useEffect(() => {
         setSortingKey(null);
     }, [rows]);
@@ -262,7 +275,8 @@ export function DataTable<T>({
                                 data-pending={isPending || isExiting || undefined}
                                 className={cn(
                                     'hover:bg-surface-muted/40 transition-opacity duration-200',
-                                    isExiting ? 'animate-out fade-out-0 fill-mode-forwards pointer-events-none duration-200' : 'animate-enter',
+                                    isExiting && 'animate-out fade-out-0 fill-mode-forwards pointer-events-none duration-200',
+                                    !isExiting && shouldAnimateRows && 'animate-fade',
                                     isPending && 'pointer-events-none opacity-50',
                                 )}
                                 style={{ '--enter-delay': `${Math.min(index, MAX_STAGGERED_ROWS) * ROW_STAGGER_MS}ms` } as CSSProperties}

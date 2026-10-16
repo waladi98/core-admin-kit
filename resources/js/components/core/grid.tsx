@@ -131,14 +131,14 @@ function resolveSpanClasses<T extends number>(
 export interface GridProps extends ComponentProps<'div'> {
     gap?: keyof typeof gapClasses;
     /**
-     * Animates children in one after another on mount. `true` uses a 40ms step;
+     * Animates children in one after another on mount. `true` uses a 25ms step;
      * pass a number for a custom step in milliseconds.
      */
     stagger?: boolean | number;
 }
 
 /** Later items share the last delay so long grids do not feel slow. */
-const MAX_STAGGERED_ITEMS = 10;
+const MAX_STAGGERED_ITEMS = 6;
 
 function applyStagger(children: ReactNode, stepInMilliseconds: number): ReactNode {
     return Children.toArray(children).map((child, index) => {
@@ -159,7 +159,7 @@ function applyStagger(children: ReactNode, stepInMilliseconds: number): ReactNod
  * Finance Core 12-column layout grid.
  */
 export function Grid({ gap = 'md', stagger = false, className, children, ...props }: GridProps) {
-    const staggerStep = stagger === true ? 40 : stagger || 0;
+    const staggerStep = stagger === true ? 25 : stagger || 0;
 
     return (
         <div className={cn('grid grid-cols-12', gapClasses[gap], className)} {...props}>

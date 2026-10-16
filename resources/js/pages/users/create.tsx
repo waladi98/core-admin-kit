@@ -5,6 +5,7 @@ import AdminLayout from '@/layouts/admin-layout';
 import { type UserFormOptions } from '@/types/user-management';
 import { Head } from '@inertiajs/react';
 import { Users } from 'lucide-react';
+import { type ReactNode } from 'react';
 
 const breadcrumbs: BreadcrumbEntry[] = [
     { title: 'Users', href: '/users', icon: Users },
@@ -13,7 +14,7 @@ const breadcrumbs: BreadcrumbEntry[] = [
 
 export default function CreateUser({ roleOptions, statusOptions }: UserFormOptions) {
     return (
-        <AdminLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Add user" />
             <div className="space-y-6">
                 <PageHeader title="Add user" description="Create a new account and assign its role." />
@@ -38,6 +39,9 @@ export default function CreateUser({ roleOptions, statusOptions }: UserFormOptio
                     </Grid.Item>
                 </Grid>
             </div>
-        </AdminLayout>
+        </>
     );
 }
+
+/** Persistent layout: the shell stays mounted while navigating between pages. */
+CreateUser.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;

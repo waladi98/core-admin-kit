@@ -13,6 +13,7 @@ import { type SharedData } from '@/types';
 import { type Activity, type ActivityPeriod, type StatMetric, type TransactionRow, type VolumeTrend } from '@/types/dashboard';
 import { Deferred, Head, router, usePage } from '@inertiajs/react';
 import { ArrowLeftRight, BadgeCheck, ChartColumn, LayoutGrid, MoreVertical, Newspaper, ShieldAlert, Wallet, type LucideIcon } from 'lucide-react';
+import { type ReactNode } from 'react';
 
 interface DashboardProps {
     filters: { period: ReportingPeriod; trendPeriod: ReportingPeriod };
@@ -66,7 +67,7 @@ export default function Dashboard({ filters, stats, volumeTrend, activities, tra
     };
 
     return (
-        <AdminLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Dashboard" />
             <div className="space-y-6">
                 <PageHeader
@@ -146,6 +147,9 @@ export default function Dashboard({ filters, stats, volumeTrend, activities, tra
                     </Grid.Item>
                 </Grid>
             </div>
-        </AdminLayout>
+        </>
     );
 }
+
+/** Persistent layout: the shell stays mounted while navigating between pages. */
+Dashboard.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;
