@@ -211,3 +211,11 @@ test('users cannot delete their own account from user management', function () {
 
     $this->assertModelExists($this->admin);
 });
+
+test('users index redirects to the last page when the requested page is past the end', function () {
+    User::factory()->count(10)->create();
+
+    $this->actingAs($this->admin)
+        ->get(route('users.index', ['page' => 3, 'role' => 'staff']))
+        ->assertRedirect(route('users.index', ['page' => 1, 'role' => 'staff']));
+});

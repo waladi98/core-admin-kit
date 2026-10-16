@@ -12,7 +12,7 @@
 | Dashboard + chart | ✅ (data dummy) |
 | Animasi & loading state | ✅ (`.docs/animation-plan.md`) |
 | Auth & settings (profile, password) | ✅ dimigrasi ke Finance Core |
-| Modul Users | 🟡 Fase 1–4 tercentang, **Fase 5 (verifikasi) belum** |
+| Modul Users | ✅ modul acuan CRUD (S0) |
 | Git | ✅ commit awal `4c3ac5f`, belum ada remote |
 | Hak akses per role | ❌ semua user login bisa akses semua halaman |
 | Toast / flash message | ❌ |
@@ -28,10 +28,10 @@
 
 ## 3. Fase
 
-### Fase S0 — Selesaikan Modul Users (acuan CRUD)
-- [ ] Jalankan verifikasi Fase 5 di `users-module-plan.md` (Pint, test, build) dan perbaiki bila ada error.
-- [ ] Review konsistensi dengan `AGENTS.md` (pakai `useTableQuery`, `DataTable` loading, `Pagination`, `Modal`).
-- [ ] Tandai Users sebagai **modul acuan**: dokumentasikan langkah membuat modul CRUD baru (`.docs/guide-new-module.md`).
+### Fase S0 — Selesaikan Modul Users (acuan CRUD) ✅ SELESAI
+- [x] Jalankan verifikasi Fase 5 di `users-module-plan.md` (Pint, test, build) dan perbaiki bila ada error.
+- [x] Review konsistensi dengan `AGENTS.md` (pakai `useTableQuery`, `DataTable` loading, `Pagination`, `Modal`).
+- [x] Tandai Users sebagai **modul acuan**: dokumentasikan langkah membuat modul CRUD baru (`.docs/guide-new-module.md`).
 
 ### Fase S1 — Hak Akses (Role & Permission)
 - [ ] Permission didefinisikan di satu tempat (enum/config), dipetakan ke `UserRole`.

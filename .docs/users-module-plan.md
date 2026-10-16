@@ -52,4 +52,10 @@ Props index: `users { data[], currentPage, lastPage, perPage, from, to, total }`
 Status: tsc, eslint, prettier, `npm run build` OK; `UserManagementTest` 15/15 lulus (MySQL `db_pm_v6_test`).
 
 ### Fase 5 — Verifikasi
-- [ ] `vendor/bin/pint --dirty --format agent`, `php artisan test --compact tests/Feature/UserManagementTest.php`, `npm run build` / tsc
+- [x] `vendor/bin/pint --dirty --format agent`, `php artisan test --compact tests/Feature/UserManagementTest.php`, `npm run build` / tsc
+
+### Fase 6 — Penyempurnaan (S0 roadmap)
+- [x] User berstatus `inactive` tidak bisa login (`LoginRequest`) dan sesi aktifnya otomatis keluar (middleware `EnsureUserIsActive` di grup web).
+- [x] Halaman tabel yang melewati batas (mis. setelah menghapus baris terakhir di halaman terakhir) diarahkan ke halaman terakhir.
+- [x] Test tambahan untuk kedua perilaku di atas.
+- [x] Panduan modul baru: `.docs/guide-new-module.md`.

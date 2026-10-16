@@ -22,7 +22,7 @@ class UserController extends Controller
 {
     public const PER_PAGE = 10;
 
-    public function index(UserIndexRequest $request): Response
+    public function index(UserIndexRequest $request): Response|RedirectResponse
     {
         $sort = $request->sort();
 
@@ -35,6 +35,11 @@ class UserController extends Controller
             ->orderBy('id')
             ->paginate(self::PER_PAGE)
             ->withQueryString();
+
+        // A page past the end (e.g. after deleting the last row of the last page) falls back to the last page.
+        if ($users->isEmpty() && $users->currentPage() > 1) {
+            return to_route('users.index', [...$request->query(), 'page' => $users->lastPage()]);
+        }
 
         return Inertia::render('users/index', [
             'users' => [

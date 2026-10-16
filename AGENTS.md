@@ -220,6 +220,10 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Charts use Recharts and are loaded through `components/admin/lazy-charts.tsx`.
 - Data-loading sections that are deferred show an animated skeleton placeholder.
 
+## New Modules
+
+- Build every new CRUD module by following .docs/guide-new-module.md, using the Users module (/users) as the reference implementation.
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.
