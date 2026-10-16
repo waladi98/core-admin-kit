@@ -240,6 +240,7 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Roles live in the database (`App\Models\Role`, constants `Role::ADMIN|MANAGER|STAFF`) and are managed on the Roles & Permissions page (`/roles`). Admin passes every check via `Gate::before` and cannot be edited; built-in roles cannot be renamed or deleted.
 - Backend: one Policy per model calling `$user->can(Permission::X->value)`; controllers call `Gate::authorize(...)`, Form Requests `authorize()` with `$this->user()->can(...)`. Rules that must hold even for admins (e.g. not deleting yourself) are enforced in the controller.
 - Frontend: `auth.permissions` is shared by `HandleInertiaRequests`. Hide what the user cannot use with `useCan('users.create')`, `usePermissions()` or `<Can permission="…">` (`@/components/admin/can`); add `permission` to entries in `config/navigation.ts`. The UI only hides things — the server always enforces.
+- Passwords: always validate with `Password::defaults()` (stricter in production, set in `AppServiceProvider`). Sensitive account actions (signing out other devices, deleting the account) require `current_password`.
 - Tests: users get the `staff` role by default; use `User::factory()->admin()` or `->role(Role::MANAGER)`.
 
 ## Translations (Indonesian & English)

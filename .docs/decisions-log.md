@@ -152,3 +152,13 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Retensi | 365 hari, dibersihkan harian oleh `model:prune` (butuh scheduler). | Database tidak membengkak. |
 | Urutan migrasi | Migrasi role (S1) memakai `ActivityLog::withoutRecording()` karena tabel log dibuat belakangan. | Ditemukan saat test: instalasi baru akan gagal tanpa ini. |
 | Dashboard | Feed "Pembaruan terbaru" kini data asli; statistik, chart & tabel transaksi masih contoh. | |
+
+## S10 — Keamanan Akun (bagian 1, tanpa dependency)
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Daftar sesi | Dibaca dari tabel `sessions` (driver database, bawaan `.env.example`); browser & platform ditebak dari user agent tanpa library. | Tanpa dependency; cukup untuk mengenali perangkat. |
+| Keluar dari perangkat lain | Wajib konfirmasi kata sandi + dialog konfirmasi; `Auth::logoutOtherDevices()` dan baris sesi lain dihapus; dicatat di audit trail. | Mencegah penyalahgunaan bila perangkat ditinggal dalam keadaan login. |
+| Kebijakan password | Production: min. 8 karakter, huruf besar & kecil, angka. Non-production: min. 8. | Aman di production tanpa merepotkan development/test. Pemeriksaan kebocoran (`uncompromised`) tidak dipakai karena butuh akses internet ke layanan luar. |
+| Rate limit login | Sudah ada (5 percobaan per email + IP, bawaan starter kit). | — |
+| 2FA | Menunggu izin dependency Laravel Fortify. | Sesuai kesepakatan. |

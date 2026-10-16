@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Password rules used by registration, user management and password changes.
+        // Production: at least 8 characters with upper and lower case letters and a number.
+        Password::defaults(fn (): Password => $this->app->isProduction()
+            ? Password::min(8)->letters()->mixedCase()->numbers()
+            : Password::min(8));
+
         // Admins can do everything, including permissions added later.
         Gate::before(fn (User $user): ?bool => $user->hasRole(Role::ADMIN) ? true : null);
 
