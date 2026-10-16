@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserStatus;
+use App\Http\Requests\BulkUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UserIndexRequest;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Kelola Users: list, create, edit and delete application users.
@@ -30,11 +32,7 @@ class UserController extends Controller
         $sort = $request->sort();
 
         // Search and role apply to both the table and the status tab counts.
-        $filtered = User::query()
-            ->when($request->search(), fn (Builder $query, string $search) => $query->where(
-                fn (Builder $query) => $query->whereLike('name', "%{$search}%")->orWhereLike('email', "%{$search}%")
-            ))
-            ->when($request->role(), fn (Builder $query, string $role) => $query->role($role));
+        $filtered = $this->filteredQuery($request);
 
         $statusCounts = (clone $filtered)
             ->toBase()
@@ -42,11 +40,8 @@ class UserController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        $users = (clone $filtered)
+        $users = $this->sorted($this->withStatus(clone $filtered, $request), $sort)
             ->with('roles')
-            ->when($request->status(), fn (Builder $query, UserStatus $status) => $query->where('status', $status))
-            ->orderBy(ltrim($sort, '-'), Str::startsWith($sort, '-') ? 'desc' : 'asc')
-            ->orderBy('id')
             ->paginate($request->perPage())
             ->withQueryString();
 
@@ -148,6 +143,86 @@ class UserController extends Controller
         $user->delete();
 
         return back()->withToast('success', __(':name was deleted.', ['name' => $user->name]));
+    }
+
+    /**
+     * Download the users that match the current search, filters and sort as CSV.
+     */
+    public function export(UserIndexRequest $request): StreamedResponse
+    {
+        Gate::authorize('viewAny', User::class);
+
+        $query = $this->sorted($this->withStatus($this->filteredQuery($request), $request), $request->sort())->with('roles');
+
+        return response()->streamDownload(function () use ($query): void {
+            $output = fopen('php://output', 'w');
+            fwrite($output, "\u{FEFF}"); // UTF-8 BOM so Excel shows accented names correctly.
+            fputcsv($output, [__('Name'), __('Email'), __('Role'), __('Status'), __('Joined')]);
+
+            $query->lazy(500)->each(function (User $user) use ($output): void {
+                fputcsv($output, [
+                    $user->name,
+                    $user->email,
+                    $user->roles->first()?->label() ?? '',
+                    $user->status->label(),
+                    $user->created_at->toDateString(),
+                ]);
+            });
+
+            fclose($output);
+        }, 'users-'.now()->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * Apply an action to several users at once (the selected table rows).
+     * Your own account is always skipped.
+     */
+    public function bulk(BulkUserRequest $request): RedirectResponse
+    {
+        $users = User::query()->whereKey($request->validated('ids'))->whereKeyNot($request->user()->id)->get();
+        $action = $request->validated('action');
+
+        $users = $users->filter(fn (User $user): bool => $request->user()->can($action === 'delete' ? 'delete' : 'update', $user));
+
+        match ($action) {
+            'activate' => User::query()->whereKey($users->modelKeys())->update(['status' => UserStatus::Active]),
+            'deactivate' => User::query()->whereKey($users->modelKeys())->update(['status' => UserStatus::Inactive]),
+            'delete' => $users->each->delete(),
+        };
+
+        return back()->withToast('success', trans_choice('{1} :count user updated.|[2,*] :count users updated.', $users->count(), ['count' => $users->count()]));
+    }
+
+    /**
+     * Users matching the search text and role filter.
+     *
+     * @return Builder<User>
+     */
+    private function filteredQuery(UserIndexRequest $request): Builder
+    {
+        return User::query()
+            ->when($request->search(), fn (Builder $query, string $search) => $query->where(
+                fn (Builder $query) => $query->whereLike('name', "%{$search}%")->orWhereLike('email', "%{$search}%")
+            ))
+            ->when($request->role(), fn (Builder $query, string $role) => $query->role($role));
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
+    private function withStatus(Builder $query, UserIndexRequest $request): Builder
+    {
+        return $query->when($request->status(), fn (Builder $query, UserStatus $status) => $query->where('status', $status));
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
+    private function sorted(Builder $query, string $sort): Builder
+    {
+        return $query->orderBy(ltrim($sort, '-'), Str::startsWith($sort, '-') ? 'desc' : 'asc')->orderBy('id');
     }
 
     /**

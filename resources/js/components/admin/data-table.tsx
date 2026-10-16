@@ -13,6 +13,8 @@ export interface DataTableColumn<T> {
     sortValue?: (row: T) => string | number;
     /** Marks the column sortable when sorting happens on the server (controlled `sort`). */
     sortable?: boolean;
+    /** Set to false for columns that must always show (e.g. the name). Used by useColumnVisibility. */
+    hideable?: boolean;
     /** Skeleton shape shown while the first page loads. */
     skeleton?: 'text' | 'avatar' | 'badge';
     className?: string;
@@ -49,6 +51,13 @@ export interface DataTableProps<T> {
      * height-limited container such as `<Panel fill>` with a flex-column body.
      */
     stickyHeader?: boolean;
+    /**
+     * Buttons shown in a bar above the table while rows are selected (needs `selectable`).
+     * Receives the selected row ids.
+     */
+    bulkActions?: (selectedIds: string[]) => ReactNode;
+    /** On screens below 768px, render each row as a card with this content instead of a table row. */
+    mobileCard?: (row: T) => ReactNode;
 }
 
 /** Later rows share the last delay so long pages do not feel slow. */
@@ -100,6 +109,8 @@ export function DataTable<T>({
     emptyMessage = 'No data found.',
     rowNumberOffset,
     stickyHeader = false,
+    bulkActions,
+    mobileCard,
 }: DataTableProps<T>) {
     const showRowNumbers = rowNumberOffset !== undefined;
     const isServerSorted = controlledSort !== undefined;
@@ -180,152 +191,219 @@ export function DataTable<T>({
     const displayedRows = [...sortedRows.map((row) => ({ row, isExiting: false }))];
     exitingRows.forEach(({ row, index }) => displayedRows.splice(Math.min(index, displayedRows.length), 0, { row, isExiting: true }));
 
+    const showBulkBar = selectable && bulkActions !== undefined && selectedIds.length > 0;
+
     return (
-        <Table aria-busy={isLoading || undefined} containerClassName={cn(stickyHeader && 'min-h-0 flex-1 overflow-auto')}>
-            <TableHead className={cn(stickyHeader && 'sticky top-0 z-10')}>
-                <TableRow className="border-b-0">
-                    {selectable && (
-                        <TableHeaderCell className="w-10">
-                            <Checkbox
-                                checked={isAllSelected}
-                                indeterminate={isPartiallySelected}
-                                onChange={toggleAll}
-                                disabled={isLoading}
-                                aria-label={__('Select all rows')}
-                            />
-                        </TableHeaderCell>
+        <>
+            {showBulkBar && (
+                <div className="animate-fade border-line bg-surface-muted flex shrink-0 flex-wrap items-center gap-2 border-b px-3 py-2 text-sm">
+                    <span className="text-ink font-medium">{__(':count selected', { count: selectedIds.length })}</span>
+                    <div className="flex flex-wrap items-center gap-2">{bulkActions(selectedIds)}</div>
+                    <button
+                        type="button"
+                        onClick={() => onSelectionChange?.([])}
+                        className="text-ink-soft hover:text-ink ml-auto text-xs font-medium underline underline-offset-4"
+                    >
+                        {__('Clear selection')}
+                    </button>
+                </div>
+            )}
+
+            {mobileCard && (
+                <ul className="divide-line divide-y md:hidden" aria-busy={isLoading || undefined}>
+                    {isInitialLoading &&
+                        Array.from({ length: skeletonRows }, (_, index) => (
+                            <li key={`skeleton-${index}`} className="space-y-2 p-3">
+                                <Skeleton shape="text" className="w-1/2" />
+                                <Skeleton shape="text" className="w-3/4" />
+                            </li>
+                        ))}
+                    {!isLoading && sortedRows.length === 0 && (
+                        <li className="text-ink-muted p-6 text-center text-sm">{emptyState ?? __(emptyMessage)}</li>
                     )}
-                    {showRowNumbers && <TableHeaderCell className="w-12">#</TableHeaderCell>}
-                    {columns.map((column) => {
-                        const isSortable = Boolean(column.sortValue) || Boolean(column.sortable && isServerSorted);
-                        const isSorted = sort?.key === column.key;
-                        const isSortPending = isLoading && sortingKey === column.key;
-                        const SortIcon = isSortPending ? LoaderCircle : !isSorted ? ArrowUpDown : sort.direction === 'asc' ? ArrowUp : ArrowDown;
+                    {!isInitialLoading &&
+                        sortedRows.map((row) => {
+                            const id = getRowId(row);
+                            const isPending = pendingRowIds.includes(id);
 
-                        return (
-                            <TableHeaderCell
-                                key={column.key}
-                                className={column.className}
-                                aria-sort={isSorted ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}
-                            >
-                                {isSortable ? (
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSort(column.key)}
-                                        disabled={isInitialLoading}
-                                        className="hover:text-ink inline-flex items-center gap-1.5 transition-colors disabled:pointer-events-none"
-                                    >
-                                        {__(column.header)}
-                                        <SortIcon
-                                            className={cn(
-                                                'size-3.5',
-                                                isSortPending && 'animate-spin',
-                                                isSorted || isSortPending ? 'text-ink' : 'text-ink-subtle',
-                                            )}
+                            return (
+                                <li
+                                    key={id}
+                                    className={cn(
+                                        'flex items-start gap-3 p-3',
+                                        isPending && 'pointer-events-none opacity-50',
+                                        isReloading && 'opacity-50',
+                                    )}
+                                >
+                                    {selectable && (
+                                        <Checkbox
+                                            checked={selectedIds.includes(id)}
+                                            onChange={() => toggleRow(id)}
+                                            aria-label={__('Select row :id', { id })}
+                                            className="mt-0.5"
                                         />
-                                    </button>
-                                ) : (
-                                    __(column.header)
-                                )}
+                                    )}
+                                    <div className="min-w-0 flex-1">{mobileCard(row)}</div>
+                                    {rowActions && (
+                                        <div className="shrink-0">
+                                            {isPending ? <LoaderCircle className="text-ink-muted size-4 animate-spin" /> : rowActions(row)}
+                                        </div>
+                                    )}
+                                </li>
+                            );
+                        })}
+                </ul>
+            )}
+
+            <Table
+                aria-busy={isLoading || undefined}
+                containerClassName={cn(stickyHeader && 'min-h-0 flex-1 overflow-auto', mobileCard && 'hidden md:block')}
+            >
+                <TableHead className={cn(stickyHeader && 'sticky top-0 z-10')}>
+                    <TableRow className="border-b-0">
+                        {selectable && (
+                            <TableHeaderCell className="w-10">
+                                <Checkbox
+                                    checked={isAllSelected}
+                                    indeterminate={isPartiallySelected}
+                                    onChange={toggleAll}
+                                    disabled={isLoading}
+                                    aria-label={__('Select all rows')}
+                                />
                             </TableHeaderCell>
-                        );
-                    })}
-                    {rowActions && <TableHeaderCell className="w-12" aria-label={__('Actions')} />}
-                </TableRow>
-                <tr aria-hidden="true">
-                    <td colSpan={columnCount} className="border-line relative h-0.5 overflow-hidden border-b p-0">
-                        {isReloading && <span className="animate-progress bg-brand absolute inset-y-0 left-0 block w-2/5 rounded-full" />}
-                    </td>
-                </tr>
-            </TableHead>
-            <TableBody className={cn('transition-opacity duration-200', isReloading && 'pointer-events-none opacity-50')}>
-                {isInitialLoading &&
-                    Array.from({ length: skeletonRows }, (_, rowIndex) => (
-                        <TableRow key={`skeleton-${rowIndex}`}>
-                            {selectable && (
-                                <TableCell>
-                                    <Skeleton className="size-4" />
-                                </TableCell>
-                            )}
-                            {showRowNumbers && (
-                                <TableCell>
-                                    <Skeleton shape="text" className="w-4" />
-                                </TableCell>
-                            )}
-                            {columns.map((column, columnIndex) => (
-                                <TableCell key={column.key} className={column.className}>
-                                    <SkeletonCell shape={column.skeleton} index={rowIndex + columnIndex} />
-                                </TableCell>
-                            ))}
-                            {rowActions && (
-                                <TableCell>
-                                    <Skeleton className="ml-auto size-6" />
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    ))}
+                        )}
+                        {showRowNumbers && <TableHeaderCell className="w-12">#</TableHeaderCell>}
+                        {columns.map((column) => {
+                            const isSortable = Boolean(column.sortValue) || Boolean(column.sortable && isServerSorted);
+                            const isSorted = sort?.key === column.key;
+                            const isSortPending = isLoading && sortingKey === column.key;
+                            const SortIcon = isSortPending ? LoaderCircle : !isSorted ? ArrowUpDown : sort.direction === 'asc' ? ArrowUp : ArrowDown;
 
-                {!isLoading && displayedRows.length === 0 && (
-                    <TableRow className="hover:bg-transparent">
-                        <TableCell colSpan={columnCount} className="h-auto py-10 whitespace-normal">
-                            <div className="animate-enter flex flex-col items-center gap-2 text-center">
-                                {emptyState ?? (
-                                    <>
-                                        <span className="border-line bg-surface-muted rounded-field flex size-10 items-center justify-center border">
-                                            <Inbox className="text-ink-subtle size-5" />
-                                        </span>
-                                        <p className="text-ink-muted text-sm">{__(emptyMessage)}</p>
-                                    </>
-                                )}
-                            </div>
-                        </TableCell>
+                            return (
+                                <TableHeaderCell
+                                    key={column.key}
+                                    className={column.className}
+                                    aria-sort={isSorted ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}
+                                >
+                                    {isSortable ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => handleSort(column.key)}
+                                            disabled={isInitialLoading}
+                                            className="hover:text-ink inline-flex items-center gap-1.5 transition-colors disabled:pointer-events-none"
+                                        >
+                                            {__(column.header)}
+                                            <SortIcon
+                                                className={cn(
+                                                    'size-3.5',
+                                                    isSortPending && 'animate-spin',
+                                                    isSorted || isSortPending ? 'text-ink' : 'text-ink-subtle',
+                                                )}
+                                            />
+                                        </button>
+                                    ) : (
+                                        __(column.header)
+                                    )}
+                                </TableHeaderCell>
+                            );
+                        })}
+                        {rowActions && <TableHeaderCell className="w-12" aria-label={__('Actions')} />}
                     </TableRow>
-                )}
-
-                {!isInitialLoading &&
-                    displayedRows.map(({ row, isExiting }, index) => {
-                        const id = getRowId(row);
-                        const isSelected = selectedIds.includes(id);
-                        const isPending = pendingRowIds.includes(id);
-
-                        return (
-                            <TableRow
-                                key={isExiting ? `exiting-${id}` : id}
-                                data-selected={isSelected}
-                                data-pending={isPending || isExiting || undefined}
-                                className={cn(
-                                    'hover:bg-surface-muted/40 transition-opacity duration-200',
-                                    isExiting && 'animate-out fade-out-0 fill-mode-forwards pointer-events-none duration-200',
-                                    !isExiting && shouldAnimateRows && 'animate-fade',
-                                    isPending && 'pointer-events-none opacity-50',
-                                )}
-                                style={{ '--enter-delay': `${Math.min(index, MAX_STAGGERED_ROWS) * ROW_STAGGER_MS}ms` } as CSSProperties}
-                            >
+                    <tr aria-hidden="true">
+                        <td colSpan={columnCount} className="border-line relative h-0.5 overflow-hidden border-b p-0">
+                            {isReloading && <span className="animate-progress bg-brand absolute inset-y-0 left-0 block w-2/5 rounded-full" />}
+                        </td>
+                    </tr>
+                </TableHead>
+                <TableBody className={cn('transition-opacity duration-200', isReloading && 'pointer-events-none opacity-50')}>
+                    {isInitialLoading &&
+                        Array.from({ length: skeletonRows }, (_, rowIndex) => (
+                            <TableRow key={`skeleton-${rowIndex}`}>
                                 {selectable && (
                                     <TableCell>
-                                        <Checkbox checked={isSelected} onChange={() => toggleRow(id)} aria-label={__('Select row :id', { id })} />
+                                        <Skeleton className="size-4" />
                                     </TableCell>
                                 )}
-                                {showRowNumbers && <TableCell className="text-ink-muted tabular-nums">{rowNumberOffset + index + 1}</TableCell>}
-                                {columns.map((column) => (
+                                {showRowNumbers && (
+                                    <TableCell>
+                                        <Skeleton shape="text" className="w-4" />
+                                    </TableCell>
+                                )}
+                                {columns.map((column, columnIndex) => (
                                     <TableCell key={column.key} className={column.className}>
-                                        {column.cell(row)}
+                                        <SkeletonCell shape={column.skeleton} index={rowIndex + columnIndex} />
                                     </TableCell>
                                 ))}
                                 {rowActions && (
-                                    <TableCell className="text-right">
-                                        {isPending ? (
-                                            <LoaderCircle className="text-ink-muted ml-auto size-4 animate-spin" aria-label={__('Processing')} />
-                                        ) : (
-                                            rowActions(row)
-                                        )}
+                                    <TableCell>
+                                        <Skeleton className="ml-auto size-6" />
                                     </TableCell>
                                 )}
                             </TableRow>
-                        );
-                    })}
-            </TableBody>
-        </Table>
+                        ))}
+
+                    {!isLoading && displayedRows.length === 0 && (
+                        <TableRow className="hover:bg-transparent">
+                            <TableCell colSpan={columnCount} className="h-auto py-10 whitespace-normal">
+                                <div className="animate-enter flex flex-col items-center gap-2 text-center">
+                                    {emptyState ?? (
+                                        <>
+                                            <span className="border-line bg-surface-muted rounded-field flex size-10 items-center justify-center border">
+                                                <Inbox className="text-ink-subtle size-5" />
+                                            </span>
+                                            <p className="text-ink-muted text-sm">{__(emptyMessage)}</p>
+                                        </>
+                                    )}
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    )}
+
+                    {!isInitialLoading &&
+                        displayedRows.map(({ row, isExiting }, index) => {
+                            const id = getRowId(row);
+                            const isSelected = selectedIds.includes(id);
+                            const isPending = pendingRowIds.includes(id);
+
+                            return (
+                                <TableRow
+                                    key={isExiting ? `exiting-${id}` : id}
+                                    data-selected={isSelected}
+                                    data-pending={isPending || isExiting || undefined}
+                                    className={cn(
+                                        'hover:bg-surface-muted/40 transition-opacity duration-200',
+                                        isExiting && 'animate-out fade-out-0 fill-mode-forwards pointer-events-none duration-200',
+                                        !isExiting && shouldAnimateRows && 'animate-fade',
+                                        isPending && 'pointer-events-none opacity-50',
+                                    )}
+                                    style={{ '--enter-delay': `${Math.min(index, MAX_STAGGERED_ROWS) * ROW_STAGGER_MS}ms` } as CSSProperties}
+                                >
+                                    {selectable && (
+                                        <TableCell>
+                                            <Checkbox checked={isSelected} onChange={() => toggleRow(id)} aria-label={__('Select row :id', { id })} />
+                                        </TableCell>
+                                    )}
+                                    {showRowNumbers && <TableCell className="text-ink-muted tabular-nums">{rowNumberOffset + index + 1}</TableCell>}
+                                    {columns.map((column) => (
+                                        <TableCell key={column.key} className={column.className}>
+                                            {column.cell(row)}
+                                        </TableCell>
+                                    ))}
+                                    {rowActions && (
+                                        <TableCell className="text-right">
+                                            {isPending ? (
+                                                <LoaderCircle className="text-ink-muted ml-auto size-4 animate-spin" aria-label={__('Processing')} />
+                                            ) : (
+                                                rowActions(row)
+                                            )}
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            );
+                        })}
+                </TableBody>
+            </Table>
+        </>
     );
 }
 

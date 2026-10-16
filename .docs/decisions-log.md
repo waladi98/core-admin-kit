@@ -117,3 +117,13 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Pemuatan daftar | Jumlah belum dibaca dikirim di setiap halaman & dicek tiap 60 detik (`usePoll`); daftar (15 terbaru) baru dimuat saat lonceng dibuka (`Inertia::optional`). | Halaman tetap ringan. |
 | Contoh notifikasi | Selamat datang untuk pengguna baru; pemberitahuan saat role diubah oleh orang lain. | Contoh nyata untuk modul lain. |
 | Real-time (WebSocket) | Belum; cukup polling 60 detik. | Tanpa dependency/server tambahan (Reverb/Pusher) — bisa ditambah nanti. |
+
+## S7 — DataTable Lanjutan
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Penyimpanan kolom yang disembunyikan | `localStorage` per pengguna & per tabel. | Tanpa tabel database baru; pilihan tampilan cukup per perangkat. Bisa dipindah ke database bila perlu sinkron antar perangkat. |
+| Export | CSV dari server (UTF-8 + BOM agar nama ber-aksen tampil benar di Excel), mengikuti search/filter/sort aktif, streaming per 500 baris. | Tetap ringan untuk data besar; tanpa dependency Excel. |
+| Aksi massal Users | Aktifkan, nonaktifkan, hapus; akun sendiri selalu dilewati; izin dicek per baris; hapus massal minta konfirmasi. | Aman dan konsisten dengan aturan hapus satu per satu. |
+| Pilihan baris | Tetap tersimpan saat pindah halaman tabel, dikosongkan setelah aksi massal berhasil. | Memungkinkan memilih baris dari beberapa halaman. |
+| Tampilan HP | Di bawah 768px baris tampil sebagai kartu (`mobileCard`). | Tabel lebar tidak nyaman di layar kecil. |

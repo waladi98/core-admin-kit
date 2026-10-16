@@ -1,9 +1,11 @@
 import { Can } from '@/components/admin/can';
+import { ColumnToggle } from '@/components/admin/column-toggle';
 import { DataTable, type DataTableColumn } from '@/components/admin/data-table';
 import {
     Avatar,
     Badge,
     Button,
+    buttonVariants,
     Dropdown,
     DropdownContent,
     DropdownItem,
@@ -11,18 +13,18 @@ import {
     DropdownSeparator,
     DropdownTrigger,
     FilterTabs,
+    iconButtonVariants,
     Input,
     Pagination,
     Panel,
-    buttonVariants,
-    iconButtonVariants,
     useConfirm,
     type BadgeProps,
     type BreadcrumbEntry,
     type FilterTabOption,
 } from '@/components/core';
 import { usePermissions } from '@/hooks/use-can';
-import { useTableQuery } from '@/hooks/use-table-query';
+import { useColumnVisibility } from '@/hooks/use-column-visibility';
+import { toQueryParams, useTableQuery } from '@/hooks/use-table-query';
 import AdminLayout from '@/layouts/admin-layout';
 import { formatDate } from '@/lib/format';
 import { __ } from '@/lib/i18n';
@@ -31,7 +33,7 @@ import { type SharedData } from '@/types';
 import { type TableSort } from '@/types/table';
 import { type ManagedUser, type UserIndexProps, type UserRole, type UserStatus } from '@/types/user-management';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Check, Filter, LoaderCircle, MoreHorizontal, Pencil, Plus, Search, Trash2, Users } from 'lucide-react';
+import { Check, Download, Filter, LoaderCircle, MoreHorizontal, Pencil, Plus, Search, Trash2, UserCheck, Users, UserX } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 
 const breadcrumbs: BreadcrumbEntry[] = [{ title: 'Users', href: '/users', icon: Users }];
@@ -53,6 +55,7 @@ const columns: DataTableColumn<ManagedUser>[] = [
         key: 'name',
         header: 'Name',
         sortable: true,
+        hideable: false,
         skeleton: 'avatar',
         className: 'w-full min-w-48',
         cell: (user) => (
@@ -100,6 +103,8 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
     const canDelete = can('users.delete');
     const confirm = useConfirm();
     const [deletingIds, setDeletingIds] = useState<string[]>([]);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const columnVisibility = useColumnVisibility('users', columns);
 
     const table = useTableQuery<{ role: string | null; status: string | null }>({
         url: route('users.index'),
@@ -146,6 +151,36 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
         });
     };
 
+    const runBulkAction = async (action: 'activate' | 'deactivate' | 'delete', ids: string[]) => {
+        if (action === 'delete') {
+            const confirmed = await confirm({
+                title: 'Delete the selected users?',
+                description: __(':count users will lose access immediately. Your own account is skipped. This cannot be undone.', {
+                    count: ids.length,
+                }),
+                confirmLabel: 'Delete users',
+                tone: 'danger',
+            });
+
+            if (!confirmed) {
+                return;
+            }
+        }
+
+        router.post(
+            route('users.bulk'),
+            { action, ids: ids.map(Number) },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['users', 'statusCounts'],
+                onStart: () => setDeletingIds(ids),
+                onFinish: () => setDeletingIds([]),
+                onSuccess: () => setSelectedIds([]),
+            },
+        );
+    };
+
     const headerActions = (
         <>
             <Input
@@ -179,6 +214,15 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                     ))}
                 </DropdownContent>
             </Dropdown>
+            <ColumnToggle visibility={columnVisibility} />
+            <a
+                href={route('users.export', toQueryParams(table.query))}
+                className={buttonVariants({ variant: 'secondary', size: 'sm' })}
+                aria-label={__('Export CSV')}
+            >
+                <Download />
+                <span className="hidden sm:inline">{__('Export')}</span>
+            </a>
             <Can permission="users.create">
                 <Link href={route('users.create')} prefetch className={buttonVariants({ size: 'sm' })}>
                     <Plus />
@@ -206,7 +250,47 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                     <DataTable
                         stickyHeader
                         rows={users.data}
-                        columns={columns}
+                        columns={columnVisibility.visibleColumns}
+                        selectable={canEdit || canDelete}
+                        selectedIds={selectedIds}
+                        onSelectionChange={setSelectedIds}
+                        bulkActions={(ids) => (
+                            <>
+                                {canEdit && (
+                                    <>
+                                        <Button variant="secondary" size="sm" onClick={() => runBulkAction('activate', ids)}>
+                                            <UserCheck /> {__('Activate')}
+                                        </Button>
+                                        <Button variant="secondary" size="sm" onClick={() => runBulkAction('deactivate', ids)}>
+                                            <UserX /> {__('Deactivate')}
+                                        </Button>
+                                    </>
+                                )}
+                                {canDelete && (
+                                    <Button variant="danger" size="sm" onClick={() => runBulkAction('delete', ids)}>
+                                        <Trash2 /> {__('Delete')}
+                                    </Button>
+                                )}
+                            </>
+                        )}
+                        mobileCard={(user) => (
+                            <div className="space-y-1.5">
+                                <div className="flex items-center gap-2">
+                                    <Avatar name={user.name} src={user.avatar} size="sm" />
+                                    <span className="text-ink truncate font-medium">{user.name}</span>
+                                </div>
+                                <p className="text-ink-muted truncate text-xs">{user.email}</p>
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                    <Badge shape="pill" tone={roleTones[user.role] ?? 'neutral'}>
+                                        {user.roleLabel}
+                                    </Badge>
+                                    <Badge shape="pill" tone={statusTones[user.status]}>
+                                        {user.statusLabel}
+                                    </Badge>
+                                    <span className="text-ink-subtle text-xs">{formatDate(user.createdAt)}</span>
+                                </div>
+                            </div>
+                        )}
                         getRowId={(user) => String(user.id)}
                         rowNumberOffset={(users.currentPage - 1) * users.perPage}
                         sort={table.query.sort}

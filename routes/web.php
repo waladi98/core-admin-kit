@@ -14,6 +14,8 @@ Route::post('locale', LocaleController::class)->name('locale.update');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('users/export', [UserController::class, 'export'])->name('users.export');
+    Route::post('users/bulk', [UserController::class, 'bulk'])->name('users.bulk');
     Route::resource('users', UserController::class)->except('show');
     Route::resource('roles', RoleController::class)->except('show');
 
