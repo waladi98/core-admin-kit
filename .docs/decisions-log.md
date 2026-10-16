@@ -82,3 +82,13 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Bahasa halaman error | Ditentukan di handler (bahasa pengguna / session / default) dan dikirim bersama terjemahan. | 404 dapat terjadi sebelum middleware web (bahasa & shared props) berjalan. |
 | Tombol | "Kembali" + "Ke dasbor" (sudah login) / "Ke beranda" (tamu); tidak ada tombol beranda saat 503. | Selalu ada jalan keluar yang jelas. |
 | Error boundary | Per halaman (di `AdminLayout`, reset saat pindah halaman) dan per chart. | Satu widget rusak tidak membuat seluruh layar kosong. |
+
+## S5 — Format & Zona Waktu
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Penyimpanan waktu | Database tetap UTC (`APP_TIMEZONE=UTC`). | Praktik standar; aman bila kelak ada pengguna/cabang di zona lain (WITA/WIT). |
+| Tampilan waktu | `APP_DISPLAY_TIMEZONE` (default `Asia/Jakarta`), dipakai `lib/format.ts` dan `App\Support\Format`; dibagikan ke frontend sebagai prop `timezone`. | Satu tempat untuk mengganti zona tampilan per instalasi. |
+| Mata uang | Rupiah tanpa desimal; `id`: "Rp 1.250.000", `en`: "IDR 1,250,000". | Sesuai kebiasaan penulisan rupiah; tetap jelas untuk pengguna berbahasa Inggris. |
+| Tanggal tanpa jam (`YYYY-MM-DD`) | Diperlakukan sebagai tanggal kalender, tidak digeser zona waktu. | Mencegah tanggal "mundur sehari" di zona berbeda. |
+| Backend helper | `App\Support\Format` memakai `Illuminate\Support\Number` (butuh ekstensi PHP `intl`). | Format sama dengan frontend; `intl` dicatat sebagai kebutuhan server di README (S11). |

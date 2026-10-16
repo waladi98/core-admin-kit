@@ -10,18 +10,20 @@ export type TranslationReplacements = Record<string, string | number>;
 
 interface TranslationState {
     locale: string;
+    timezone: string;
     translations: Record<string, string>;
 }
 
-const state: TranslationState = { locale: 'en', translations: {} };
+const state: TranslationState = { locale: 'en', timezone: 'Asia/Jakarta', translations: {} };
 
 /**
  * Called by the layouts while rendering, so every component below them
  * (and helper functions they call) uses the current page's language.
  */
-export function syncTranslations(locale: string | undefined, translations: Record<string, string> | undefined): void {
+export function syncTranslations(locale: string | undefined, translations: Record<string, string> | undefined, timezone?: string): void {
     state.locale = locale ?? 'en';
     state.translations = translations ?? {};
+    state.timezone = timezone ?? state.timezone;
 }
 
 export function translate(translations: Record<string, string>, key: string, replacements: TranslationReplacements = {}): string {
@@ -49,4 +51,11 @@ export function intlLocale(locale: string = state.locale): string {
 
 export function currentLocale(): string {
     return state.locale;
+}
+
+/**
+ * IANA timezone used to display dates, e.g. "Asia/Jakarta" (APP_DISPLAY_TIMEZONE).
+ */
+export function currentTimezone(): string {
+    return state.timezone;
 }

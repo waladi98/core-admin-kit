@@ -1,6 +1,6 @@
 # Finance Core — Starter Kit Roadmap
 
-> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, S3 ✅, S4 ✅, berikutnya S5)** — keputusan kecil dicatat di `.docs/decisions-log.md`
+> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, S3 ✅, S4 ✅, S5 ✅, berikutnya S11)** — keputusan kecil dicatat di `.docs/decisions-log.md`
 > Tujuan: template ini dipakai sebagai titik awal project-project berikutnya, sehingga fitur yang hampir selalu dibutuhkan sudah tersedia dan konsisten.
 
 ## 1. Kondisi Saat Ini
@@ -50,7 +50,7 @@
 | 5 | **S2** | Toast, flash message, `useConfirm` | ✅ | ✅ |
 | 6 | **S3** | Komponen form lengkap | ✅ | ✅ |
 | 7 | **S4** | Halaman error & error boundary | ✅ | ✅ |
-| 8 | **S5** | Format Rupiah, tanggal, locale & timezone | ⬜ | ✅ |
+| 8 | **S5** | Format Rupiah, tanggal, locale & timezone | ✅ | ✅ |
 | 9 | **S11** | Kesiapan starter kit & rilis `v1.0.0` | ⬜ | ✅ |
 | 10 | S6 | Command palette `⌘K` & notifikasi | ⬜ | v1.x |
 | 11 | S7 | DataTable lanjutan | ⬜ | v1.x |
@@ -130,10 +130,10 @@
 - [x] Halaman maintenance.
 - [x] Error boundary React untuk widget yang gagal render.
 
-### S5 — Utilitas Format
-- [ ] `lib/format.ts`: Rupiah, angka, persen, tanggal & waktu, tanggal relatif (mengikuti locale S1b).
-- [ ] Timezone `Asia/Jakarta`.
-- [ ] Helper backend dengan format yang sama.
+### S5 — Utilitas Format ✅
+- [x] `lib/format.ts`: Rupiah, angka, persen, tanggal & waktu, tanggal relatif (mengikuti locale S1b).
+- [x] Timezone `Asia/Jakarta`.
+- [x] Helper backend dengan format yang sama.
 
 ### S11 — Kesiapan Starter Kit & `v1.0.0`
 - [ ] Halaman katalog komponen `/ui` (hanya environment local).

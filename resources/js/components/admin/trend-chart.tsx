@@ -1,4 +1,4 @@
-import { intlLocale } from '@/lib/i18n';
+import { formatNumber } from '@/lib/format';
 import { type TrendPoint } from '@/types/dashboard';
 import { useState } from 'react';
 import { Bar, BarChart, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -15,7 +15,6 @@ function findHighestIndex(points: TrendPoint[]): number {
 }
 
 export function TrendChart({ points, highlightIndex, className }: TrendChartProps) {
-    const numberFormatter = new Intl.NumberFormat(intlLocale());
     const defaultIndex = highlightIndex ?? findHighestIndex(points);
     const [activeIndex, setActiveIndex] = useState(defaultIndex);
     const activePoint = points[activeIndex];
@@ -50,7 +49,7 @@ export function TrendChart({ points, highlightIndex, className }: TrendChartProp
                         tickLine={false}
                         width={44}
                         tick={{ fontSize: 12, fill: 'var(--color-ink-muted)' }}
-                        tickFormatter={(value: number) => numberFormatter.format(value)}
+                        tickFormatter={(value: number) => formatNumber(value)}
                     />
                     <Tooltip
                         defaultIndex={defaultIndex}
@@ -63,7 +62,7 @@ export function TrendChart({ points, highlightIndex, className }: TrendChartProp
 
                             return (
                                 <span className="bg-brand text-brand-foreground shadow-pop rounded-md px-2 py-1 text-xs font-medium">
-                                    {label} : {numberFormatter.format(Number(payload[0].value))}
+                                    {label} : {formatNumber(Number(payload[0].value))}
                                 </span>
                             );
                         }}

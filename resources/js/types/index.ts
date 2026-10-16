@@ -14,6 +14,8 @@ export interface SharedData {
     locale: string;
     /** Locale code → language name. */
     locales: Record<string, string>;
+    /** IANA timezone for displaying dates (APP_DISPLAY_TIMEZONE). */
+    timezone: string;
     /** English text → translated text for the current locale (empty for English). */
     translations: Record<string, string>;
     [key: string]: unknown;

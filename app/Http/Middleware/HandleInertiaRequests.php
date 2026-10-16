@@ -56,6 +56,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => Inertia::always(fn (): array => ['toast' => $request->session()->get('toast')]),
             'locale' => app()->getLocale(),
             'locales' => SetLocale::available(),
+            'timezone' => config('app.display_timezone'),
             'translations' => fn (): array => Translations::forLocale(app()->getLocale()),
         ]);
     }

@@ -24,6 +24,7 @@ import {
 import { usePermissions } from '@/hooks/use-can';
 import { useTableQuery } from '@/hooks/use-table-query';
 import AdminLayout from '@/layouts/admin-layout';
+import { formatDate } from '@/lib/format';
 import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
@@ -82,7 +83,7 @@ const columns: DataTableColumn<ManagedUser>[] = [
             </Badge>
         ),
     },
-    { key: 'created_at', header: 'Joined', sortable: true, cell: (user) => user.createdAt },
+    { key: 'created_at', header: 'Joined', sortable: true, cell: (user) => formatDate(user.createdAt) },
 ];
 
 type StatusTab = 'all' | UserStatus;

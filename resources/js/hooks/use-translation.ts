@@ -24,7 +24,7 @@ export function useTranslation(): UseTranslationResult {
  * Call once at the top of each layout, before its children render.
  */
 export function useSyncTranslations(): void {
-    const { locale, translations } = usePage<SharedData>().props;
+    const { locale, translations, timezone } = usePage<SharedData>().props;
 
-    syncTranslations(locale, translations);
+    syncTranslations(locale, translations, timezone);
 }

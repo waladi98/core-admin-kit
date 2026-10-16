@@ -9,7 +9,8 @@ import { TrendBadge } from '@/components/admin/trend-badge';
 import { FadeIn, Grid, IconButton, Panel, Skeleton, type BreadcrumbEntry } from '@/components/core';
 import { useReloading } from '@/hooks/use-reloading';
 import AdminLayout from '@/layouts/admin-layout';
-import { __, intlLocale } from '@/lib/i18n';
+import { formatNumber } from '@/lib/format';
+import { __ } from '@/lib/i18n';
 import { type SharedData } from '@/types';
 import { type Activity, type ActivityPeriod, type StatMetric, type TransactionRow, type VolumeTrend } from '@/types/dashboard';
 import { Deferred, Head, router } from '@inertiajs/react';
@@ -111,9 +112,7 @@ export default function Dashboard({ filters, stats, volumeTrend, activities, tra
                         />
                         <Panel.Body>
                             <div className="flex items-baseline gap-3">
-                                <p className="text-ink text-2xl font-semibold tracking-tight">
-                                    {new Intl.NumberFormat(intlLocale()).format(volumeTrend.total)}
-                                </p>
+                                <p className="text-ink text-2xl font-semibold tracking-tight">{formatNumber(volumeTrend.total)}</p>
                                 <TrendBadge change={volumeTrend.change} />
                             </div>
                             {/* Height follows the screen so stats + chart fit one viewport on desktop. */}

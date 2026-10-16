@@ -1,5 +1,6 @@
 import { Breadcrumb, IconButton, type BreadcrumbEntry } from '@/components/core';
-import { __, intlLocale } from '@/lib/i18n';
+import { formatDate } from '@/lib/format';
+import { __ } from '@/lib/i18n';
 import { Link } from '@inertiajs/react';
 import { Bell, CalendarDays, Menu, Settings } from 'lucide-react';
 import { TopbarActionsSlot } from './topbar-actions';
@@ -37,7 +38,7 @@ export function Topbar({ breadcrumbs = [], title, titleParams, onOpenMenu }: Top
             <div className="flex shrink-0 items-center gap-1">
                 <span className="text-ink-muted mr-2 hidden items-center gap-1.5 text-xs md:inline-flex">
                     <CalendarDays className="size-3.5" />
-                    {new Intl.DateTimeFormat(intlLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}
+                    {formatDate(new Date(), 'full')}
                 </span>
                 <IconButton label={__('Notifications')} className="relative">
                     <Bell />
