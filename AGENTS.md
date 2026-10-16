@@ -265,6 +265,8 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.
+- The component catalog at `/ui` (`resources/js/pages/ui.tsx`, local environment only) shows every core component; add new core components there. It is developer-only and stays in English.
+- Setup & commands for humans are in `README.md` (`composer setup`, `app:install`, `app:sync-permissions`, deploy steps).
 
 ## Backend
 

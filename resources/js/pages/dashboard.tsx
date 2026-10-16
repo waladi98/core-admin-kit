@@ -6,7 +6,7 @@ import { StatCard } from '@/components/admin/stat-card';
 import { TopbarActions } from '@/components/admin/topbar-actions';
 import { TransactionTable } from '@/components/admin/transaction-table';
 import { TrendBadge } from '@/components/admin/trend-badge';
-import { FadeIn, Grid, IconButton, Panel, Skeleton, type BreadcrumbEntry } from '@/components/core';
+import { Badge, FadeIn, Grid, IconButton, Panel, Skeleton, type BreadcrumbEntry } from '@/components/core';
 import { useReloading } from '@/hooks/use-reloading';
 import AdminLayout from '@/layouts/admin-layout';
 import { formatNumber } from '@/lib/format';
@@ -70,6 +70,10 @@ export default function Dashboard({ filters, stats, volumeTrend, activities, tra
             <Head title={__('Dashboard')} />
 
             <TopbarActions>
+                {/* Remove this badge once the dashboard reads real data (see DashboardController). */}
+                <Badge tone="warning" shape="pill" className="hidden sm:inline-flex">
+                    {__('Sample data')}
+                </Badge>
                 <PeriodSelect options={reportingPeriodOptions} value={filters.period} onChange={(period) => applyFilters({ period }, ['stats'])} />
                 <IconButton label={__('More options')} variant="secondary">
                     <MoreVertical />

@@ -92,3 +92,17 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Mata uang | Rupiah tanpa desimal; `id`: "Rp 1.250.000", `en`: "IDR 1,250,000". | Sesuai kebiasaan penulisan rupiah; tetap jelas untuk pengguna berbahasa Inggris. |
 | Tanggal tanpa jam (`YYYY-MM-DD`) | Diperlakukan sebagai tanggal kalender, tidak digeser zona waktu. | Mencegah tanggal "mundur sehari" di zona berbeda. |
 | Backend helper | `App\Support\Format` memakai `Illuminate\Support\Number` (butuh ekstensi PHP `intl`). | Format sama dengan frontend; `intl` dicatat sebagai kebutuhan server di README (S11). |
+
+## S11 — Kesiapan Starter Kit
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Menu placeholder | Dihapus; tersisa Overview, Administration (Users, Roles & Permissions), Settings. Contoh sub-menu ditulis sebagai komentar di `config/navigation.ts`. | Starter kit bersih; tidak ada menu yang tidak berfungsi. |
+| Dashboard | Tetap sebagai contoh tampilan (chart, feed, tabel) dengan lencana **"Data contoh"** di topbar. | Menunjukkan pola widget; jelas bahwa angkanya dummy. Hapus lencana saat dashboard memakai data asli. |
+| Halaman `welcome` & prop `quote` | Dihapus; `/` diarahkan ke `/dashboard` (tamu → login). | Sisa bawaan starter kit Laravel. |
+| Seeder | `DatabaseSeeder` hanya membuat admin; 100 pengguna contoh lewat `app:install --demo` / `UserSeeder`. | Instalasi baru tidak berisi data dummy. |
+| `composer setup` / `app:install` | Idempoten: tidak mengganti `APP_KEY`, hanya seeding bila belum ada pengguna, membuat storage link bila belum ada. | Aman dijalankan ulang oleh siapa pun di tim. |
+| CI | Jalan di `master`/`main`/`develop`; test di PHP 8.2 & 8.4 (SQLite, `intl`); lint dalam mode **cek** (Pint `--test`, Prettier `--check`, ESLint, `tsc`). | Sebelumnya CI tidak pernah jalan (branch `master` tidak dipantau) dan lint hanya memperbaiki tanpa gagal. 7 file bawaan dirapikan Pint agar CI hijau. |
+| Katalog `/ui` | Hanya `local`, berbahasa Inggris (khusus developer). | Bukan halaman pengguna. |
+| Tag `v1.0.0` | **Belum dibuat** — menunggu Anda setelah uji manual di browser. | Sesuai kesepakatan izin. |
+| Test di SQLite | Belum bisa diuji lokal (tanpa `pdo_sqlite`); CI akan menjadi pemeriksa pertama. | Bila ada perbedaan SQLite vs MySQL, perbaiki dari hasil CI. |

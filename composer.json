@@ -56,6 +56,12 @@
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
         ],
+        "setup": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan app:install --ansi",
+            "npm install",
+            "npm run build"
+        ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
@@ -67,7 +73,8 @@
         ]
     },
     "scripts-descriptions": {
-        "test:local": "Run the test suite against the local MySQL test database (db_pm_v6_testing), never the development database."
+        "setup": "First-time setup: .env, app key, migrations, roles & permissions, admin account, storage link and frontend build.",
+        "test:local":"Run the test suite against the local MySQL test database (db_pm_v6_testing), never the development database."
     },
     "extra": {
         "laravel": {

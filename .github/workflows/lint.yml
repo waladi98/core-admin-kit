@@ -3,43 +3,49 @@ name: linter
 on:
   push:
     branches:
-      - develop
+      - master
       - main
+      - develop
   pull_request:
     branches:
-      - develop
+      - master
       - main
-
-permissions:
-  contents: write
+      - develop
 
 jobs:
   quality:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.2'
+          extensions: intl
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install Dependencies
         run: |
           composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+          npm ci
 
-      - name: Run Pint
-        run: vendor/bin/pint
+      # Checks only: the job fails when code is not formatted or has lint/type errors.
+      - name: PHP Code Style (Pint)
+        run: vendor/bin/pint --test
 
-      - name: Format Frontend
-        run: npm run format
+      - name: Frontend Formatting (Prettier)
+        run: npm run format:check
 
-      - name: Lint Frontend
-        run: npm run lint
+      - name: Frontend Lint (ESLint)
+        run: npx eslint .
 
-      # - name: Commit Changes
-      #   uses: stefanzweifel/git-auto-commit-action@v5
-      #   with:
-      #     commit_message: fix code style
-      #     commit_options: '--no-verify'
+      - name: TypeScript
+        run: npx tsc --noEmit

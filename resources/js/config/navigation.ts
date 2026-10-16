@@ -1,60 +1,28 @@
 import { type AdminNavGroup } from '@/types/navigation';
-import {
-    ArrowLeftRight,
-    Blocks,
-    BookOpen,
-    Building2,
-    FileText,
-    LayoutGrid,
-    LifeBuoy,
-    LineChart,
-    LockKeyhole,
-    MessageSquare,
-    PiggyBank,
-    Settings,
-    ShieldCheck,
-    UserCog,
-    Users,
-} from 'lucide-react';
+import { LayoutGrid, LockKeyhole, Settings, UserCog } from 'lucide-react';
 
 /**
- * Finance Core sidebar menu.
+ * Sidebar menu.
  *
- * Entries without `href` are placeholders until their pages exist.
- * Entries with `permission` are hidden from users who lack it (see App\Enums\Permission).
+ * - Titles and group labels are English texts; the sidebar translates them (lang/id.json).
+ * - `permission` hides an entry from users who lack it (see App\Enums\Permission).
+ * - Entries without `href` are placeholders until their pages exist.
+ * - A parent with `children` becomes a collapsible sub-menu (a flyout when the sidebar is collapsed):
+ *
+ *   {
+ *       title: 'Transactions',
+ *       icon: ArrowLeftRight,
+ *       permission: 'transactions.view',
+ *       children: [
+ *           { title: 'All transactions', href: '/transactions' },
+ *           { title: 'Approvals', href: '/transactions/approvals', permission: 'transactions.approve' },
+ *       ],
+ *   },
  */
 export const mainNavigation: AdminNavGroup[] = [
     {
         label: 'Main Navigation',
-        items: [
-            { title: 'Overview', icon: LayoutGrid, href: '/dashboard' },
-            {
-                title: 'Transactions',
-                icon: ArrowLeftRight,
-                children: [{ title: 'All / My Queue' }, { title: 'Overdue Risk' }, { title: 'Escalations' }],
-            },
-            { title: 'Clients', icon: Building2 },
-            {
-                title: 'Accounts & Teams',
-                icon: Users,
-                children: [{ title: 'Accounts' }, { title: 'Teams' }],
-            },
-            {
-                title: 'Knowledge Base',
-                icon: BookOpen,
-                children: [{ title: 'Articles' }, { title: 'Policies' }],
-            },
-            { title: 'Integrations', icon: Blocks },
-        ],
-    },
-    {
-        label: 'Analytics & Insights',
-        items: [
-            { title: 'Compliance', icon: ShieldCheck },
-            { title: 'Reports', icon: FileText },
-            { title: 'Cashflow Analytics', icon: LineChart },
-            { title: 'Budgeting', icon: PiggyBank },
-        ],
+        items: [{ title: 'Overview', icon: LayoutGrid, href: '/dashboard' }],
     },
     {
         label: 'Administration',
@@ -68,10 +36,6 @@ export const mainNavigation: AdminNavGroup[] = [
 export const supportNavigation: AdminNavGroup[] = [
     {
         label: 'Support',
-        items: [
-            { title: 'Feedback', icon: MessageSquare },
-            { title: 'Help & Support', icon: LifeBuoy },
-            { title: 'Settings', icon: Settings, href: '/settings/profile' },
-        ],
+        items: [{ title: 'Settings', icon: Settings, href: '/settings/profile' }],
     },
 ];

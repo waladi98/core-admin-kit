@@ -23,6 +23,6 @@ class DatabaseSeeder extends Seeder
         );
         $admin->syncRoles([Role::ADMIN]);
 
-        $this->call(UserSeeder::class);
+        // Sample users for demos: php artisan db:seed --class=UserSeeder (or app:install --demo).
     }
 }
