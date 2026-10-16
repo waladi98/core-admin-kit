@@ -36,7 +36,7 @@
    - jika halaman melewati akhir (`isEmpty() && currentPage() > 1`) → redirect ke `lastPage()`;
    - kirim props camelCase: `{ data, currentPage, lastPage, perPage, from, to, total }`, `filters`, dan opsi dropdown `{ value, label }[]`;
    - ubah model jadi array lewat method `present()` (jangan kirim model mentah).
-4. **`store` / `update` / `destroy`** — pakai Form Request, `to_route('clients.index')` setelah simpan, `back()` setelah hapus.
+4. **`store` / `update` / `destroy`** — pakai Form Request, `to_route('clients.index')->withToast('success', __('Client created.'))` setelah simpan, `back()->withToast('success', __(':name was deleted.', [...]))` setelah hapus. Kegagalan aturan bisnis → `back()->withToast('error', __('…'))`.
 5. **Route** — di dalam grup `auth` di `routes/web.php`.
 6. **Hak akses** — tambah case di `App\Enums\Permission` (mis. `clients.view`, `clients.create`, `clients.update`, `clients.delete`) dengan `label()` & `group()`, jalankan `php artisan app:sync-permissions`, buat `ClientPolicy` (lihat `UserPolicy`), panggil `Gate::authorize()` di controller dan `can()` di `authorize()` Form Request. Centang permission untuk role yang perlu di halaman **Roles & Permissions**.
 
@@ -50,7 +50,7 @@
    - `DataTable` dengan `sort` / `onSortChange` / `isLoading` / `pendingRowIds` / `emptyState`; kolom `sortable` harus sama dengan whitelist backend; set `skeleton` per kolom;
    - `DataTable rowNumberOffset` untuk kolom `#`, badge `shape="pill"`;
    - `Pagination` di footer panel dengan `loadingPage`, `perPage` dan `onPerPageChange` (backend menerima `per_page` dari whitelist);
-   - hapus lewat `Modal` + `router.delete(..., { only: ['clients'], preserveState: true, preserveScroll: true })`, id baris dimasukkan ke `pendingRowIds` selama request.
+   - hapus lewat `useConfirm()` (`tone: 'danger'`) lalu `router.delete(..., { only: ['clients'], preserveState: true, preserveScroll: true })`, id baris dimasukkan ke `pendingRowIds` selama request; toast dari server muncul otomatis.
 3. **Form** — satu komponen form untuk tambah & edit (lihat `user-form.tsx`): `useForm`, field dikelompokkan dalam `FormSection` + `FormField` (`required`, `hint`, `error`) grid 3 kolom, lalu `FormActions` (Cancel + Save dengan ikon `Check`). Halaman create/edit memberi `title` ke `AdminLayout` dan tidak memakai `PageHeader`.
 4. **Persistent layout** di setiap halaman:
    ```tsx
@@ -74,6 +74,7 @@ Jalankan: `composer test:local` (MySQL `db_pm_v6_testing`).
 
 - [ ] `vendor/bin/pint --dirty --format agent`
 - [ ] `npx tsc --noEmit`, `npx eslint resources/js`, `npm run build`
+- [ ] Teks baru ditambahkan ke `lang/id.json`
 - [ ] `composer test:local` lolos
 - [ ] Uji manual: search, filter, sort, pagination, tambah, edit, hapus (juga dengan DevTools "Slow 3G")
 - [ ] Commit satu modul = satu commit

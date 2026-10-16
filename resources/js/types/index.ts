@@ -8,6 +8,8 @@ export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
+    /** One-time messages from the server, e.g. `->withToast('success', ...)`. */
+    flash?: { toast?: { id: string; type: string; message: string } | null };
     /** Current interface language, e.g. `id`. */
     locale: string;
     /** Locale code → language name. */

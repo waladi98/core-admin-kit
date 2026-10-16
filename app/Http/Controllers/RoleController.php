@@ -52,7 +52,7 @@ class RoleController extends Controller
             $role->syncPermissions($request->validated('permissions'));
         });
 
-        return to_route('roles.index');
+        return to_route('roles.index')->withToast('success', __('Role created.'));
     }
 
     public function edit(Role $role): Response
@@ -82,19 +82,21 @@ class RoleController extends Controller
             $role->syncPermissions($request->validated('permissions'));
         });
 
-        return to_route('roles.index');
+        return to_route('roles.index')->withToast('success', __('Role updated.'));
     }
 
     public function destroy(Role $role): RedirectResponse
     {
         abort_if($role->isBuiltIn(), 403, __('Built-in roles cannot be deleted.'));
-        abort_if($role->users()->exists(), 409, __('Move the users to another role before deleting this one.'));
-
         Gate::authorize('delete', $role);
+
+        if ($role->users()->exists()) {
+            return back()->withToast('error', __('Move the users to another role before deleting this one.'));
+        }
 
         $role->delete();
 
-        return back();
+        return back()->withToast('success', __('Role deleted.'));
     }
 
     /**

@@ -12,12 +12,11 @@ import {
     DropdownTrigger,
     FilterTabs,
     Input,
-    Modal,
-    ModalFooter,
     Pagination,
     Panel,
     buttonVariants,
     iconButtonVariants,
+    useConfirm,
     type BadgeProps,
     type BreadcrumbEntry,
     type FilterTabOption,
@@ -98,7 +97,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
     const can = usePermissions();
     const canEdit = can('users.update');
     const canDelete = can('users.delete');
-    const [userToDelete, setUserToDelete] = useState<ManagedUser | null>(null);
+    const confirm = useConfirm();
     const [deletingIds, setDeletingIds] = useState<string[]>([]);
 
     const table = useTableQuery<{ role: string | null; status: string | null }>({
@@ -123,15 +122,21 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
         })),
     ];
 
-    const confirmDelete = () => {
-        if (!userToDelete) {
+    const deleteUser = async (user: ManagedUser) => {
+        const confirmed = await confirm({
+            title: 'Delete this user?',
+            description: __(':name (:email) will lose access immediately. This cannot be undone.', { name: user.name, email: user.email }),
+            confirmLabel: 'Delete user',
+            tone: 'danger',
+        });
+
+        if (!confirmed) {
             return;
         }
 
-        const rowId = String(userToDelete.id);
-        setUserToDelete(null);
+        const rowId = String(user.id);
 
-        router.delete(route('users.destroy', userToDelete.id), {
+        router.delete(route('users.destroy', user.id), {
             preserveScroll: true,
             preserveState: true,
             only: ['users', 'statusCounts'],
@@ -229,7 +234,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                                                       icon={<Trash2 />}
                                                       tone="danger"
                                                       disabled={user.id === auth.user.id}
-                                                      onSelect={() => setUserToDelete(user)}
+                                                      onSelect={() => deleteUser(user)}
                                                   >
                                                       {__('Delete')}
                                                   </DropdownItem>
@@ -266,29 +271,6 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                     </div>
                 </Panel.Body>
             </Panel>
-
-            <Modal
-                isOpen={userToDelete !== null}
-                onClose={() => setUserToDelete(null)}
-                title="Delete this user?"
-                description={
-                    userToDelete
-                        ? __(':name (:email) will lose access immediately. This cannot be undone.', {
-                              name: userToDelete.name,
-                              email: userToDelete.email,
-                          })
-                        : undefined
-                }
-            >
-                <ModalFooter>
-                    <Button variant="secondary" onClick={() => setUserToDelete(null)}>
-                        {__('Cancel')}
-                    </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
-                        {__('Delete user')}
-                    </Button>
-                </ModalFooter>
-            </Modal>
         </>
     );
 }

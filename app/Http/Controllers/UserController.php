@@ -99,7 +99,7 @@ class UserController extends Controller
             $user->syncRoles([$request->validated('role')]);
         });
 
-        return to_route('users.index');
+        return to_route('users.index')->withToast('success', __('User created.'));
     }
 
     public function edit(User $user): Response
@@ -123,7 +123,7 @@ class UserController extends Controller
             $user->syncRoles([$request->validated('role')]);
         });
 
-        return to_route('users.index');
+        return to_route('users.index')->withToast('success', __('User updated.'));
     }
 
     public function destroy(Request $request, User $user): RedirectResponse
@@ -134,7 +134,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        return back();
+        return back()->withToast('success', __(':name was deleted.', ['name' => $user->name]));
     }
 
     /**

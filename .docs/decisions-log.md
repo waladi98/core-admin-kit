@@ -48,3 +48,14 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Pesan validasi | `lang/id/validation.php` ditulis sendiri (aturan yang umum dipakai + nama atribut), tanpa paket tambahan. | Tanpa dependency baru; aturan yang tidak ada jatuh ke bahasa Inggris. |
 | Pemilih bahasa | Menu pengguna (sidebar), bawah kartu login, dan Settings → Profile. | Mudah ditemukan tanpa halaman tambahan. |
 | Data dummy dashboard | Label statistik diterjemahkan; isi activity feed & transaksi dummy tidak. | Data dummy akan dibersihkan di S11. |
+
+## S2 — Toast, Flash & Konfirmasi
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Mekanisme flash | Session Laravel (`->withToast()` macro) + shared prop `flash` dengan `Inertia::always`. | Klien `@inertiajs/core` 2.0.3 belum memakai fitur flash bawaan Inertia; cara ini tanpa upgrade dependency dan tetap jalan pada partial reload. |
+| Id toast | UUID per flash. | Pesan yang sama yang di-flash dua kali tetap muncul dua kali, tetapi tidak dobel saat halaman dirender ulang. |
+| Posisi & durasi | Kanan atas di bawah topbar; sukses 4 dtk, info 5, peringatan 6, error 8; jeda saat kursor di atasnya; maks. 4 tumpukan. | Tidak menutupi tombol aksi tabel/form; error cukup lama untuk dibaca pengguna 30–70 tahun. |
+| Teks "Saved" inline di Settings | Dihapus, diganti toast. | Satu pola umpan balik di seluruh aplikasi. |
+| Hapus role yang masih dipakai | Kini toast error + kembali ke halaman (sebelumnya 409). | Pengguna melihat pesan jelas, bukan halaman error. |
+| `useConfirm` | Satu dialog bersama di `AdminLayout`, dipanggil dengan `await confirm({...})`; Modal hapus manual di Users & Roles diganti. | Kode halaman lebih pendek, tampilan konfirmasi seragam. Modal hapus akun (butuh input kata sandi) tetap Modal biasa. |

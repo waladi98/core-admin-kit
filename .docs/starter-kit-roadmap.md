@@ -1,6 +1,6 @@
 # Finance Core — Starter Kit Roadmap
 
-> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, berikutnya S2)** — keputusan kecil dicatat di `.docs/decisions-log.md`
+> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, berikutnya S3)** — keputusan kecil dicatat di `.docs/decisions-log.md`
 > Tujuan: template ini dipakai sebagai titik awal project-project berikutnya, sehingga fitur yang hampir selalu dibutuhkan sudah tersedia dan konsisten.
 
 ## 1. Kondisi Saat Ini
@@ -17,7 +17,7 @@
 | Git | ✅ sudah ada commit, belum ada remote |
 | Hak akses per role | ✅ roles & permissions diatur dari UI (spatie) |
 | Multi-bahasa | ✅ Indonesia & Inggris, per pengguna |
-| Toast / flash message | ❌ |
+| Toast / flash message | ✅ `withToast()`, `useToast`, `useConfirm` |
 | Search `⌘K` & lonceng notifikasi | ❌ hanya tampilan |
 | Halaman error | ❌ masih bawaan Laravel |
 
@@ -47,7 +47,7 @@
 | 2 | **UI0** | Layout compact & minim scroll | ✅ | ✅ |
 | 3 | **S1** | Hak akses: roles & permissions dari UI | ✅ | ✅ |
 | 4 | **S1b** | Multi-bahasa (ID/EN) | ✅ | ✅ |
-| 5 | **S2** | Toast, flash message, `useConfirm` | ⬜ | ✅ |
+| 5 | **S2** | Toast, flash message, `useConfirm` | ✅ | ✅ |
 | 6 | **S3** | Komponen form lengkap | ⬜ | ✅ |
 | 7 | **S4** | Halaman error & error boundary | ⬜ | ✅ |
 | 8 | **S5** | Format Rupiah, tanggal, locale & timezone | ⬜ | ✅ |
@@ -114,11 +114,11 @@
 - [x] Migrasi semua teks UI yang ada (layout, menu, dashboard, auth, settings, users, roles).
 - [x] Format tanggal/angka mengikuti locale (terhubung ke S5).
 
-### S2 — Feedback: Toast, Flash & Konfirmasi
-- [ ] `core/toast.tsx` + `ToastProvider` (success, error, warning, info; auto-hide; stack).
-- [ ] Flash message dari Laravel otomatis jadi toast.
-- [ ] Hook `useConfirm()` → `await confirm({ title, description, tone: 'danger' })`.
-- [ ] Users & Roles memakai toast & `useConfirm` sebagai contoh.
+### S2 — Feedback: Toast, Flash & Konfirmasi ✅
+- [x] `core/toast.tsx` + `ToastProvider` (success, error, warning, info; auto-hide; stack).
+- [x] Flash message dari Laravel otomatis jadi toast.
+- [x] Hook `useConfirm()` → `await confirm({ title, description, tone: 'danger' })`.
+- [x] Users & Roles memakai toast & `useConfirm` sebagai contoh.
 
 ### S3 — Komponen Form Lengkap
 - [ ] `Textarea`, `Switch`, `RadioGroup`, `CheckboxGroup` (`FormField` sudah ada).

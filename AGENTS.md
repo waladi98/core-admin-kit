@@ -247,6 +247,13 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Dates and numbers use `Intl` with `intlLocale()` from `@/lib/i18n`, never a hard-coded `'en-US'`.
 - The user's language is stored in `users.locale` (switcher in the user menu, auth pages and Settings → Profile); guests use the session; default is `APP_LOCALE`.
 
+## Feedback: Toasts & Confirmations
+
+- After every create/update/delete, redirect with `->withToast('success'|'error'|'warning'|'info', __('…'))` (macro in `AppServiceProvider`). The `flash` shared prop is `Inertia::always`, so toasts also arrive after partial reloads; `FlashToasts` in the layouts shows them. Do not render inline "Saved" texts.
+- Expected business-rule failures (e.g. a role still in use) return `back()->withToast('error', …)` instead of aborting; use `abort(403)` only for authorization.
+- Client-only messages: `const toast = useToast(); toast.success(t('…'))`.
+- Destructive actions ask first with `const confirm = useConfirm(); if (await confirm({ title, description, confirmLabel, tone: 'danger' })) { … }` (English texts; the dialog translates them). Use a custom `Modal` only when the dialog needs inputs (e.g. password confirmation in `delete-user.tsx`).
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.

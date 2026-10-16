@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Support\Translations;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -50,6 +51,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'permissions' => fn (): array => $this->permissionsOf($request->user()),
             ],
+            // Set with `->withToast($type, $message)` on a redirect; shown once as a toast.
+            // Always included, so toasts also arrive after partial reloads (e.g. deleting a table row).
+            'flash' => Inertia::always(fn (): array => ['toast' => $request->session()->get('toast')]),
             'locale' => app()->getLocale(),
             'locales' => SetLocale::available(),
             'translations' => fn (): array => Translations::forLocale(app()->getLocale()),

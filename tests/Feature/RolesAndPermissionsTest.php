@@ -120,7 +120,11 @@ test('built-in roles and roles that still have users cannot be deleted', functio
     User::factory()->role('auditor')->create();
 
     $this->actingAs($this->admin)->delete(route('roles.destroy', Role::findByName(Role::STAFF)))->assertForbidden();
-    $this->actingAs($this->admin)->delete(route('roles.destroy', $custom))->assertStatus(409);
+    $this->actingAs($this->admin)
+        ->from(route('roles.index'))
+        ->delete(route('roles.destroy', $custom))
+        ->assertRedirect(route('roles.index'))
+        ->assertSessionHas('toast.type', 'error');
 
     $this->assertModelExists($custom);
 });

@@ -2,7 +2,6 @@ import { Button, FormActions, FormField, FormSection, Input, type BreadcrumbEntr
 import AdminLayout from '@/layouts/admin-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { __ } from '@/lib/i18n';
-import { Transition } from '@headlessui/react';
 import { Head, useForm } from '@inertiajs/react';
 import { Check, KeyRound } from 'lucide-react';
 import { useRef, type FormEventHandler, type ReactNode } from 'react';
@@ -16,7 +15,7 @@ export default function Password() {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
-    const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
+    const { data, setData, errors, put, reset, processing } = useForm({
         current_password: '',
         password: '',
         password_confirmation: '',
@@ -89,15 +88,6 @@ export default function Password() {
                     </div>
 
                     <FormActions className="border-line mt-4 border-t pt-4">
-                        <Transition
-                            show={recentlySuccessful}
-                            enter="transition ease-in-out"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out"
-                            leaveTo="opacity-0"
-                        >
-                            <p className="text-success text-sm font-medium">{__('Saved')}</p>
-                        </Transition>
                         <Button type="submit" isLoading={processing}>
                             {!processing && <Check />}
                             {__('Save password')}

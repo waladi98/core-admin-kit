@@ -4,7 +4,6 @@ import AdminLayout from '@/layouts/admin-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { __ } from '@/lib/i18n';
 import { type SharedData } from '@/types';
-import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Check, UserRound } from 'lucide-react';
 import { type FormEventHandler, type ReactNode } from 'react';
@@ -17,7 +16,7 @@ const breadcrumbs: BreadcrumbEntry[] = [
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
     const { auth, locale, locales } = usePage<SharedData>().props;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, patch, errors, processing } = useForm({
         name: auth.user.name,
         email: auth.user.email,
         locale: (auth.user.locale as string | null) ?? locale,
@@ -88,15 +87,6 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     )}
 
                     <FormActions className="border-line mt-4 border-t pt-4">
-                        <Transition
-                            show={recentlySuccessful}
-                            enter="transition ease-in-out"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out"
-                            leaveTo="opacity-0"
-                        >
-                            <p className="text-success text-sm font-medium">{__('Saved')}</p>
-                        </Transition>
                         <Button type="submit" isLoading={processing}>
                             {!processing && <Check />}
                             {__('Save')}

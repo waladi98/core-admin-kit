@@ -2,17 +2,15 @@ import { Can } from '@/components/admin/can';
 import { DataTable, type DataTableColumn } from '@/components/admin/data-table';
 import {
     Badge,
-    Button,
+    buttonVariants,
     Dropdown,
     DropdownContent,
     DropdownItem,
     DropdownSeparator,
     DropdownTrigger,
-    Modal,
-    ModalFooter,
-    Panel,
-    buttonVariants,
     iconButtonVariants,
+    Panel,
+    useConfirm,
     type BreadcrumbEntry,
 } from '@/components/core';
 import { usePermissions } from '@/hooks/use-can';
@@ -41,7 +39,7 @@ function deleteBlockedReason(role: RoleRow): string | null {
 export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) {
     const can = usePermissions();
     const canManage = can('roles.manage');
-    const [roleToDelete, setRoleToDelete] = useState<RoleRow | null>(null);
+    const confirm = useConfirm();
     const [deletingIds, setDeletingIds] = useState<string[]>([]);
 
     const columns: DataTableColumn<RoleRow>[] = [
@@ -92,15 +90,21 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
         },
     ];
 
-    const confirmDelete = () => {
-        if (!roleToDelete) {
+    const deleteRole = async (role: RoleRow) => {
+        const confirmed = await confirm({
+            title: 'Delete this role?',
+            description: __('The :name role will be removed. This cannot be undone.', { name: role.label }),
+            confirmLabel: 'Delete role',
+            tone: 'danger',
+        });
+
+        if (!confirmed) {
             return;
         }
 
-        const rowId = String(roleToDelete.id);
-        setRoleToDelete(null);
+        const rowId = String(role.id);
 
-        router.delete(route('roles.destroy', roleToDelete.id), {
+        router.delete(route('roles.destroy', role.id), {
             preserveScroll: true,
             preserveState: true,
             only: ['roles'],
@@ -157,7 +161,7 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
                                                     icon={<Trash2 />}
                                                     tone="danger"
                                                     disabled={blockedReason !== null}
-                                                    onSelect={() => setRoleToDelete(role)}
+                                                    onSelect={() => deleteRole(role)}
                                                 >
                                                     <span className="flex flex-col">
                                                         {__('Delete')}
@@ -177,22 +181,6 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
                     </p>
                 </Panel.Body>
             </Panel>
-
-            <Modal
-                isOpen={roleToDelete !== null}
-                onClose={() => setRoleToDelete(null)}
-                title="Delete this role?"
-                description={roleToDelete ? `The ${roleToDelete.label} role will be removed. This cannot be undone.` : undefined}
-            >
-                <ModalFooter>
-                    <Button variant="secondary" onClick={() => setRoleToDelete(null)}>
-                        {__('Cancel')}
-                    </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
-                        {__('Delete role')}
-                    </Button>
-                </ModalFooter>
-            </Modal>
         </>
     );
 }
