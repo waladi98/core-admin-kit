@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\Translations;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -49,6 +50,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'permissions' => fn (): array => $this->permissionsOf($request->user()),
             ],
+            'locale' => app()->getLocale(),
+            'locales' => SetLocale::available(),
+            'translations' => fn (): array => Translations::forLocale(app()->getLocale()),
         ]);
     }
 

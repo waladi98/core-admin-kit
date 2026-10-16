@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type TransactionPriority } from '@/types/dashboard';
 
@@ -21,7 +22,7 @@ export function PriorityBadge({ priority }: { priority: TransactionPriority }) {
                     />
                 ))}
             </span>
-            {config.label}
+            {__(config.label)}
         </span>
     );
 }

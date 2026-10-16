@@ -10,6 +10,8 @@ import {
 } from '@/components/core';
 import { usePermissions } from '@/hooks/use-can';
 import { useNavigationPending } from '@/hooks/use-navigation-pending';
+import { useTranslation } from '@/hooks/use-translation';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type AdminNavChild, type AdminNavGroup, type AdminNavItem } from '@/types/navigation';
 import { Link, usePage } from '@inertiajs/react';
@@ -117,7 +119,7 @@ function NavChildList({
                             )}
                         >
                             <span className="flex-1 truncate">{child.title}</span>
-                            {isLoading && <LoaderCircle className="text-ink-muted size-3.5 shrink-0 animate-spin" aria-label="Loading" />}
+                            {isLoading && <LoaderCircle className="text-ink-muted size-3.5 shrink-0 animate-spin" aria-label={__('Loading')} />}
                         </NavTarget>
                     </li>
                 );
@@ -235,10 +237,27 @@ export function filterNavigation(groups: AdminNavGroup[], can: (permission: stri
         .filter((group) => group.items.length > 0);
 }
 
+/**
+ * Translates menu titles and group labels (they are written in English in config/navigation.ts).
+ */
+function translateNavigation(groups: AdminNavGroup[]): AdminNavGroup[] {
+    return groups.map((group) => ({
+        ...group,
+        label: __(group.label),
+        items: group.items.map((item) => ({
+            ...item,
+            title: __(item.title),
+            children: item.children?.map((child) => ({ ...child, title: __(child.title) })),
+        })),
+    }));
+}
+
 export function SidebarNav({ groups: allGroups, isCollapsed, onNavigate }: SidebarNavProps) {
     const { url } = usePage();
     const can = usePermissions();
-    const groups = useMemo(() => filterNavigation(allGroups, can), [allGroups, can]);
+    const { locale } = useTranslation();
+    // `locale` is a dependency so titles are translated again after switching language.
+    const groups = useMemo(() => translateNavigation(filterNavigation(allGroups, can)), [allGroups, can, locale]); // eslint-disable-line react-hooks/exhaustive-deps
     const { isPending, pendingPath } = useNavigationPending();
     const visiblePendingPath = isPending ? pendingPath : null;
     const navRef = useRef<HTMLElement>(null);

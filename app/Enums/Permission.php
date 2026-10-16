@@ -26,12 +26,12 @@ enum Permission: string
     public function label(): string
     {
         return match ($this) {
-            self::UsersView => 'View users',
-            self::UsersCreate => 'Create users',
-            self::UsersUpdate => 'Edit users',
-            self::UsersDelete => 'Delete users',
-            self::RolesView => 'View roles',
-            self::RolesManage => 'Create, edit and delete roles',
+            self::UsersView => __('View users'),
+            self::UsersCreate => __('Create users'),
+            self::UsersUpdate => __('Edit users'),
+            self::UsersDelete => __('Delete users'),
+            self::RolesView => __('View roles'),
+            self::RolesManage => __('Create, edit and delete roles'),
         };
     }
 
@@ -41,8 +41,8 @@ enum Permission: string
     public function group(): string
     {
         return match ($this) {
-            self::UsersView, self::UsersCreate, self::UsersUpdate, self::UsersDelete => 'Users',
-            self::RolesView, self::RolesManage => 'Roles & Permissions',
+            self::UsersView, self::UsersCreate, self::UsersUpdate, self::UsersDelete => __('Users'),
+            self::RolesView, self::RolesManage => __('Roles & Permissions'),
         };
     }
 

@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { type LucideIcon } from 'lucide-react';
@@ -28,7 +29,7 @@ export function Breadcrumb({ items, size = 'md', className }: BreadcrumbProps) {
                     const content = (
                         <>
                             {Icon && !isSmall && <Icon className="size-4 shrink-0" />}
-                            {item.title}
+                            {__(item.title)}
                         </>
                     );
 

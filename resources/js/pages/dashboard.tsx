@@ -9,6 +9,7 @@ import { TrendBadge } from '@/components/admin/trend-badge';
 import { FadeIn, Grid, IconButton, Panel, Skeleton, type BreadcrumbEntry } from '@/components/core';
 import { useReloading } from '@/hooks/use-reloading';
 import AdminLayout from '@/layouts/admin-layout';
+import { __, intlLocale } from '@/lib/i18n';
 import { type SharedData } from '@/types';
 import { type Activity, type ActivityPeriod, type StatMetric, type TransactionRow, type VolumeTrend } from '@/types/dashboard';
 import { Deferred, Head, router } from '@inertiajs/react';
@@ -33,8 +34,6 @@ const statIcons: Record<string, LucideIcon> = {
     daily_transactions: ArrowLeftRight,
     compliance_rate: BadgeCheck,
 };
-
-const numberFormatter = new Intl.NumberFormat('en-US');
 
 function ActivityFeedSkeleton() {
     return (
@@ -67,11 +66,11 @@ export default function Dashboard({ filters, stats, volumeTrend, activities, tra
 
     return (
         <>
-            <Head title="Dashboard" />
+            <Head title={__('Dashboard')} />
 
             <TopbarActions>
                 <PeriodSelect options={reportingPeriodOptions} value={filters.period} onChange={(period) => applyFilters({ period }, ['stats'])} />
-                <IconButton label="More options" variant="secondary">
+                <IconButton label={__('More options')} variant="secondary">
                     <MoreVertical />
                 </IconButton>
             </TopbarActions>
@@ -112,7 +111,9 @@ export default function Dashboard({ filters, stats, volumeTrend, activities, tra
                         />
                         <Panel.Body>
                             <div className="flex items-baseline gap-3">
-                                <p className="text-ink text-2xl font-semibold tracking-tight">{numberFormatter.format(volumeTrend.total)}</p>
+                                <p className="text-ink text-2xl font-semibold tracking-tight">
+                                    {new Intl.NumberFormat(intlLocale()).format(volumeTrend.total)}
+                                </p>
                                 <TrendBadge change={volumeTrend.change} />
                             </div>
                             {/* Height follows the screen so stats + chart fit one viewport on desktop. */}
@@ -143,7 +144,7 @@ export default function Dashboard({ filters, stats, volumeTrend, activities, tra
 
 /** Persistent layout: the shell stays mounted while navigating between pages. */
 Dashboard.layout = (page: ReactElement<SharedData>) => (
-    <AdminLayout breadcrumbs={breadcrumbs} title={`Hello, ${page.props.auth.user.name} 👋`}>
+    <AdminLayout breadcrumbs={breadcrumbs} title="Hello, :name 👋" titleParams={{ name: page.props.auth.user.name }}>
         {page}
     </AdminLayout>
 );

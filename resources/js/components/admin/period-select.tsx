@@ -1,4 +1,5 @@
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger, buttonVariants } from '@/components/core';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { CalendarDays, Check, ChevronDown } from 'lucide-react';
 
@@ -20,7 +21,7 @@ export function PeriodSelect<T extends string>({ options, value, onChange }: Per
         <Dropdown>
             <DropdownTrigger className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'gap-1.5')}>
                 <CalendarDays />
-                {selectedOption?.label}
+                {selectedOption && __(selectedOption.label)}
                 <ChevronDown className="text-ink-subtle" />
             </DropdownTrigger>
             <DropdownContent className="min-w-40">
@@ -30,7 +31,7 @@ export function PeriodSelect<T extends string>({ options, value, onChange }: Per
                         onSelect={() => onChange(option.value)}
                         icon={option.value === value ? <Check /> : <span className="size-4" />}
                     >
-                        {option.label}
+                        {__(option.label)}
                     </DropdownItem>
                 ))}
             </DropdownContent>

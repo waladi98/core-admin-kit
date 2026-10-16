@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, LoaderCircle } from 'lucide-react';
 import { type ReactNode } from 'react';
@@ -86,31 +87,31 @@ export function Pagination({
     );
 
     return (
-        <nav aria-label="Pagination" className={cn('flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between', className)}>
+        <nav aria-label={__('Pagination')} className={cn('flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between', className)}>
             <div className="text-ink-muted flex items-center gap-2 text-xs">
                 {hasPerPage && (
                     <>
                         <Select
                             size="sm"
-                            aria-label="Entries per page"
+                            aria-label={__('Entries per page')}
                             options={perPageOptions.map((option) => ({ value: String(option), label: String(option) }))}
                             value={String(perPage)}
                             onChange={(event) => onPerPageChange(Number(event.target.value))}
                             disabled={isBusy}
                             wrapperClassName="w-18"
                         />
-                        <span>entries per page</span>
+                        <span>{__('entries per page')}</span>
                     </>
                 )}
                 {total !== undefined && (
                     <span>
                         {hasPerPage && <span className="text-line-strong mr-2">·</span>}
                         {total === 0 ? (
-                            'No results'
+                            __('No results')
                         ) : (
                             <>
-                                <span className="text-ink-soft font-medium">{from}</span>–<span className="text-ink-soft font-medium">{to}</span> of{' '}
-                                <span className="text-ink-soft font-medium">{total}</span>
+                                <span className="text-ink-soft font-medium">{from}</span>–<span className="text-ink-soft font-medium">{to}</span>{' '}
+                                {__('of')} <span className="text-ink-soft font-medium">{total}</span>
                             </>
                         )}
                     </span>
@@ -118,8 +119,8 @@ export function Pagination({
             </div>
 
             <div className="flex items-center gap-0.5">
-                {renderNavButton(1, 'First page', <ChevronsLeft />, currentPage <= 1)}
-                {renderNavButton(currentPage - 1, 'Previous page', <ChevronLeft />, currentPage <= 1)}
+                {renderNavButton(1, __('First page'), <ChevronsLeft />, currentPage <= 1)}
+                {renderNavButton(currentPage - 1, __('Previous page'), <ChevronLeft />, currentPage <= 1)}
                 {getPageItems(currentPage, pageCount).map((item) => {
                     if (typeof item !== 'number') {
                         return (
@@ -141,7 +142,7 @@ export function Pagination({
                             type="button"
                             onClick={() => onPageChange(item)}
                             aria-current={isCurrent ? 'page' : undefined}
-                            aria-label={`Page ${item}`}
+                            aria-label={__('Page :page', { page: item })}
                             disabled={isCurrent || isBusy}
                             className={cn(
                                 pageButtonClass,
@@ -155,8 +156,8 @@ export function Pagination({
                         </button>
                     );
                 })}
-                {renderNavButton(currentPage + 1, 'Next page', <ChevronRight />, currentPage >= pageCount)}
-                {renderNavButton(pageCount, 'Last page', <ChevronsRight />, currentPage >= pageCount)}
+                {renderNavButton(currentPage + 1, __('Next page'), <ChevronRight />, currentPage >= pageCount)}
+                {renderNavButton(pageCount, __('Last page'), <ChevronsRight />, currentPage >= pageCount)}
             </div>
         </nav>
     );

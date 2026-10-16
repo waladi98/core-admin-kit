@@ -128,7 +128,7 @@ class UserController extends Controller
 
     public function destroy(Request $request, User $user): RedirectResponse
     {
-        abort_if($user->is($request->user()), 403, 'You cannot delete your own account here.');
+        abort_if($user->is($request->user()), 403, __('You cannot delete your own account here.'));
 
         Gate::authorize('delete', $user);
 

@@ -1,6 +1,7 @@
 import { RoleForm } from '@/components/admin/role-form';
 import { type BreadcrumbEntry } from '@/components/core';
 import AdminLayout from '@/layouts/admin-layout';
+import { __ } from '@/lib/i18n';
 import { type RoleEditProps } from '@/types/roles';
 import { Head } from '@inertiajs/react';
 import { LockKeyhole } from 'lucide-react';
@@ -15,12 +16,12 @@ function editBreadcrumbs(role: RoleEditProps['role']): BreadcrumbEntry[] {
 
 export default function EditRole({ role, permissionGroups, canUpdate }: RoleEditProps) {
     const readOnlyReason = role.isAdmin
-        ? 'The Admin role always has every permission, including ones added later. It cannot be changed.'
-        : 'You can view this role but do not have permission to change it.';
+        ? __('The Admin role always has every permission, including ones added later. It cannot be changed.')
+        : __('You can view this role but do not have permission to change it.');
 
     return (
         <>
-            <Head title={`Role ${role.label}`} />
+            <Head title={__('Role :name', { name: role.label })} />
             <RoleForm
                 method="put"
                 action={route('roles.update', role.id)}
@@ -37,7 +38,7 @@ export default function EditRole({ role, permissionGroups, canUpdate }: RoleEdit
 
 /** Persistent layout: the shell stays mounted while navigating between pages. */
 EditRole.layout = (page: ReactElement<RoleEditProps>) => (
-    <AdminLayout breadcrumbs={editBreadcrumbs(page.props.role)} title={`Role · ${page.props.role.label}`}>
+    <AdminLayout breadcrumbs={editBreadcrumbs(page.props.role)} title="Role · :name" titleParams={{ name: page.props.role.label }}>
         {page}
     </AdminLayout>
 );

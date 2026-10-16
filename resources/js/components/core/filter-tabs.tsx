@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type KeyboardEvent, useRef } from 'react';
 
@@ -37,7 +38,7 @@ export function FilterTabs<T extends string>({ options, value, onChange, label, 
     };
 
     return (
-        <div role="tablist" aria-label={label} className={cn('flex flex-wrap items-center gap-1.5', className)}>
+        <div role="tablist" aria-label={__(label)} className={cn('flex flex-wrap items-center gap-1.5', className)}>
             {options.map((option, index) => {
                 const isSelected = option.value === value;
 
@@ -60,7 +61,7 @@ export function FilterTabs<T extends string>({ options, value, onChange, label, 
                                 : 'border-line bg-surface text-ink-soft hover:bg-surface-hover',
                         )}
                     >
-                        {option.label}
+                        {__(option.label)}
                         {option.count !== undefined && (
                             <span
                                 className={cn(

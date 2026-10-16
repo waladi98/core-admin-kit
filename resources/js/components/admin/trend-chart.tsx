@@ -1,3 +1,4 @@
+import { intlLocale } from '@/lib/i18n';
 import { type TrendPoint } from '@/types/dashboard';
 import { useState } from 'react';
 import { Bar, BarChart, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -13,9 +14,8 @@ function findHighestIndex(points: TrendPoint[]): number {
     return points.reduce((highestIndex, point, index) => (point.value > points[highestIndex].value ? index : highestIndex), 0);
 }
 
-const numberFormatter = new Intl.NumberFormat('en-US');
-
 export function TrendChart({ points, highlightIndex, className }: TrendChartProps) {
+    const numberFormatter = new Intl.NumberFormat(intlLocale());
     const defaultIndex = highlightIndex ?? findHighestIndex(points);
     const [activeIndex, setActiveIndex] = useState(defaultIndex);
     const activePoint = points[activeIndex];

@@ -49,21 +49,21 @@ class DashboardController extends Controller
         return [
             [
                 'key' => 'current_balance',
-                'label' => 'Current Balance',
+                'label' => __('Current Balance'),
                 'value' => '$'.number_format(3484 * $scale).'K',
                 'change' => 7.1,
                 'trend' => [12, 18, 14, 22, 16, 24, 19, 21, 17, 20],
             ],
             [
                 'key' => 'daily_transactions',
-                'label' => 'Daily Avg. Transactions',
+                'label' => __('Daily Avg. Transactions'),
                 'value' => number_format(486 * min($scale, 1.1)),
                 'change' => 2.0,
                 'trend' => [10, 11, 10, 14, 12, 16, 13, 17, 15, 18],
             ],
             [
                 'key' => 'compliance_rate',
-                'label' => 'Compliance Rate',
+                'label' => __('Compliance Rate'),
                 'value' => '92%',
                 'change' => -1.3,
                 'trend' => [18, 14, 16, 12, 17, 13, 15, 19, 14, 12],

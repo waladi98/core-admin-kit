@@ -1,5 +1,6 @@
 import { IconButton, Input, Kbd } from '@/components/core';
 import { mainNavigation, supportNavigation } from '@/config/navigation';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { PanelLeft, Search, X } from 'lucide-react';
@@ -52,11 +53,11 @@ export function Sidebar({ isCollapsed = false, onToggleCollapse, onClose, enable
                     </Link>
                 )}
                 {onClose ? (
-                    <IconButton label="Close menu" onClick={onClose}>
+                    <IconButton label={__('Close menu')} onClick={onClose}>
                         <X />
                     </IconButton>
                 ) : (
-                    <IconButton label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} onClick={onToggleCollapse}>
+                    <IconButton label={isCollapsed ? __('Expand sidebar') : __('Collapse sidebar')} onClick={onToggleCollapse}>
                         <PanelLeft />
                     </IconButton>
                 )}
@@ -64,15 +65,15 @@ export function Sidebar({ isCollapsed = false, onToggleCollapse, onClose, enable
 
             <div className={cn('shrink-0 px-3 pb-3', isCollapsed && 'flex justify-center px-0')}>
                 {isCollapsed ? (
-                    <IconButton label="Search" onClick={onToggleCollapse}>
+                    <IconButton label={__('Search')} onClick={onToggleCollapse}>
                         <Search />
                     </IconButton>
                 ) : (
                     <Input
                         ref={searchInputRef}
                         type="search"
-                        placeholder="Search anything"
-                        aria-label="Search anything"
+                        placeholder={__('Search anything')}
+                        aria-label={__('Search anything')}
                         leadingIcon={<Search />}
                         trailing={<Kbd>⌘K</Kbd>}
                     />

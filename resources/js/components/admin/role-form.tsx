@@ -1,4 +1,5 @@
 import { Button, Checkbox, FormActions, FormField, FormSection, Input, buttonVariants } from '@/components/core';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type PermissionGroup, type RoleFormData } from '@/types/roles';
 import { Link, useForm } from '@inertiajs/react';
@@ -83,7 +84,7 @@ export function RoleForm({
                             required
                             disabled={isNameLocked || isReadOnly}
                             autoComplete="off"
-                            placeholder="e.g. Finance Lead"
+                            placeholder={__('e.g. Finance Lead')}
                             invalid={Boolean(errors.name)}
                         />
                     </FormField>
@@ -96,7 +97,7 @@ export function RoleForm({
                 description="Tick what people with this role can do."
                 actions={
                     <span className="text-ink-muted text-xs">
-                        <span className="text-ink font-semibold">{selected.size}</span> of {totalPermissions} selected
+                        {__(':selected of :total selected', { selected: selected.size, total: totalPermissions })}
                     </span>
                 }
             >
@@ -110,7 +111,7 @@ export function RoleForm({
 
                         return (
                             <fieldset key={group.group} className="rounded-field border-line border">
-                                <legend className="sr-only">{group.group}</legend>
+                                <legend className="sr-only">{__(group.group)}</legend>
                                 <label
                                     htmlFor={groupId}
                                     className={cn(
@@ -125,7 +126,7 @@ export function RoleForm({
                                         onChange={() => toggleGroup(group, !isAllSelected)}
                                         disabled={isReadOnly}
                                     />
-                                    <span className="text-ink flex-1 text-sm font-medium">{group.group}</span>
+                                    <span className="text-ink flex-1 text-sm font-medium">{__(group.group)}</span>
                                     <span className="text-ink-muted text-xs">
                                         {selectedInGroup}/{group.permissions.length}
                                     </span>
@@ -149,7 +150,7 @@ export function RoleForm({
                                                         onChange={() => togglePermission(permission.value)}
                                                         disabled={isReadOnly}
                                                     />
-                                                    <span className="text-ink-soft min-w-0 flex-1 text-[13px]">{permission.label}</span>
+                                                    <span className="text-ink-soft min-w-0 flex-1 text-[13px]">{__(permission.label)}</span>
                                                     <code className="text-ink-subtle hidden text-xs sm:inline">{permission.value}</code>
                                                 </label>
                                             </li>
@@ -164,12 +165,12 @@ export function RoleForm({
 
             <FormActions sticky>
                 <Link href={route('roles.index')} className={buttonVariants({ variant: 'secondary' })}>
-                    {isReadOnly ? 'Back' : 'Cancel'}
+                    {isReadOnly ? __('Back') : __('Cancel')}
                 </Link>
                 {!isReadOnly && (
                     <Button type="submit" isLoading={processing}>
                         {!processing && <Check />}
-                        {submitLabel}
+                        {__(submitLabel)}
                     </Button>
                 )}
             </FormActions>

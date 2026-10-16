@@ -1,4 +1,5 @@
 import { Checkbox, Skeleton, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@/components/core';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type TableSort } from '@/types/table';
 import { ArrowDown, ArrowUp, ArrowUpDown, Inbox, LoaderCircle } from 'lucide-react';
@@ -190,7 +191,7 @@ export function DataTable<T>({
                                 indeterminate={isPartiallySelected}
                                 onChange={toggleAll}
                                 disabled={isLoading}
-                                aria-label="Select all rows"
+                                aria-label={__('Select all rows')}
                             />
                         </TableHeaderCell>
                     )}
@@ -214,7 +215,7 @@ export function DataTable<T>({
                                         disabled={isInitialLoading}
                                         className="hover:text-ink inline-flex items-center gap-1.5 transition-colors disabled:pointer-events-none"
                                     >
-                                        {column.header}
+                                        {__(column.header)}
                                         <SortIcon
                                             className={cn(
                                                 'size-3.5',
@@ -224,12 +225,12 @@ export function DataTable<T>({
                                         />
                                     </button>
                                 ) : (
-                                    column.header
+                                    __(column.header)
                                 )}
                             </TableHeaderCell>
                         );
                     })}
-                    {rowActions && <TableHeaderCell className="w-12" aria-label="Actions" />}
+                    {rowActions && <TableHeaderCell className="w-12" aria-label={__('Actions')} />}
                 </TableRow>
                 <tr aria-hidden="true">
                     <td colSpan={columnCount} className="border-line relative h-0.5 overflow-hidden border-b p-0">
@@ -273,7 +274,7 @@ export function DataTable<T>({
                                         <span className="border-line bg-surface-muted rounded-field flex size-10 items-center justify-center border">
                                             <Inbox className="text-ink-subtle size-5" />
                                         </span>
-                                        <p className="text-ink-muted text-sm">{emptyMessage}</p>
+                                        <p className="text-ink-muted text-sm">{__(emptyMessage)}</p>
                                     </>
                                 )}
                             </div>
@@ -302,7 +303,7 @@ export function DataTable<T>({
                             >
                                 {selectable && (
                                     <TableCell>
-                                        <Checkbox checked={isSelected} onChange={() => toggleRow(id)} aria-label={`Select row ${id}`} />
+                                        <Checkbox checked={isSelected} onChange={() => toggleRow(id)} aria-label={__('Select row :id', { id })} />
                                     </TableCell>
                                 )}
                                 {showRowNumbers && <TableCell className="text-ink-muted tabular-nums">{rowNumberOffset + index + 1}</TableCell>}
@@ -314,7 +315,7 @@ export function DataTable<T>({
                                 {rowActions && (
                                     <TableCell className="text-right">
                                         {isPending ? (
-                                            <LoaderCircle className="text-ink-muted ml-auto size-4 animate-spin" aria-label="Processing" />
+                                            <LoaderCircle className="text-ink-muted ml-auto size-4 animate-spin" aria-label={__('Processing')} />
                                         ) : (
                                             rowActions(row)
                                         )}

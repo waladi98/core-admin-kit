@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { X } from 'lucide-react';
@@ -38,13 +39,17 @@ export function Modal({ isOpen, onClose, title, description, size = 'md', classN
                     <button
                         type="button"
                         onClick={onClose}
-                        aria-label="Close"
+                        aria-label={__('Close')}
                         className="text-ink-muted hover:bg-surface-hover hover:text-ink rounded-field absolute top-4 right-4 inline-flex size-7 items-center justify-center transition-colors"
                     >
                         <X className="size-4" />
                     </button>
-                    <DialogTitle className="text-ink pr-8 text-base font-semibold">{title}</DialogTitle>
-                    {description && <Description className="text-ink-muted mt-1.5 text-sm">{description}</Description>}
+                    <DialogTitle className="text-ink pr-8 text-base font-semibold">{typeof title === 'string' ? __(title) : title}</DialogTitle>
+                    {description && (
+                        <Description className="text-ink-muted mt-1.5 text-sm">
+                            {typeof description === 'string' ? __(description) : description}
+                        </Description>
+                    )}
                     {children && <div className="scrollbar-thin -mx-1 mt-5 min-h-0 overflow-y-auto px-1">{children}</div>}
                 </DialogPanel>
             </div>

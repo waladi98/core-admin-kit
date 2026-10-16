@@ -17,6 +17,7 @@ import {
 } from '@/components/core';
 import { usePermissions } from '@/hooks/use-can';
 import AdminLayout from '@/layouts/admin-layout';
+import { __ } from '@/lib/i18n';
 import { type RoleIndexProps, type RoleRow } from '@/types/roles';
 import { Head, Link, router } from '@inertiajs/react';
 import { Eye, LockKeyhole, MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
@@ -27,11 +28,11 @@ const breadcrumbs: BreadcrumbEntry[] = [{ title: 'Roles & Permissions', href: '/
 /** Why a role cannot be deleted, or null when it can. */
 function deleteBlockedReason(role: RoleRow): string | null {
     if (role.isBuiltIn) {
-        return 'Built-in roles cannot be deleted.';
+        return __('Built-in roles cannot be deleted.');
     }
 
     if (role.usersCount > 0) {
-        return 'Move its users to another role first.';
+        return __('Move its users to another role first.');
     }
 
     return null;
@@ -54,12 +55,12 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
                     <span className="text-ink font-medium">{role.label}</span>
                     {role.isAdmin && (
                         <Badge shape="pill" tone="info">
-                            Full access
+                            {__('Full access')}
                         </Badge>
                     )}
                     {role.isBuiltIn && !role.isAdmin && (
                         <Badge shape="pill" tone="neutral">
-                            Built-in
+                            {__('Built-in')}
                         </Badge>
                     )}
                 </span>
@@ -110,7 +111,7 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
 
     return (
         <>
-            <Head title="Roles & Permissions" />
+            <Head title={__('Roles & Permissions')} />
 
             <Panel fill>
                 <Panel.Header
@@ -120,7 +121,7 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
                         <Can permission="roles.manage">
                             <Link href={route('roles.create')} prefetch className={buttonVariants({ size: 'sm' })}>
                                 <Plus />
-                                Add role
+                                {__('Add role')}
                             </Link>
                         </Can>
                     }
@@ -140,14 +141,14 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
                             return (
                                 <Dropdown>
                                     <DropdownTrigger
-                                        aria-label={`Actions for ${role.label}`}
+                                        aria-label={__('Actions for :name', { name: role.label })}
                                         className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}
                                     >
                                         <MoreHorizontal />
                                     </DropdownTrigger>
                                     <DropdownContent>
                                         <DropdownItem icon={isEditable ? <Pencil /> : <Eye />} href={route('roles.edit', role.id)}>
-                                            {isEditable ? 'Edit permissions' : 'View permissions'}
+                                            {isEditable ? __('Edit permissions') : __('View permissions')}
                                         </DropdownItem>
                                         {canManage && (
                                             <>
@@ -159,7 +160,7 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
                                                     onSelect={() => setRoleToDelete(role)}
                                                 >
                                                     <span className="flex flex-col">
-                                                        Delete
+                                                        {__('Delete')}
                                                         {blockedReason && <span className="text-ink-muted text-xs">{blockedReason}</span>}
                                                     </span>
                                                 </DropdownItem>
@@ -172,8 +173,7 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
                         emptyMessage="No roles yet."
                     />
                     <p className="border-line text-ink-muted shrink-0 border-t px-3 py-2.5 text-xs">
-                        {roles.length} {roles.length === 1 ? 'role' : 'roles'} · Admin always has every permission. Changes apply on the user's next
-                        page load.
+                        {__(":count roles · Admin always has every permission. Changes apply on the user's next page load.", { count: roles.length })}
                     </p>
                 </Panel.Body>
             </Panel>
@@ -186,10 +186,10 @@ export default function RolesIndex({ roles, totalPermissions }: RoleIndexProps) 
             >
                 <ModalFooter>
                     <Button variant="secondary" onClick={() => setRoleToDelete(null)}>
-                        Cancel
+                        {__('Cancel')}
                     </Button>
                     <Button variant="danger" onClick={confirmDelete}>
-                        Delete role
+                        {__('Delete role')}
                     </Button>
                 </ModalFooter>
             </Modal>

@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type LucideIcon } from 'lucide-react';
 import { type ComponentProps, type ReactNode } from 'react';
@@ -46,7 +47,7 @@ export function PanelHeader({ title, icon: Icon, trailingIcon: TrailingIcon, act
     return (
         <header className={cn('flex min-h-10 flex-wrap items-center gap-2 px-3 py-1.5', className)}>
             {Icon && <Icon className="text-ink-muted size-4 shrink-0" />}
-            <h2 className="text-ink-soft min-w-24 flex-1 truncate text-sm font-medium">{title}</h2>
+            <h2 className="text-ink-soft min-w-24 flex-1 truncate text-sm font-medium">{typeof title === 'string' ? __(title) : title}</h2>
             {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
             {!actions && TrailingIcon && <TrailingIcon className="text-ink-muted size-4 shrink-0" />}
         </header>

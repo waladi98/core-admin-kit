@@ -12,6 +12,7 @@ import {
     buttonVariants,
     iconButtonVariants,
 } from '@/components/core';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type TransactionPriority, type TransactionRow, type TransactionStatus } from '@/types/dashboard';
 import { Check, Download, Eye, Filter, MoreVertical, Pencil, Search, UserRoundPlus, type LucideIcon } from 'lucide-react';
@@ -65,13 +66,16 @@ const statusFilters = Object.entries(statusConfig) as [TransactionStatus, (typeo
 function RowActions({ row }: { row: TransactionRow }) {
     return (
         <Dropdown>
-            <DropdownTrigger aria-label={`Actions for ${row.reference}`} className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}>
+            <DropdownTrigger
+                aria-label={__('Actions for :name', { name: row.reference })}
+                className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}
+            >
                 <MoreVertical />
             </DropdownTrigger>
             <DropdownContent>
-                <DropdownItem icon={<Eye />}>View details</DropdownItem>
-                <DropdownItem icon={<Pencil />}>Edit</DropdownItem>
-                <DropdownItem icon={<UserRoundPlus />}>Reassign</DropdownItem>
+                <DropdownItem icon={<Eye />}>{__('View details')}</DropdownItem>
+                <DropdownItem icon={<Pencil />}>{__('Edit')}</DropdownItem>
+                <DropdownItem icon={<UserRoundPlus />}>{__('Reassign')}</DropdownItem>
             </DropdownContent>
         </Dropdown>
     );
@@ -105,8 +109,8 @@ export function TransactionTable({ title, icon, rows, isLoading = false }: Trans
         <>
             <Input
                 type="search"
-                placeholder="Transaction"
-                aria-label="Search transactions"
+                placeholder={__('Transaction')}
+                aria-label={__('Search transactions')}
                 leadingIcon={<Search />}
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
@@ -115,12 +119,12 @@ export function TransactionTable({ title, icon, rows, isLoading = false }: Trans
             <Dropdown>
                 <DropdownTrigger className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), statusFilter && 'border-brand')}>
                     <Filter />
-                    <span className="hidden sm:inline">{statusFilter ? statusConfig[statusFilter].label : 'Filter'}</span>
+                    <span className="hidden sm:inline">{statusFilter ? __(statusConfig[statusFilter].label) : __('Filter')}</span>
                 </DropdownTrigger>
                 <DropdownContent>
-                    <DropdownLabel>Status</DropdownLabel>
+                    <DropdownLabel>{__('Status')}</DropdownLabel>
                     <DropdownItem onSelect={() => setStatusFilter(null)} icon={statusFilter === null ? <Check /> : <span className="size-4" />}>
-                        All statuses
+                        {__('All statuses')}
                     </DropdownItem>
                     <DropdownSeparator />
                     {statusFilters.map(([status, config]) => (
@@ -129,19 +133,19 @@ export function TransactionTable({ title, icon, rows, isLoading = false }: Trans
                             onSelect={() => setStatusFilter(status)}
                             icon={statusFilter === status ? <Check /> : <span className="size-4" />}
                         >
-                            {config.label}
+                            {__(config.label)}
                         </DropdownItem>
                     ))}
                 </DropdownContent>
             </Dropdown>
             <Dropdown>
-                <DropdownTrigger aria-label="More table actions" className={iconButtonVariants({ variant: 'secondary', size: 'md' })}>
+                <DropdownTrigger aria-label={__('More table actions')} className={iconButtonVariants({ variant: 'secondary', size: 'md' })}>
                     <MoreVertical />
                 </DropdownTrigger>
                 <DropdownContent>
-                    <DropdownItem icon={<Download />}>Export CSV</DropdownItem>
+                    <DropdownItem icon={<Download />}>{__('Export CSV')}</DropdownItem>
                     <DropdownItem icon={<UserRoundPlus />} disabled={selectedIds.length === 0}>
-                        Reassign selected ({selectedIds.length})
+                        {__('Reassign selected (:count)', { count: selectedIds.length })}
                     </DropdownItem>
                 </DropdownContent>
             </Dropdown>
@@ -164,8 +168,8 @@ export function TransactionTable({ title, icon, rows, isLoading = false }: Trans
                     skeletonRows={4}
                     emptyState={
                         <>
-                            <p className="text-ink text-sm font-medium">No transactions found</p>
-                            <p className="text-ink-muted text-sm">Try a different keyword or status.</p>
+                            <p className="text-ink text-sm font-medium">{__('No transactions found')}</p>
+                            <p className="text-ink-muted text-sm">{__('Try a different keyword or status.')}</p>
                             {(searchTerm || statusFilter) && (
                                 <Button
                                     variant="secondary"
@@ -176,7 +180,7 @@ export function TransactionTable({ title, icon, rows, isLoading = false }: Trans
                                         setStatusFilter(null);
                                     }}
                                 >
-                                    Reset filters
+                                    {__('Reset filters')}
                                 </Button>
                             )}
                         </>

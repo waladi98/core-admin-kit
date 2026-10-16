@@ -1,6 +1,7 @@
 import { UserForm } from '@/components/admin/user-form';
 import { type BreadcrumbEntry } from '@/components/core';
 import AdminLayout from '@/layouts/admin-layout';
+import { __ } from '@/lib/i18n';
 import { type UserFormOptions } from '@/types/user-management';
 import { Head } from '@inertiajs/react';
 import { Users } from 'lucide-react';
@@ -14,7 +15,7 @@ const breadcrumbs: BreadcrumbEntry[] = [
 export default function CreateUser({ roleOptions, statusOptions }: UserFormOptions) {
     return (
         <>
-            <Head title="Add user" />
+            <Head title={__('Add user')} />
             <UserForm
                 method="post"
                 action={route('users.store')}

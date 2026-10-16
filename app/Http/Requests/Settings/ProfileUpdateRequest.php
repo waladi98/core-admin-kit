@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Settings;
 
+use App\Http\Middleware\SetLocale;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,6 +28,8 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+
+            'locale' => ['nullable', 'string', Rule::in(array_keys(SetLocale::available()))],
         ];
     }
 }

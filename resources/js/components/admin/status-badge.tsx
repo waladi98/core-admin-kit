@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type TransactionStatus } from '@/types/dashboard';
 import { CircleAlert, CircleCheck, Clock3, FileSearch, type LucideIcon } from 'lucide-react';
@@ -16,7 +17,7 @@ export function StatusBadge({ status }: { status: TransactionStatus }) {
     return (
         <span className="text-ink-soft inline-flex items-center gap-2">
             <Icon className={cn('size-4 shrink-0', config.color)} aria-hidden="true" />
-            {config.label}
+            {__(config.label)}
         </span>
     );
 }

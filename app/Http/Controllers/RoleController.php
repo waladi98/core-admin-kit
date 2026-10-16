@@ -71,7 +71,7 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role): RedirectResponse
     {
-        abort_if($role->isAdmin(), 403, 'The admin role always has every permission.');
+        abort_if($role->isAdmin(), 403, __('The admin role always has every permission.'));
 
         DB::transaction(function () use ($request, $role): void {
             // Built-in role names are referenced in code, so only their permissions can change.
@@ -87,8 +87,8 @@ class RoleController extends Controller
 
     public function destroy(Role $role): RedirectResponse
     {
-        abort_if($role->isBuiltIn(), 403, 'Built-in roles cannot be deleted.');
-        abort_if($role->users()->exists(), 409, 'Move the users to another role before deleting this one.');
+        abort_if($role->isBuiltIn(), 403, __('Built-in roles cannot be deleted.'));
+        abort_if($role->users()->exists(), 409, __('Move the users to another role before deleting this one.'));
 
         Gate::authorize('delete', $role);
 

@@ -33,3 +33,18 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Akun pemilik di DB development | `waladi.widarno@…` (id 1) dijadikan **admin** setelah migrasi. | DB development sudah berisi admin dummy dari seeder, sehingga aturan "akun pertama jadi admin" tidak berlaku dan pemilik akan kehilangan akses ke Users/Roles. |
 | Menu | Grup baru **Administration**: Users & Roles & Permissions, tersembunyi tanpa permission. | Memisahkan menu pengelolaan dari menu bisnis. |
 | Seeder | `admin@example.com` / `password` sebagai admin awal. | Instalasi baru langsung bisa login sebagai admin. Ganti password setelah login pertama. |
+
+## S1b — Multi-bahasa
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Format terjemahan | JSON Laravel (`lang/id.json`) dengan teks Inggris sebagai kunci; Inggris tanpa file. | Satu sumber untuk `__()` (PHP) dan `t()` (React); teks yang belum diterjemahkan tetap tampil dalam bahasa Inggris, tidak kosong. |
+| Pengiriman ke frontend | Shared prop `translations` hanya untuk bahasa aktif (±240 entri). | Ringan; partial reload tidak mengirim ulang. |
+| Penerjemahan di komponen inti | Breadcrumb, Panel, FormSection/FormField, Modal, DataTable, FilterTabs, sidebar, topbar menerjemahkan prop teksnya sendiri. | Halaman & modul baru cukup menulis teks Inggris; lebih sedikit kode berulang. |
+| Judul dinamis | `title="Edit user · :name"` + `titleParams`, diterjemahkan di topbar. | Fungsi `layout` dijalankan sebelum bahasa disinkronkan; terjemahan harus terjadi saat topbar dirender. |
+| Halaman auth | Memakai `t()` dari `useTranslation()`. | Layout auth berada di dalam halaman, jadi teks halaman dievaluasi sebelum layout. |
+| Penyimpanan bahasa | `users.locale` (pengguna), session (tamu), default `APP_LOCALE`. | Bahasa ikut akun di perangkat mana pun; tamu bisa ganti di halaman login. |
+| Default instalasi baru | `.env.example` → `APP_LOCALE=id`. | Target pengguna berbahasa Indonesia. `.env` lokal Anda tidak diubah (masih `en`); pilih bahasa lewat menu pengguna atau Settings → Profile. |
+| Pesan validasi | `lang/id/validation.php` ditulis sendiri (aturan yang umum dipakai + nama atribut), tanpa paket tambahan. | Tanpa dependency baru; aturan yang tidak ada jatuh ke bahasa Inggris. |
+| Pemilih bahasa | Menu pengguna (sidebar), bawah kartu login, dan Settings → Profile. | Mudah ditemukan tanpa halaman tambahan. |
+| Data dummy dashboard | Label statistik diterjemahkan; isi activity feed & transaksi dummy tidak. | Data dummy akan dibersihkan di S11. |

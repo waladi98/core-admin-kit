@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type LucideIcon } from 'lucide-react';
 import { type ComponentProps, type ReactNode } from 'react';
@@ -28,8 +29,10 @@ export function FormSection({ title, description, icon: Icon, actions, className
                     </span>
                 )}
                 <div className="min-w-0 flex-1">
-                    <h2 className="text-ink text-sm font-semibold">{title}</h2>
-                    {description && <p className="text-ink-muted mt-0.5 text-xs">{description}</p>}
+                    <h2 className="text-ink text-sm font-semibold">{typeof title === 'string' ? __(title) : title}</h2>
+                    {description && (
+                        <p className="text-ink-muted mt-0.5 text-xs">{typeof description === 'string' ? __(description) : description}</p>
+                    )}
                 </div>
                 {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
             </header>
@@ -56,10 +59,14 @@ export function FormField({ label, htmlFor, required = false, hint, error, class
     return (
         <div className={cn('grid content-start gap-1.5', className)}>
             <Label htmlFor={htmlFor} required={required}>
-                {label}
+                {typeof label === 'string' ? __(label) : label}
             </Label>
             {children}
-            {error ? <p className="text-danger text-xs">{error}</p> : hint && <p className="text-ink-muted text-xs">{hint}</p>}
+            {error ? (
+                <p className="text-danger text-xs">{error}</p>
+            ) : (
+                hint && <p className="text-ink-muted text-xs">{typeof hint === 'string' ? __(hint) : hint}</p>
+            )}
         </div>
     );
 }

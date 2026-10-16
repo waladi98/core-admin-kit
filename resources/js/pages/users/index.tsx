@@ -25,6 +25,7 @@ import {
 import { usePermissions } from '@/hooks/use-can';
 import { useTableQuery } from '@/hooks/use-table-query';
 import AdminLayout from '@/layouts/admin-layout';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { type TableSort } from '@/types/table';
@@ -143,8 +144,8 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
         <>
             <Input
                 type="search"
-                placeholder="Search name or email…"
-                aria-label="Search users"
+                placeholder={__('Search name or email…')}
+                aria-label={__('Search users')}
                 leadingIcon={table.isSearching ? <LoaderCircle className="animate-spin" /> : <Search />}
                 value={table.query.search}
                 onChange={(event) => table.setSearch(event.target.value)}
@@ -153,12 +154,12 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
             <Dropdown>
                 <DropdownTrigger className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), activeRole && 'border-brand')}>
                     <Filter />
-                    {activeRole ? roleOptions.find((option) => option.value === activeRole)?.label : 'Filter'}
+                    {activeRole ? roleOptions.find((option) => option.value === activeRole)?.label : __('Filter')}
                 </DropdownTrigger>
                 <DropdownContent>
-                    <DropdownLabel>Role</DropdownLabel>
+                    <DropdownLabel>{__('Role')}</DropdownLabel>
                     <DropdownItem onSelect={() => table.setFilter('role', null)} icon={activeRole === null ? <Check /> : <span className="size-4" />}>
-                        All roles
+                        {__('All roles')}
                     </DropdownItem>
                     <DropdownSeparator />
                     {roleOptions.map((option) => (
@@ -175,7 +176,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
             <Can permission="users.create">
                 <Link href={route('users.create')} prefetch className={buttonVariants({ size: 'sm' })}>
                     <Plus />
-                    Add user
+                    {__('Add user')}
                 </Link>
             </Can>
         </>
@@ -183,7 +184,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
 
     return (
         <>
-            <Head title="Users" />
+            <Head title={__('Users')} />
 
             <Panel fill>
                 <Panel.Header title="Users" icon={Users} actions={headerActions} />
@@ -211,7 +212,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                                 ? (user) => (
                                       <Dropdown>
                                           <DropdownTrigger
-                                              aria-label={`Actions for ${user.name}`}
+                                              aria-label={__('Actions for :name', { name: user.name })}
                                               className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}
                                           >
                                               <MoreHorizontal />
@@ -219,7 +220,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                                           <DropdownContent>
                                               {canEdit && (
                                                   <DropdownItem icon={<Pencil />} href={route('users.edit', user.id)}>
-                                                      Edit
+                                                      {__('Edit')}
                                                   </DropdownItem>
                                               )}
                                               {canEdit && canDelete && <DropdownSeparator />}
@@ -230,7 +231,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                                                       disabled={user.id === auth.user.id}
                                                       onSelect={() => setUserToDelete(user)}
                                                   >
-                                                      Delete
+                                                      {__('Delete')}
                                                   </DropdownItem>
                                               )}
                                           </DropdownContent>
@@ -240,11 +241,11 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                         }
                         emptyState={
                             <>
-                                <p className="text-ink text-sm font-medium">No users found</p>
-                                <p className="text-ink-muted text-sm">Try a different keyword, role or status.</p>
+                                <p className="text-ink text-sm font-medium">{__('No users found')}</p>
+                                <p className="text-ink-muted text-sm">{__('Try a different keyword, role or status.')}</p>
                                 {table.hasActiveFilters && (
                                     <Button variant="secondary" size="sm" className="mt-2" onClick={table.reset}>
-                                        Reset filters
+                                        {__('Reset filters')}
                                     </Button>
                                 )}
                             </>
@@ -271,15 +272,20 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                 onClose={() => setUserToDelete(null)}
                 title="Delete this user?"
                 description={
-                    userToDelete ? `${userToDelete.name} (${userToDelete.email}) will lose access immediately. This cannot be undone.` : undefined
+                    userToDelete
+                        ? __(':name (:email) will lose access immediately. This cannot be undone.', {
+                              name: userToDelete.name,
+                              email: userToDelete.email,
+                          })
+                        : undefined
                 }
             >
                 <ModalFooter>
                     <Button variant="secondary" onClick={() => setUserToDelete(null)}>
-                        Cancel
+                        {__('Cancel')}
                     </Button>
                     <Button variant="danger" onClick={confirmDelete}>
-                        Delete user
+                        {__('Delete user')}
                     </Button>
                 </ModalFooter>
             </Modal>

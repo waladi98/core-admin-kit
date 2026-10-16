@@ -1,4 +1,5 @@
 import { Input, SegmentedControl, type SegmentedOption } from '@/components/core';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type Activity, type ActivityPeriod, type ActivityType } from '@/types/dashboard';
 import { ArrowLeftRight, BookOpenText, Repeat2, Search, Star, TriangleAlert, UserRound, type LucideIcon } from 'lucide-react';
@@ -7,9 +8,9 @@ import { useMemo, useState } from 'react';
 const activityStyles: Record<ActivityType, { icon: LucideIcon; color: string }> = {
     transaction: { icon: ArrowLeftRight, color: 'text-info' },
     client: { icon: UserRound, color: 'text-success' },
-    reassignment: { icon: Repeat2, color: 'text-violet-500' },
+    reassignment: { icon: Repeat2, color: 'text-brand' },
     risk: { icon: TriangleAlert, color: 'text-danger' },
-    knowledge: { icon: BookOpenText, color: 'text-cyan-600' },
+    knowledge: { icon: BookOpenText, color: 'text-info' },
     feedback: { icon: Star, color: 'text-warning' },
 };
 
@@ -46,21 +47,27 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
     return (
         <div className="flex min-h-0 flex-1 flex-col gap-3">
-            <SegmentedControl options={periodOptions} value={period} onChange={setPeriod} label="Activity period" />
+            <SegmentedControl
+                options={periodOptions.map((option) => ({ ...option, label: __(option.label) }))}
+                value={period}
+                onChange={setPeriod}
+                label={__('Activity period')}
+            />
             <Input
                 type="search"
-                placeholder="Search activities"
-                aria-label="Search activities"
+                placeholder={__('Search activities')}
+                aria-label={__('Search activities')}
                 leadingIcon={<Search />}
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
             />
             <p className="text-ink-muted border-line border-b pb-3 text-xs">
-                <span className="text-ink text-base font-semibold">{visibleActivities.length}</span> new activities {periodLabels[period]}
+                <span className="text-ink text-base font-semibold">{visibleActivities.length}</span>{' '}
+                {__('new activities :period', { period: __(periodLabels[period]) })}
             </p>
 
             {visibleActivities.length === 0 ? (
-                <p className="text-ink-subtle py-8 text-center text-sm">No activities found.</p>
+                <p className="text-ink-subtle py-8 text-center text-sm">{__('No activities found.')}</p>
             ) : (
                 <ul className="scrollbar-thin scroll-fade-y -mr-2 min-h-0 flex-1 space-y-4 overflow-y-auto py-1 pr-2">
                     {visibleActivities.map((activity) => {

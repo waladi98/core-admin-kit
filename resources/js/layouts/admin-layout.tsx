@@ -5,6 +5,8 @@ import { TopbarSlotProvider } from '@/components/admin/topbar-actions';
 import { Drawer, type BreadcrumbEntry } from '@/components/core';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useNavigationPending } from '@/hooks/use-navigation-pending';
+import { useSyncTranslations } from '@/hooks/use-translation';
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { useCallback, useState, type ReactNode } from 'react';
 
@@ -30,11 +32,14 @@ export interface AdminLayoutProps {
     breadcrumbs?: BreadcrumbEntry[];
     /** Page title shown in the topbar under the breadcrumb, e.g. on create and edit pages. */
     title?: string;
+    /** Values for `:placeholders` in `title`. The title is translated by the topbar. */
+    titleParams?: Record<string, string | number>;
     children: ReactNode;
 }
 
-export default function AdminLayout({ breadcrumbs, title, children }: AdminLayoutProps) {
+export default function AdminLayout({ breadcrumbs, title, titleParams, children }: AdminLayoutProps) {
     const [isCollapsed, setIsCollapsed] = useState(() => (typeof window === 'undefined' ? false : readCollapsedPreference()));
+    useSyncTranslations();
     const mobileMenu = useDisclosure();
     const navigation = useNavigationPending();
 
@@ -58,12 +63,12 @@ export default function AdminLayout({ breadcrumbs, title, children }: AdminLayou
                     <Sidebar isCollapsed={isCollapsed} onToggleCollapse={toggleCollapse} enableSearchShortcut />
                 </div>
 
-                <Drawer isOpen={mobileMenu.isOpen} onClose={mobileMenu.close} title="Navigation menu">
+                <Drawer isOpen={mobileMenu.isOpen} onClose={mobileMenu.close} title={__('Navigation menu')}>
                     <Sidebar onClose={mobileMenu.close} />
                 </Drawer>
 
                 <div className="flex min-w-0 flex-1 flex-col">
-                    <Topbar breadcrumbs={breadcrumbs} title={title} onOpenMenu={mobileMenu.open} />
+                    <Topbar breadcrumbs={breadcrumbs} title={title} titleParams={titleParams} onOpenMenu={mobileMenu.open} />
                     <main
                         aria-busy={navigation.isPending || undefined}
                         className={cn(

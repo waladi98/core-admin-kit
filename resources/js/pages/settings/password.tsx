@@ -1,6 +1,7 @@
 import { Button, FormActions, FormField, FormSection, Input, type BreadcrumbEntry } from '@/components/core';
 import AdminLayout from '@/layouts/admin-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import { __ } from '@/lib/i18n';
 import { Transition } from '@headlessui/react';
 import { Head, useForm } from '@inertiajs/react';
 import { Check, KeyRound } from 'lucide-react';
@@ -43,7 +44,7 @@ export default function Password() {
 
     return (
         <>
-            <Head title="Password settings" />
+            <Head title={__('Password settings')} />
 
             <form onSubmit={updatePassword}>
                 <FormSection icon={KeyRound} title="Update password" description="Use a long, random password to keep your account secure.">
@@ -56,7 +57,7 @@ export default function Password() {
                                 onChange={(e) => setData('current_password', e.target.value)}
                                 type="password"
                                 autoComplete="current-password"
-                                placeholder="Current password"
+                                placeholder={__('Current password')}
                                 invalid={Boolean(errors.current_password)}
                             />
                         </FormField>
@@ -69,7 +70,7 @@ export default function Password() {
                                 onChange={(e) => setData('password', e.target.value)}
                                 type="password"
                                 autoComplete="new-password"
-                                placeholder="New password"
+                                placeholder={__('New password')}
                                 invalid={Boolean(errors.password)}
                             />
                         </FormField>
@@ -81,7 +82,7 @@ export default function Password() {
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 type="password"
                                 autoComplete="new-password"
-                                placeholder="Confirm password"
+                                placeholder={__('Confirm password')}
                                 invalid={Boolean(errors.password_confirmation)}
                             />
                         </FormField>
@@ -95,11 +96,11 @@ export default function Password() {
                             leave="transition ease-in-out"
                             leaveTo="opacity-0"
                         >
-                            <p className="text-success text-sm font-medium">Saved</p>
+                            <p className="text-success text-sm font-medium">{__('Saved')}</p>
                         </Transition>
                         <Button type="submit" isLoading={processing}>
                             {!processing && <Check />}
-                            Save password
+                            {__('Save password')}
                         </Button>
                     </FormActions>
                 </FormSection>

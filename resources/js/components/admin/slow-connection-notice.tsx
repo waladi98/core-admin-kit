@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { router } from '@inertiajs/react';
 import { LoaderCircle, WifiOff } from 'lucide-react';
 
@@ -20,10 +21,10 @@ export function SlowConnectionNotice({ isVisible }: { isVisible: boolean }) {
                 <WifiOff className="size-4" />
             </span>
             <div className="min-w-0">
-                <p className="text-ink font-medium">Slow connection</p>
+                <p className="text-ink font-medium">{__('Slow connection')}</p>
                 <p className="text-ink-muted flex items-center gap-1.5 text-xs">
                     <LoaderCircle className="size-3 animate-spin" />
-                    Still loading the page…
+                    {__('Still loading the page…')}
                 </p>
             </div>
             <button
@@ -31,7 +32,7 @@ export function SlowConnectionNotice({ isVisible }: { isVisible: boolean }) {
                 onClick={() => router.cancel()}
                 className="text-ink-soft hover:bg-surface-hover hover:text-ink rounded-field ml-2 h-8 px-2.5 text-xs font-medium transition-colors"
             >
-                Cancel
+                {__('Cancel')}
             </button>
         </div>
     );

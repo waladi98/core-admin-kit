@@ -8,6 +8,12 @@ export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
+    /** Current interface language, e.g. `id`. */
+    locale: string;
+    /** Locale code → language name. */
+    locales: Record<string, string>;
+    /** English text → translated text for the current locale (empty for English). */
+    translations: Record<string, string>;
     [key: string]: unknown;
 }
 
@@ -16,6 +22,8 @@ export interface User {
     name: string;
     email: string;
     avatar?: string;
+    /** Preferred UI language; null follows the application default. */
+    locale?: string | null;
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;

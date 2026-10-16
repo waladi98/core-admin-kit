@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Link, usePage } from '@inertiajs/react';
 import { KeyRound, UserRound, type LucideIcon } from 'lucide-react';
@@ -18,7 +19,7 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
     return (
         <div className="gap-section flex flex-col lg:flex-row lg:items-start">
             <nav
-                aria-label="Settings"
+                aria-label={__('Settings')}
                 className="scrollbar-thin flex gap-1 overflow-x-auto lg:sticky lg:top-[calc(var(--spacing-topbar)+var(--spacing-page))] lg:w-48 lg:shrink-0 lg:flex-col"
             >
                 {settingsNavigation.map((item) => {
@@ -39,7 +40,7 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
                             )}
                         >
                             <Icon className="size-4 shrink-0" />
-                            {item.title}
+                            {__(item.title)}
                         </Link>
                     );
                 })}

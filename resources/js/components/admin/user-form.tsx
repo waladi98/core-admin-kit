@@ -1,4 +1,5 @@
 import { Button, FormActions, FormField, FormSection, Input, Select, buttonVariants } from '@/components/core';
+import { __ } from '@/lib/i18n';
 import { type UserFormData, type UserFormOptions } from '@/types/user-management';
 import { Link, useForm } from '@inertiajs/react';
 import { Check, KeyRound, UserRound } from 'lucide-react';
@@ -33,7 +34,7 @@ export function UserForm({ initialValues, method, action, submitLabel, isPasswor
                             onChange={(event) => setData('name', event.target.value)}
                             required
                             autoComplete="off"
-                            placeholder="Full name"
+                            placeholder={__('Full name')}
                             invalid={Boolean(errors.name)}
                         />
                     </FormField>
@@ -46,7 +47,7 @@ export function UserForm({ initialValues, method, action, submitLabel, isPasswor
                             onChange={(event) => setData('email', event.target.value)}
                             required
                             autoComplete="off"
-                            placeholder="name@company.com"
+                            placeholder={__('name@company.com')}
                             invalid={Boolean(errors.email)}
                         />
                     </FormField>
@@ -87,7 +88,7 @@ export function UserForm({ initialValues, method, action, submitLabel, isPasswor
                             onChange={(event) => setData('password', event.target.value)}
                             required={!isPasswordOptional}
                             autoComplete="new-password"
-                            placeholder={isPasswordOptional ? 'Keep current password' : 'Password'}
+                            placeholder={isPasswordOptional ? __('Keep current password') : __('Password')}
                             invalid={Boolean(errors.password)}
                         />
                     </FormField>
@@ -105,7 +106,7 @@ export function UserForm({ initialValues, method, action, submitLabel, isPasswor
                             onChange={(event) => setData('password_confirmation', event.target.value)}
                             required={!isPasswordOptional}
                             autoComplete="new-password"
-                            placeholder="Confirm password"
+                            placeholder={__('Confirm password')}
                             invalid={Boolean(errors.password_confirmation)}
                         />
                     </FormField>
@@ -114,11 +115,11 @@ export function UserForm({ initialValues, method, action, submitLabel, isPasswor
 
             <FormActions sticky>
                 <Link href={route('users.index')} className={buttonVariants({ variant: 'secondary' })}>
-                    Cancel
+                    {__('Cancel')}
                 </Link>
                 <Button type="submit" isLoading={processing}>
                     {!processing && <Check />}
-                    {submitLabel}
+                    {__(submitLabel)}
                 </Button>
             </FormActions>
         </form>

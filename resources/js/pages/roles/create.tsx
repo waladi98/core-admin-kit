@@ -1,6 +1,7 @@
 import { RoleForm } from '@/components/admin/role-form';
 import { type BreadcrumbEntry } from '@/components/core';
 import AdminLayout from '@/layouts/admin-layout';
+import { __ } from '@/lib/i18n';
 import { type RoleCreateProps } from '@/types/roles';
 import { Head } from '@inertiajs/react';
 import { LockKeyhole } from 'lucide-react';
@@ -14,7 +15,7 @@ const breadcrumbs: BreadcrumbEntry[] = [
 export default function CreateRole({ permissionGroups }: RoleCreateProps) {
     return (
         <>
-            <Head title="Add role" />
+            <Head title={__('Add role')} />
             <RoleForm
                 method="post"
                 action={route('roles.store')}

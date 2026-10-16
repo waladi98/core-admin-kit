@@ -238,6 +238,15 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Frontend: `auth.permissions` is shared by `HandleInertiaRequests`. Hide what the user cannot use with `useCan('users.create')`, `usePermissions()` or `<Can permission="…">` (`@/components/admin/can`); add `permission` to entries in `config/navigation.ts`. The UI only hides things — the server always enforces.
 - Tests: users get the `staff` role by default; use `User::factory()->admin()` or `->role(Role::MANAGER)`.
 
+## Translations (Indonesian & English)
+
+- Write every UI text in English and translate it; add the Indonesian text to `lang/id.json` (keys are the English texts, English needs no file). Placeholders use `:name`.
+- Backend: `__('Text')` for labels and messages sent to the frontend (enum `label()`, abort messages, flash messages). Validation messages come from `lang/id/validation.php`; add new attribute names to its `attributes` array.
+- Frontend: inside components use `const { t } = useTranslation()`; helper code rendered under `AdminLayout` may use `__()` from `@/lib/i18n`. Auth pages (layout inside the page) must use `t()`.
+- Core components translate string props themselves: `Breadcrumb` titles, `Panel.Header` title, `FormSection` title/description, `FormField` label/hint, `Modal` title/description, `DataTable` header/emptyMessage, `FilterTabs` labels, sidebar menu (`config/navigation.ts`), topbar `title` (+ `titleParams` for `:placeholders`). Pass English strings to them; do not pre-translate.
+- Dates and numbers use `Intl` with `intlLocale()` from `@/lib/i18n`, never a hard-coded `'en-US'`.
+- The user's language is stored in `users.locale` (switcher in the user menu, auth pages and Settings → Profile); guests use the session; default is `APP_LOCALE`.
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.

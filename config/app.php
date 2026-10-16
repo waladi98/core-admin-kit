@@ -86,6 +86,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Available Locales
+    |--------------------------------------------------------------------------
+    |
+    | Languages users can choose. Keys are locale codes (lang/{code}.json),
+    | values are names shown in the language switcher, written in that language.
+    |
+    */
+
+    'available_locales' => [
+        'en' => 'English',
+        'id' => 'Bahasa Indonesia',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |

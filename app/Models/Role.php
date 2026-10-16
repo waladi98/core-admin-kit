@@ -44,6 +44,6 @@ class Role extends SpatieRole
      */
     public function label(): string
     {
-        return Str::headline($this->name);
+        return __(Str::headline($this->name));
     }
 }

@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 export interface TrendBadgeProps {
@@ -16,7 +17,7 @@ export function TrendBadge({ change, suffix = 'vs last week', className }: Trend
     return (
         <span className={cn('inline-flex items-center gap-1.5 text-xs', className)}>
             <span className={cn('font-medium', change >= 0 ? 'text-success' : 'text-danger')}>{formatChange(change)}</span>
-            {suffix && <span className="text-ink-muted">{suffix}</span>}
+            {suffix && <span className="text-ink-muted">{__(suffix)}</span>}
         </span>
     );
 }
