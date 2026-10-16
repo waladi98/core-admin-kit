@@ -1,3 +1,4 @@
+import { CommandPaletteProvider } from '@/components/admin/command-palette';
 import { ErrorBoundary } from '@/components/admin/error-boundary';
 import { FlashToasts } from '@/components/admin/flash-toasts';
 import { Sidebar } from '@/components/admin/sidebar/sidebar';
@@ -58,40 +59,42 @@ export default function AdminLayout({ breadcrumbs, title, titleParams, children 
     return (
         <ToastProvider>
             <ConfirmProvider>
-                <TopbarSlotProvider>
-                    <FlashToasts />
-                    <div className="bg-surface text-ink flex min-h-screen">
-                        <div
-                            className={cn(
-                                'border-line sticky top-0 hidden h-screen shrink-0 border-r transition-[width] duration-200 ease-out lg:block',
-                                isCollapsed ? 'w-16' : 'w-60',
-                            )}
-                        >
-                            <Sidebar isCollapsed={isCollapsed} onToggleCollapse={toggleCollapse} enableSearchShortcut />
-                        </div>
-
-                        <Drawer isOpen={mobileMenu.isOpen} onClose={mobileMenu.close} title={__('Navigation menu')}>
-                            <Sidebar onClose={mobileMenu.close} />
-                        </Drawer>
-
-                        <div className="flex min-w-0 flex-1 flex-col">
-                            <Topbar breadcrumbs={breadcrumbs} title={title} titleParams={titleParams} onOpenMenu={mobileMenu.open} />
-                            <main
-                                aria-busy={navigation.isPending || undefined}
+                <CommandPaletteProvider>
+                    <TopbarSlotProvider>
+                        <FlashToasts />
+                        <div className="bg-surface text-ink flex min-h-screen">
+                            <div
                                 className={cn(
-                                    'animate-fade p-page flex-1 transition-opacity duration-200',
-                                    navigation.isPending && 'pointer-events-none opacity-60',
+                                    'border-line sticky top-0 hidden h-screen shrink-0 border-r transition-[width] duration-200 ease-out lg:block',
+                                    isCollapsed ? 'w-16' : 'w-60',
                                 )}
                             >
-                                <ErrorBoundary size="page" resetKey={pageUrl}>
-                                    {children}
-                                </ErrorBoundary>
-                            </main>
-                        </div>
+                                <Sidebar isCollapsed={isCollapsed} onToggleCollapse={toggleCollapse} />
+                            </div>
 
-                        <SlowConnectionNotice isVisible={navigation.isSlow} />
-                    </div>
-                </TopbarSlotProvider>
+                            <Drawer isOpen={mobileMenu.isOpen} onClose={mobileMenu.close} title={__('Navigation menu')}>
+                                <Sidebar onClose={mobileMenu.close} />
+                            </Drawer>
+
+                            <div className="flex min-w-0 flex-1 flex-col">
+                                <Topbar breadcrumbs={breadcrumbs} title={title} titleParams={titleParams} onOpenMenu={mobileMenu.open} />
+                                <main
+                                    aria-busy={navigation.isPending || undefined}
+                                    className={cn(
+                                        'animate-fade p-page flex-1 transition-opacity duration-200',
+                                        navigation.isPending && 'pointer-events-none opacity-60',
+                                    )}
+                                >
+                                    <ErrorBoundary size="page" resetKey={pageUrl}>
+                                        {children}
+                                    </ErrorBoundary>
+                                </main>
+                            </div>
+
+                            <SlowConnectionNotice isVisible={navigation.isSlow} />
+                        </div>
+                    </TopbarSlotProvider>
+                </CommandPaletteProvider>
             </ConfirmProvider>
         </ToastProvider>
     );

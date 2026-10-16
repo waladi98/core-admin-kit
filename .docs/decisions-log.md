@@ -106,3 +106,14 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Katalog `/ui` | Hanya `local`, berbahasa Inggris (khusus developer). | Bukan halaman pengguna. |
 | Tag `v1.0.0` | **Belum dibuat** — menunggu Anda setelah uji manual di browser. | Sesuai kesepakatan izin. |
 | Test di SQLite | Belum bisa diuji lokal (tanpa `pdo_sqlite`); CI akan menjadi pemeriksa pertama. | Bila ada perbedaan SQLite vs MySQL, perbaiki dari hasil CI. |
+
+## S6 — Command Palette & Notifikasi
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Isi command palette | Semua halaman di menu (tersaring izin, diterjemahkan) + aksi cepat dari `config/commands.ts`. Pencarian per kata, juga cocok dengan teks Inggris & kata kunci. | Tanpa konfigurasi tambahan per modul selain aksi "tambah". |
+| Kotak "Cari apa saja" di sidebar | Kini membuka command palette (sebelumnya hanya tampilan). | Satu tempat pencarian. |
+| Notifikasi | Laravel Database Notifications + kelas umum `AppNotification`; teks disimpan sebagai kunci Inggris + parameter, diterjemahkan saat dibaca. | Penerima membaca dalam bahasanya sendiri, walau pengirim memakai bahasa lain. |
+| Pemuatan daftar | Jumlah belum dibaca dikirim di setiap halaman & dicek tiap 60 detik (`usePoll`); daftar (15 terbaru) baru dimuat saat lonceng dibuka (`Inertia::optional`). | Halaman tetap ringan. |
+| Contoh notifikasi | Selamat datang untuk pengguna baru; pemberitahuan saat role diubah oleh orang lain. | Contoh nyata untuk modul lain. |
+| Real-time (WebSocket) | Belum; cukup polling 60 detik. | Tanpa dependency/server tambahan (Reverb/Pusher) — bisa ditambah nanti. |

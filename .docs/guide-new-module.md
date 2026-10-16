@@ -58,6 +58,7 @@
    ```
    Breadcrumb dinamis (mis. nama data di halaman edit): ketik argumen sebagai `ReactElement<Props>` dan baca `page.props` (lihat `pages/users/edit.tsx`).
 5. **Menu** — tambahkan di `config/navigation.ts` dengan `permission: 'clients.view'`.
+7. **Command palette** — tambahkan aksi "Add client" di `config/commands.ts` (dengan `permission`).
 6. **Tombol sesuai izin** — bungkus tombol Add dengan `<Can permission="clients.create">`, tampilkan Edit/Delete hanya jika `useCan('clients.update' | 'clients.delete')`.
 
 ### 3. Test (Pest)

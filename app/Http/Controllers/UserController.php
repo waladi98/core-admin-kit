@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UserIndexRequest;
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\AppNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -94,10 +95,14 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request): void {
+        $user = DB::transaction(function () use ($request): User {
             $user = User::create($request->safe()->except('role'));
             $user->syncRoles([$request->validated('role')]);
+
+            return $user;
         });
+
+        $user->notify(new AppNotification('Welcome to :app', 'Your account is ready. Open your profile to add a photo and choose your language.', ['app' => config('app.name')], route('profile.edit'), 'success'));
 
         return to_route('users.index')->withToast('success', __('User created.'));
     }
@@ -115,6 +120,8 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
+        $previousRole = $user->roles->first()?->name;
+
         DB::transaction(function () use ($request, $user): void {
             $user->update(collect($request->safe()->except('role'))->filter(
                 fn (mixed $value, string $key): bool => $key !== 'password' || filled($value)
@@ -122,6 +129,12 @@ class UserController extends Controller
 
             $user->syncRoles([$request->validated('role')]);
         });
+
+        $newRole = Role::findByName($request->validated('role'));
+
+        if ($previousRole !== $newRole->name && $user->isNot($request->user())) {
+            $user->notify(new AppNotification('Your role was changed', 'You are now :role. Some menus may have changed.', ['role' => Str::headline($newRole->name)], route('dashboard')));
+        }
 
         return to_route('users.index')->withToast('success', __('User updated.'));
     }

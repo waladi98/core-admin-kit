@@ -2,7 +2,8 @@ import { Breadcrumb, IconButton, type BreadcrumbEntry } from '@/components/core'
 import { formatDate } from '@/lib/format';
 import { __ } from '@/lib/i18n';
 import { Link } from '@inertiajs/react';
-import { Bell, CalendarDays, Menu, Settings } from 'lucide-react';
+import { CalendarDays, Menu, Settings } from 'lucide-react';
+import { NotificationBell } from './notification-bell';
 import { TopbarActionsSlot } from './topbar-actions';
 
 export interface TopbarProps {
@@ -40,10 +41,7 @@ export function Topbar({ breadcrumbs = [], title, titleParams, onOpenMenu }: Top
                     <CalendarDays className="size-3.5" />
                     {formatDate(new Date(), 'full')}
                 </span>
-                <IconButton label={__('Notifications')} className="relative">
-                    <Bell />
-                    <span className="bg-danger ring-surface absolute top-1.5 right-1.5 size-1.5 rounded-full ring-2" />
-                </IconButton>
+                <NotificationBell />
                 <Link
                     href="/settings/profile"
                     aria-label={__('Settings')}

@@ -262,6 +262,11 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - The error page is standalone (a 404 can happen before the web middleware runs); the handler passes `locale` and `translations` itself.
 - React rendering errors: `AdminLayout` wraps each page in `ErrorBoundary` (reset on navigation); wrap risky widgets (charts, embeds) in `<ErrorBoundary>` from `@/components/admin/error-boundary` so one failure does not blank the page.
 
+## Command Palette & Notifications
+
+- The command palette (⌘K / Ctrl+K, sidebar search) lists every permitted page from `config/navigation.ts` plus `config/commands.ts` quick actions. Add each new module's "create" action to `quickActions` with its `permission`.
+- In-app notifications: `$user->notify(new AppNotification($title, $body, $params, url: ..., tone: 'info'|'success'|'warning'|'danger'))`. Title/body are English keys with `:placeholders` (add them to `lang/id.json`); pass untranslated values in `$params` (they are translated for the reader). The bell shows the unread count (polled every minute) and loads the list only when opened (`notificationItems` optional prop).
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.

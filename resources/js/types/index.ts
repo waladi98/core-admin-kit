@@ -4,9 +4,24 @@ export interface Auth {
     permissions: string[];
 }
 
+/** An in-app notification (App\Notifications\AppNotification). Title and body are English keys. */
+export interface NotificationItem {
+    id: string;
+    title: string;
+    body: string;
+    params: Record<string, string | number>;
+    url: string | null;
+    tone: 'info' | 'success' | 'warning' | 'danger' | string;
+    readAt: string | null;
+    createdAt: string;
+}
+
 export interface SharedData {
     name: string;
     auth: Auth;
+    notifications?: { unreadCount: number };
+    /** Only present after a partial reload that asks for it (when the bell opens). */
+    notificationItems?: NotificationItem[];
     /** One-time messages from the server, e.g. `->withToast('success', ...)`. */
     flash?: { toast?: { id: string; type: string; message: string } | null };
     /** Current interface language, e.g. `id`. */

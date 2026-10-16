@@ -29,6 +29,7 @@ export * from './label';
 export * from './modal';
 export * from './pagination';
 export * from './panel';
+export * from './popover';
 export * from './segmented-control';
 export * from './select';
 export * from './skeleton';
