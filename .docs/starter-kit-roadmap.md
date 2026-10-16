@@ -135,14 +135,14 @@
 | L5 | **Kepadatan compact** | Padding konten 16px, gap grid 12px, baris tabel 40px, input/tombol 32–36px, teks 13–14px. | Sama; target sentuh minimal 32px. |
 | L6 | **Konten panjang di dalam komponen** | Modal, dropdown, sidebar, feed: `max-height` + scroll internal, bukan memanjangkan halaman. | Sama. |
 | L7 | **Tanpa judul ganda** | Judul dari breadcrumb / topbar `title`; tanpa `PageHeader`. | Sama. |
-| L8 | **Target layar uji** | 1366×768 (laptop kecil), 1440×900, 1920×1080. | 768×1024, 390×844. |
+| L8 | **Target layar** (keputusan: ukuran rata-rata) | **Acuan desain: 1536×864** (ukuran terbanyak di laptop 1080p dengan scaling 125%). **Batas minimum harus tetap nyaman: 1366×768.** Diuji juga di 1920×1080. | 768×1024, 390×844. |
 
 **Tugas:**
 - [ ] Shell `h-dvh`: `AdminLayout` jadi kolom tinggi layar, `<main>` satu-satunya area scroll (desktop).
-- [ ] Prop `fill` di `Panel` (+ `DataTable` `stickyHeader` / body scroll internal) agar panel tabel mengisi sisa tinggi layar; pagination tetap di dasar panel.
+- [x] Prop `fill` di `Panel` (+ `DataTable` `stickyHeader` / body scroll internal) agar panel tabel mengisi sisa tinggi layar; pagination tetap di dasar panel. *(diterapkan di /users)*
 - [ ] `FormActions sticky`: bar tombol menempel di bawah area konten dengan latar & garis atas.
 - [ ] Dashboard: tinggi chart & feed berbasis tinggi layar (`clamp`/`dvh`), feed scroll internal.
-- [ ] Token kepadatan di satu tempat (`--density-*` / default `size`), terapkan ke `main`, `Grid`, `Panel`, `Table`, `Input`, `Button`, `Select`.
+- [ ] *(sebagian: baris tabel 40px, header tabel 36px, padding konten 16px sudah diterapkan)* Token kepadatan di satu tempat (`--density-*` / default `size`), terapkan ke `main`, `Grid`, `Panel`, `Table`, `Input`, `Button`, `Select`.
 - [ ] Hapus `PageHeader` di Dashboard & Settings (Users sudah).
 - [ ] Modal & dropdown: `max-h` + scroll internal.
 - [ ] Uji di ukuran layar L8; pastikan di < 1024px tidak ada scroll bersarang.

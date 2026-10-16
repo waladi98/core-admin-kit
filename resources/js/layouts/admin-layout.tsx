@@ -65,7 +65,7 @@ export default function AdminLayout({ breadcrumbs, title, children }: AdminLayou
                 <main
                     aria-busy={navigation.isPending || undefined}
                     className={cn(
-                        'animate-fade flex-1 px-4 py-6 transition-opacity duration-200 lg:px-6',
+                        'animate-fade flex-1 px-4 py-4 transition-opacity duration-200 lg:px-5',
                         navigation.isPending && 'pointer-events-none opacity-60',
                     )}
                 >

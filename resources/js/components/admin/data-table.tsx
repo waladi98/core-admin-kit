@@ -43,6 +43,11 @@ export interface DataTableProps<T> {
      * (e.g. (currentPage - 1) * perPage) so numbering continues across pages.
      */
     rowNumberOffset?: number;
+    /**
+     * Keeps the header visible while rows scroll inside the table. Use inside a
+     * height-limited container such as `<Panel fill>` with a flex-column body.
+     */
+    stickyHeader?: boolean;
 }
 
 /** Later rows share the last delay so long pages do not feel slow. */
@@ -93,6 +98,7 @@ export function DataTable<T>({
     emptyState,
     emptyMessage = 'No data found.',
     rowNumberOffset,
+    stickyHeader = false,
 }: DataTableProps<T>) {
     const showRowNumbers = rowNumberOffset !== undefined;
     const isServerSorted = controlledSort !== undefined;
@@ -174,8 +180,8 @@ export function DataTable<T>({
     exitingRows.forEach(({ row, index }) => displayedRows.splice(Math.min(index, displayedRows.length), 0, { row, isExiting: true }));
 
     return (
-        <Table aria-busy={isLoading || undefined}>
-            <TableHead>
+        <Table aria-busy={isLoading || undefined} containerClassName={cn(stickyHeader && 'min-h-0 flex-1 overflow-auto')}>
+            <TableHead className={cn(stickyHeader && 'sticky top-0 z-10')}>
                 <TableRow className="border-b-0">
                     {selectable && (
                         <TableHeaderCell className="w-10">

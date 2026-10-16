@@ -13,7 +13,7 @@ export const badgeVariants = cva('inline-flex items-center gap-1 whitespace-nowr
             brand: 'bg-brand text-brand-foreground',
         },
         size: {
-            sm: 'rounded-md px-1.5 py-0.5 text-[11px]',
+            sm: 'rounded-md px-1.5 py-px text-xs',
             md: 'rounded-md px-2 py-0.5 text-xs',
         },
         appearance: {

@@ -75,7 +75,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-baseline justify-between gap-2">
                                         <p className="text-ink truncate text-[13px] font-medium">{activity.title}</p>
-                                        <time className="text-ink-subtle shrink-0 text-[11px]">{activity.time}</time>
+                                        <time className="text-ink-subtle shrink-0 text-xs">{activity.time}</time>
                                     </div>
                                     <p className="text-ink-muted mt-0.5 text-xs">{activity.description}</p>
                                 </div>

@@ -5,18 +5,29 @@ import { type ComponentProps, type ReactNode } from 'react';
 export interface PanelProps extends ComponentProps<'section'> {
     /** Dims the body content and shows a thin progress bar while data reloads. */
     isLoading?: boolean;
+    /**
+     * Desktop only: limits the panel to the visible screen height (below the topbar),
+     * so a table scrolls inside the panel while its header and footer stay visible.
+     * Below 1024px the page scrolls normally to avoid nested scrolling on touch screens.
+     */
+    fill?: boolean;
 }
 
 /**
  * Outer muted card. Combine with <PanelHeader> and <PanelBody> to get the
  * "card inside a card" look from the reference design.
  */
-export function Panel({ isLoading = false, className, ...props }: PanelProps) {
+export function Panel({ isLoading = false, fill = false, className, ...props }: PanelProps) {
     return (
         <section
             data-loading={isLoading}
             aria-busy={isLoading || undefined}
-            className={cn('group/panel rounded-panel border-line bg-surface-muted flex h-full flex-col border p-1', className)}
+            className={cn(
+                'group/panel rounded-panel border-line bg-surface-muted flex h-full flex-col border p-1',
+                // 5.5rem = topbar (3.5rem) + main vertical padding (2rem).
+                fill && 'lg:max-h-[calc(100dvh-5.5rem)]',
+                className,
+            )}
             {...props}
         />
     );
@@ -56,7 +67,7 @@ export function PanelBody({ padding = 'md', className, children, ...props }: Pan
     return (
         <div
             className={cn(
-                'rounded-panel border-line bg-surface shadow-panel relative flex-1 overflow-hidden border',
+                'rounded-panel border-line bg-surface shadow-panel relative min-h-0 flex-1 overflow-hidden border',
                 '[&>*:not([data-panel-progress])]:transition-opacity [&>*:not([data-panel-progress])]:duration-200',
                 'group-data-[loading=true]/panel:[&>*:not([data-panel-progress])]:pointer-events-none group-data-[loading=true]/panel:[&>*:not([data-panel-progress])]:opacity-50',
                 bodyPaddings[padding],

@@ -177,7 +177,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
         <>
             <Head title="Users" />
 
-            <Panel>
+            <Panel fill>
                 <Panel.Header title="Users" icon={Users} actions={headerActions} />
                 <Panel.Toolbar>
                     <FilterTabs
@@ -187,8 +187,9 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                         onChange={(status) => table.setFilter('status', status === 'all' ? null : status)}
                     />
                 </Panel.Toolbar>
-                <Panel.Body padding="none">
+                <Panel.Body padding="none" className="flex flex-col">
                     <DataTable
+                        stickyHeader
                         rows={users.data}
                         columns={columns}
                         getRowId={(user) => String(user.id)}
@@ -233,7 +234,7 @@ export default function UsersIndex({ users, filters, statusCounts, roleOptions, 
                             </>
                         }
                     />
-                    <div className="border-line border-t px-3 py-2.5">
+                    <div className="border-line shrink-0 border-t px-3 py-2">
                         <Pagination
                             currentPage={users.currentPage}
                             lastPage={users.lastPage}

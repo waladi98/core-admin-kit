@@ -79,7 +79,7 @@ export function Sidebar({ isCollapsed = false, onToggleCollapse, onClose, enable
                 )}
             </div>
 
-            <div className={cn('flex-1 overflow-y-auto px-3 py-2', isCollapsed && 'px-2')}>
+            <div className={cn('scrollbar-thin scroll-fade-y flex-1 overflow-y-auto px-3 py-3', isCollapsed && 'px-2')}>
                 <SidebarNav groups={mainNavigation} isCollapsed={isCollapsed} onNavigate={onClose} />
             </div>
 

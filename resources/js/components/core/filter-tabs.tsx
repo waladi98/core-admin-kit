@@ -64,7 +64,7 @@ export function FilterTabs<T extends string>({ options, value, onChange, label, 
                         {option.count !== undefined && (
                             <span
                                 className={cn(
-                                    'min-w-4 rounded-full px-1 text-center text-[10px] leading-4',
+                                    'min-w-5 rounded-full px-1.5 text-center text-xs leading-4',
                                     isSelected ? 'text-brand bg-surface' : 'bg-surface-muted text-ink-muted',
                                 )}
                             >

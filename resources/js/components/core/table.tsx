@@ -1,16 +1,21 @@
 import { cn } from '@/lib/utils';
 import { type ComponentProps } from 'react';
 
-export function Table({ className, ...props }: ComponentProps<'table'>) {
+export interface TableProps extends ComponentProps<'table'> {
+    /** Classes for the scroll container around the table. */
+    containerClassName?: string;
+}
+
+export function Table({ className, containerClassName, ...props }: TableProps) {
     return (
-        <div className="w-full overflow-x-auto">
+        <div className={cn('scrollbar-thin w-full overflow-x-auto', containerClassName)}>
             <table className={cn('w-full caption-bottom border-collapse text-sm', className)} {...props} />
         </div>
     );
 }
 
 export function TableHead({ className, ...props }: ComponentProps<'thead'>) {
-    return <thead className={cn('bg-surface-muted/60', className)} {...props} />;
+    return <thead className={cn('bg-surface-muted', className)} {...props} />;
 }
 
 export function TableBody({ className, ...props }: ComponentProps<'tbody'>) {
@@ -22,9 +27,9 @@ export function TableRow({ className, ...props }: ComponentProps<'tr'>) {
 }
 
 export function TableHeaderCell({ className, ...props }: ComponentProps<'th'>) {
-    return <th className={cn('text-ink-muted h-10 px-3 text-left align-middle text-xs font-medium whitespace-nowrap', className)} {...props} />;
+    return <th className={cn('text-ink-muted h-9 px-3 text-left align-middle text-xs font-medium whitespace-nowrap', className)} {...props} />;
 }
 
 export function TableCell({ className, ...props }: ComponentProps<'td'>) {
-    return <td className={cn('text-ink-soft h-12 px-3 align-middle whitespace-nowrap', className)} {...props} />;
+    return <td className={cn('text-ink-soft h-10 px-3 align-middle text-[13px] whitespace-nowrap', className)} {...props} />;
 }

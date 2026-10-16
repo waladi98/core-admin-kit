@@ -21,7 +21,7 @@ export function Breadcrumb({ items, size = 'md', className }: BreadcrumbProps) {
 
     return (
         <nav aria-label="Breadcrumb" className={className}>
-            <ol className={cn('flex flex-wrap items-center', isSmall ? 'gap-1 text-[11px] leading-4' : 'gap-2 text-sm')}>
+            <ol className={cn('flex flex-wrap items-center', isSmall ? 'gap-1 text-xs leading-4' : 'gap-2 text-sm')}>
                 {items.map((item, index) => {
                     const isLast = index === items.length - 1;
                     const Icon = item.icon;

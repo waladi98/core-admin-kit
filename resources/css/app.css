@@ -19,8 +19,9 @@
     --color-line-strong: #d9d9de;
     --color-ink: #111827;
     --color-ink-soft: #374151;
-    --color-ink-muted: #6b7280;
-    --color-ink-subtle: #9ca3af;
+    /* Text tokens meet WCAG AA (≥ 4.5:1) on white and surface-muted; muted and up meet AAA (≥ 7:1). */
+    --color-ink-muted: #4b5563;
+    --color-ink-subtle: #6b7280;
     --color-brand: #1f2937;
     --color-brand-hover: #111827;
     --color-brand-foreground: #ffffff;
@@ -85,6 +86,46 @@
     }
 }
 
+/*
+ * Thin, quiet scrollbar for scrollable areas inside the shell (sidebar, panels, menus).
+ * The thumb only shows while the pointer is over the area.
+ */
+@utility scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    transition: scrollbar-color 200ms;
+
+    &:hover,
+    &:focus-within {
+        scrollbar-color: var(--color-line-strong) transparent;
+    }
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 9999px;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background: var(--color-line-strong);
+    }
+}
+
+/* Softly fades content at the top and bottom edges of a scroll area. */
+@utility scroll-fade-y {
+    mask-image: linear-gradient(to bottom, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+
 /* Users who ask for less motion get instant state changes and static skeletons. */
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -104,6 +145,35 @@
     ::backdrop,
     ::file-selector-button {
         border-color: var(--color-line, currentColor);
+    }
+
+    /*
+     * Always reserve the scrollbar's space so the layout does not jump sideways
+     * when the page starts or stops scrolling (or a modal locks scrolling).
+     */
+    html {
+        scrollbar-gutter: stable;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-line-strong) transparent;
+        /*
+         * Headless UI adds inline padding-right equal to the scrollbar width when a
+         * Modal/Drawer locks scrolling. The gutter above already keeps that space,
+         * so the extra padding would shift the page; cancel it.
+         */
+        padding-right: 0 !important;
+    }
+
+    html::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    html::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    html::-webkit-scrollbar-thumb {
+        background: var(--color-line-strong);
+        border-radius: 9999px;
     }
 
     body {

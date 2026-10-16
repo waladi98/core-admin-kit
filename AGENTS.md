@@ -217,6 +217,7 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - New primitives (e.g. Select, Pagination) go in `components/core/` using the same conventions (`cva` variants, `cn()`, props `variant`/`size`/`className`) and are exported from `components/core/index.ts`.
 - Use only Finance Core color tokens: `surface*`, `line*`, `ink*`, `brand*`, `success|danger|warning|info` (+ `-soft`), `rounded-panel`, `rounded-field`, `shadow-panel`, `shadow-pop`. Do not use raw Tailwind palette colors such as `text-gray-500` or `bg-red-50`.
 - Light mode only. Do not add `dark:` variants.
+- Every scrollable area inside the shell (sidebar, panels, feeds, menus, modals) uses the `scrollbar-thin` utility; add `scroll-fade-y` when content scrolls under fixed edges. Do not style scrollbars per component.
 - Charts use Recharts and are loaded through `components/admin/lazy-charts.tsx`.
 - Data-loading sections that are deferred show an animated skeleton placeholder.
 
@@ -226,7 +227,7 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 
 ## Page Patterns
 
-- **Index (list) pages**: no `PageHeader`; the breadcrumb is the page title. One `Panel` holds everything: `Panel.Header` with icon + title on the left and search `Input`, Filter `Dropdown` and the primary action (e.g. "Add user", `buttonVariants({ size: 'sm' })`) on the right; `Panel.Toolbar` with `FilterTabs` (counts from the server) for the main status filter; `Panel.Body padding="none"` with `DataTable` (`rowNumberOffset`, `Badge shape="pill"`, row actions `MoreHorizontal`) and a footer `Pagination` with `perPage` / `onPerPageChange`. Reference: `resources/js/pages/users/index.tsx`, `.docs/image/index_crud.png`.
+- **Index (list) pages**: no `PageHeader`; the breadcrumb is the page title. One `<Panel fill>` holds everything (on desktop it fits the screen height so only the table rows scroll; header and pagination stay visible): `Panel.Header` with icon + title on the left and search `Input`, Filter `Dropdown` and the primary action (e.g. "Add user", `buttonVariants({ size: 'sm' })`) on the right; `Panel.Toolbar` with `FilterTabs` (counts from the server) for the main status filter; `Panel.Body padding="none" className="flex flex-col"` with `DataTable stickyHeader` (`rowNumberOffset`, `Badge shape="pill"`, row actions `MoreHorizontal`) and a footer `Pagination` (wrapper `shrink-0`) with `perPage` / `onPerPageChange`. Reference: `resources/js/pages/users/index.tsx`, `.docs/image/index_crud.png`.
 - **Create / edit pages**: pass `title` to `AdminLayout` so the topbar shows a small breadcrumb above the page title; no `PageHeader`. Group fields in `FormSection` (icon, title, description) with `FormField` (`required`, `hint`, `error`) in a `md:grid-cols-2 xl:grid-cols-3` grid, then `FormActions` below the sections (Cancel as secondary link, submit `Button` with `Check` icon). Reference: `resources/js/components/admin/user-form.tsx`, `.docs/image/create.png`.
 
 ## Navigation
@@ -238,6 +239,13 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Each module uses a controller with `Inertia::render()`, a Form Request for validation, named routes inside the `auth` middleware group, and Pest feature tests (including deferred props via `loadDeferredProps` when used).
 - Send props with the same camelCase keys as the TypeScript types in `resources/js/types/`.
 - Local tests: this machine has no SQLite PHP extension. Run tests with `composer test:local`, which points at the separate MySQL database `db_pm_v6_testing`. For a single file: set `DB_CONNECTION=mysql` and `DB_DATABASE=db_pm_v6_testing` in the environment, then `php artisan test --compact <path>`. Never run tests against the development database `db_pm_v6`: `RefreshDatabase` wipes it. Do not change the database settings in `phpunit.xml` (CI uses SQLite in-memory).
+
+## Readability (users aged 30–70)
+
+- Text must meet WCAG AA contrast (≥ 4.5:1) on `surface` and `surface-muted`. Use only the text tokens: `ink` (headings, values), `ink-soft` (body), `ink-muted` (descriptions, secondary labels, ≥ 7:1), `ink-subtle` (placeholders, hints, timestamps, icons; ≥ 4.5:1). Never lighten text with opacity (`text-ink/50`, `opacity-60` on text) or with lighter grays; `line*` tokens are for borders only, never for text.
+- Minimum text size is 12px (`text-xs`); body and table text 13–14px (`text-[13px]`, `text-sm`). No `text-[9px]`–`text-[11px]`. Only avatar initials may be smaller.
+- Important information is never conveyed by color alone: pair status colors with a label or icon.
+- Disabled controls may use `opacity-50`; everything readable must stay at full contrast.
 
 ## Motion & Loading States
 
