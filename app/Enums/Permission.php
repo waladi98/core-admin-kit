@@ -20,6 +20,7 @@ enum Permission: string
     case RolesView = 'roles.view';
     case RolesManage = 'roles.manage';
     case SettingsManage = 'settings.manage';
+    case ActivityView = 'activity.view';
 
     /**
      * Human-readable label shown next to the checkbox.
@@ -34,6 +35,7 @@ enum Permission: string
             self::RolesView => __('View roles'),
             self::RolesManage => __('Create, edit and delete roles'),
             self::SettingsManage => __('Change application name, logo and colors'),
+            self::ActivityView => __("View everyone's activity"),
         };
     }
 
@@ -46,6 +48,7 @@ enum Permission: string
             self::UsersView, self::UsersCreate, self::UsersUpdate, self::UsersDelete => __('Users'),
             self::RolesView, self::RolesManage => __('Roles & Permissions'),
             self::SettingsManage => __('Application settings'),
+            self::ActivityView => __('Activity log'),
         };
     }
 

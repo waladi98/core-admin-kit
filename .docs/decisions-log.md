@@ -138,3 +138,17 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Izin | Permission baru `settings.manage` (otomatis dimiliki Admin); menu Application tersembunyi tanpa izin. | Konsisten dengan S1. |
 | Halaman error | Ikut memakai branding; bila database bermasalah, jatuh ke nilai config. | Halaman error tidak boleh ikut gagal. |
 | Judul tab browser | Tetap dari `APP_NAME`. | Judul dibentuk saat aplikasi dimuat; ubah `APP_NAME` bila nama berubah permanen. |
+
+## S9 — Audit Log
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Implementasi | Tabel `activity_logs` + trait `LogsActivity` + `ActivityLog::record()` buatan sendiri (tanpa paket tambahan). | Ringan, sesuai kebutuhan, mudah dibaca tim. |
+| Isi catatan | Siapa (causer), kejadian, deskripsi (kunci Inggris, diterjemahkan saat tampil), nama data saat itu (tetap ada walau data dihapus), perubahan field lama → baru, alamat IP. | Cukup untuk audit tanpa menyimpan data sensitif. |
+| Data sensitif | Atribut `hidden` (password, token, path foto) tidak pernah dicatat; `locale` & verifikasi email diabaikan. | Keamanan & mengurangi catatan tak penting. |
+| Kejadian manual | Login/logout, perubahan izin role (ditambah/dihapus), perubahan pengaturan aplikasi. | Aksi penting yang tidak lewat event model. |
+| Aksi massal | Aktifkan/nonaktifkan disimpan satu per satu agar tiap perubahan tercatat. | Audit lengkap. |
+| Akses | Halaman Activity Log butuh `activity.view`; feed dashboard menampilkan aktivitas semua orang hanya bagi pemegang izin itu, selain itu hanya aktivitas sendiri. | Privasi antar pengguna. |
+| Retensi | 365 hari, dibersihkan harian oleh `model:prune` (butuh scheduler). | Database tidak membengkak. |
+| Urutan migrasi | Migrasi role (S1) memakai `ActivityLog::withoutRecording()` karena tabel log dibuat belakangan. | Ditemukan saat test: instalasi baru akan gagal tanpa ini. |
+| Dashboard | Feed "Pembaruan terbaru" kini data asli; statistik, chart & tabel transaksi masih contoh. | |

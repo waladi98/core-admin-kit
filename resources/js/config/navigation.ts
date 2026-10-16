@@ -1,5 +1,5 @@
 import { type AdminNavGroup } from '@/types/navigation';
-import { LayoutGrid, LockKeyhole, Settings, UserCog } from 'lucide-react';
+import { History, LayoutGrid, LockKeyhole, Settings, UserCog } from 'lucide-react';
 
 /**
  * Sidebar menu.
@@ -29,6 +29,7 @@ export const mainNavigation: AdminNavGroup[] = [
         items: [
             { title: 'Users', icon: UserCog, href: '/users', permission: 'users.view' },
             { title: 'Roles & Permissions', icon: LockKeyhole, href: '/roles', permission: 'roles.view' },
+            { title: 'Activity log', icon: History, href: '/activity', permission: 'activity.view' },
         ],
     },
 ];

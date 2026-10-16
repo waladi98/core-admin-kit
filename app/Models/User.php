@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\LogsActivity;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserStatus;
 use Database\Factories\UserFactory;
@@ -15,7 +16,14 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, LogsActivity, Notifiable;
+
+    /**
+     * Fields not worth recording in the audit trail (secrets are skipped automatically).
+     *
+     * @var list<string>
+     */
+    protected array $activityIgnored = ['locale', 'email_verified_at'];
 
     /**
      * The attributes that are mass assignable.

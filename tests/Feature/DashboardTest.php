@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ActivityLog;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -14,7 +15,9 @@ test('authenticated users can visit the dashboard', function () {
 });
 
 test('dashboard renders stats and trend immediately and defers the feed and table', function () {
-    $this->actingAs(User::factory()->create());
+    $user = User::factory()->create();
+    $this->actingAs($user);
+    ActivityLog::record('signed_in', 'Signed in', $user, $user->name, causer: $user);
 
     $this->get('/dashboard')
         ->assertInertia(fn (Assert $page) => $page
@@ -26,7 +29,7 @@ test('dashboard renders stats and trend immediately and defers the feed and tabl
             ->missing('activities')
             ->missing('transactions')
             ->loadDeferredProps(['feed', 'table'], fn (Assert $reload) => $reload
-                ->has('activities.today', 6)
+                ->has('activities.today', 1)
                 ->has('activities.yesterday')
                 ->has('activities.this_week')
                 ->has('transactions', 4)

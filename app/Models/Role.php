@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\LogsActivity;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role as SpatieRole;
 
@@ -12,6 +13,8 @@ use Spatie\Permission\Models\Role as SpatieRole;
  */
 class Role extends SpatieRole
 {
+    use LogsActivity;
+
     /** Full access to everything; its permissions cannot be changed and it cannot be deleted. */
     public const ADMIN = 'admin';
 
@@ -45,5 +48,13 @@ class Role extends SpatieRole
     public function label(): string
     {
         return __(Str::headline($this->name));
+    }
+
+    /**
+     * Name stored in the audit trail (English, translated when shown).
+     */
+    public function activityLabel(): string
+    {
+        return Str::headline($this->name);
     }
 }

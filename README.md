@@ -97,7 +97,7 @@ Ikuti **`.docs/guide-new-module.md`** — langkah lengkap backend (migration, Fo
 2. `composer install --no-dev --optimize-autoloader`, `npm ci && npm run build`.
 3. `php artisan migrate --force`, `php artisan app:sync-permissions`, `php artisan storage:link`.
 4. `php artisan optimize` (cache config, route, view).
-5. Jalankan queue worker bila memakai antrean (`php artisan queue:work`).
+5. Jalankan queue worker bila memakai antrean (`php artisan queue:work`) dan scheduler (cron `* * * * * php artisan schedule:run`) untuk membersihkan log aktivitas lama.
 6. Mode pemeliharaan: `php artisan down` / `php artisan up`.
 
 ## Dokumentasi Lain

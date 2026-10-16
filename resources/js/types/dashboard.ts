@@ -20,7 +20,8 @@ export interface VolumeTrend {
     highlightIndex?: number;
 }
 
-export type ActivityType = 'transaction' | 'client' | 'reassignment' | 'risk' | 'knowledge' | 'feedback';
+/** Audit trail events (see ActivityLog). */
+export type ActivityType = 'created' | 'updated' | 'deleted' | 'changed' | 'signed_in' | 'signed_out';
 
 export type ActivityPeriod = 'today' | 'yesterday' | 'this_week';
 

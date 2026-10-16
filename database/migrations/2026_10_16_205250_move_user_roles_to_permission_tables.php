@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\SyncPermissions;
+use App\Models\ActivityLog;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -19,7 +20,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        (new SyncPermissions)();
+        // The audit trail table is created by a later migration, so do not record anything here.
+        ActivityLog::withoutRecording(fn () => (new SyncPermissions)());
 
         $roleIds = Role::query()->pluck('id', 'name');
 

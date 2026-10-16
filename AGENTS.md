@@ -269,6 +269,14 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - The command palette (⌘K / Ctrl+K, sidebar search) lists every permitted page from `config/navigation.ts` plus `config/commands.ts` quick actions. Add each new module's "create" action to `quickActions` with its `permission`.
 - In-app notifications: `$user->notify(new AppNotification($title, $body, $params, url: ..., tone: 'info'|'success'|'warning'|'danger'))`. Title/body are English keys with `:placeholders` (add them to `lang/id.json`); pass untranslated values in `$params` (they are translated for the reader). The bell shows the unread count (polled every minute) and loads the list only when opened (`notificationItems` optional prop).
 
+## Audit Trail
+
+- Add `use LogsActivity;` (`App\Concerns`) to every business model: created/updated/deleted are recorded with changed fields (hidden attributes and `$activityIgnored` are skipped). Override `activityLabel()` when the record name is not `name`/`title`.
+- Record other important actions with `ActivityLog::record($event, 'English description', $subject, $label, $properties)` (e.g. approvals, permission changes, settings) and add the description to `lang/id.json`.
+- Bulk updates must save models one by one (not `Model::query()->update()`) so every change is recorded.
+- Code that runs before the `activity_logs` table exists (old migrations) wraps writes in `ActivityLog::withoutRecording()`.
+- The Activity log page needs `activity.view`; without it the dashboard feed only shows the user's own actions. Entries older than `ActivityLog::RETENTION_DAYS` are pruned daily (`model:prune`, needs the scheduler: `php artisan schedule:work` locally, a cron entry in production).
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.

@@ -25,7 +25,7 @@
 
 ### 1. Backend
 
-1. **Migration, model, factory** — `php artisan make:model Client -mf --no-interaction`. Kolom status/tipe pakai enum string (lihat `UserRole`) dengan method `label()`. Cast enum di `casts()`. Buat state factory yang berguna (mis. `inactive()`).
+1. **Migration, model, factory** — `php artisan make:model Client -mf --no-interaction`. Tambahkan `use LogsActivity;` di model agar tercatat di audit trail. Kolom status/tipe pakai enum string (lihat `UserRole`) dengan method `label()`. Cast enum di `casts()`. Buat state factory yang berguna (mis. `inactive()`).
 2. **`ClientIndexRequest`** — validasi query string tabel:
    - `search` (`nullable|string|max:100`)
    - filter (mis. `type` → `Rule::enum(...)`)

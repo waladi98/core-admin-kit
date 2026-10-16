@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Permission;
 use App\Http\Requests\RoleRequest;
+use App\Models\ActivityLog;
 use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -79,7 +80,16 @@ class RoleController extends Controller
                 $role->update(['name' => $request->validated('name')]);
             }
 
+            $before = $role->permissions->pluck('name')->all();
             $role->syncPermissions($request->validated('permissions'));
+            $after = $role->fresh()->permissions->pluck('name')->all();
+
+            $added = array_values(array_diff($after, $before));
+            $removed = array_values(array_diff($before, $after));
+
+            if ($added !== [] || $removed !== []) {
+                ActivityLog::record('changed', 'Role permissions changed', $role, $role->activityLabel(), ['added' => $added, 'removed' => $removed]);
+            }
         });
 
         return to_route('roles.index')->withToast('success', __('Role updated.'));

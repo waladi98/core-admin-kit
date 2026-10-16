@@ -2,16 +2,16 @@ import { Input, SegmentedControl, type SegmentedOption } from '@/components/core
 import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { type Activity, type ActivityPeriod, type ActivityType } from '@/types/dashboard';
-import { ArrowLeftRight, BookOpenText, Repeat2, Search, Star, TriangleAlert, UserRound, type LucideIcon } from 'lucide-react';
+import { LogIn, LogOut, Pencil, Plus, Search, SlidersHorizontal, Trash2, type LucideIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const activityStyles: Record<ActivityType, { icon: LucideIcon; color: string }> = {
-    transaction: { icon: ArrowLeftRight, color: 'text-info' },
-    client: { icon: UserRound, color: 'text-success' },
-    reassignment: { icon: Repeat2, color: 'text-brand' },
-    risk: { icon: TriangleAlert, color: 'text-danger' },
-    knowledge: { icon: BookOpenText, color: 'text-info' },
-    feedback: { icon: Star, color: 'text-warning' },
+    created: { icon: Plus, color: 'text-success' },
+    updated: { icon: Pencil, color: 'text-info' },
+    deleted: { icon: Trash2, color: 'text-danger' },
+    changed: { icon: SlidersHorizontal, color: 'text-warning' },
+    signed_in: { icon: LogIn, color: 'text-brand' },
+    signed_out: { icon: LogOut, color: 'text-ink-muted' },
 };
 
 const periodOptions: SegmentedOption<ActivityPeriod>[] = [
@@ -42,7 +42,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             return periodActivities;
         }
 
-        return periodActivities.filter((activity) => `${activity.title} ${activity.description}`.toLowerCase().includes(keyword));
+        return periodActivities.filter((activity) =>
+            `${activity.title} ${__(activity.title)} ${activity.description}`.toLowerCase().includes(keyword),
+        );
     }, [activities, period, searchTerm]);
 
     return (
@@ -71,7 +73,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             ) : (
                 <ul className="scrollbar-thin scroll-fade-y -mr-2 min-h-0 flex-1 space-y-4 overflow-y-auto py-1 pr-2">
                     {visibleActivities.map((activity) => {
-                        const style = activityStyles[activity.type];
+                        const style = activityStyles[activity.type] ?? activityStyles.changed;
                         const Icon = style.icon;
 
                         return (
@@ -81,7 +83,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                                 </span>
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-baseline justify-between gap-2">
-                                        <p className="text-ink truncate text-[13px] font-medium">{activity.title}</p>
+                                        <p className="text-ink truncate text-[13px] font-medium">{__(activity.title)}</p>
                                         <time className="text-ink-subtle shrink-0 text-xs">{activity.time}</time>
                                     </div>
                                     <p className="text-ink-muted mt-0.5 text-xs">{activity.description}</p>

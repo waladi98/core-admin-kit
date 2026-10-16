@@ -185,8 +185,9 @@ class UserController extends Controller
         $users = $users->filter(fn (User $user): bool => $request->user()->can($action === 'delete' ? 'delete' : 'update', $user));
 
         match ($action) {
-            'activate' => User::query()->whereKey($users->modelKeys())->update(['status' => UserStatus::Active]),
-            'deactivate' => User::query()->whereKey($users->modelKeys())->update(['status' => UserStatus::Inactive]),
+            // Saved one by one so each change is recorded in the audit trail.
+            'activate' => $users->each->update(['status' => UserStatus::Active]),
+            'deactivate' => $users->each->update(['status' => UserStatus::Inactive]),
             'delete' => $users->each->delete(),
         };
 

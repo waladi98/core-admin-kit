@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ApplicationSettingsRequest;
+use App\Models\ActivityLog;
 use App\Support\AppSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -40,7 +41,17 @@ class ApplicationController extends Controller
             $values['logo_path'] = $request->hasFile('logo') ? $request->file('logo')->store('branding', 'public') : null;
         }
 
+        $before = AppSettings::all();
         AppSettings::set($values);
+
+        $changes = collect($values)
+            ->filter(fn (?string $value, string $key): bool => ($before[$key] ?? null) !== $value)
+            ->map(fn (?string $value, string $key): array => ['old' => $before[$key] ?? null, 'new' => $value])
+            ->all();
+
+        if ($changes !== []) {
+            ActivityLog::record('changed', 'Application settings changed', subjectLabel: (string) $values['name'], properties: ['changes' => $changes]);
+        }
 
         return to_route('application.edit')->withToast('success', __('Application settings saved.'));
     }

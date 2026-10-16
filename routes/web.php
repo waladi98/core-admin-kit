@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NotificationController;
@@ -18,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('users/bulk', [UserController::class, 'bulk'])->name('users.bulk');
     Route::resource('users', UserController::class)->except('show');
     Route::resource('roles', RoleController::class)->except('show');
+    Route::get('activity', [ActivityLogController::class, 'index'])->name('activity.index');
 
     Route::post('notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
     Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');

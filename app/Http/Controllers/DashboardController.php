@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
 use App\Http\Requests\DashboardRequest;
+use App\Models\ActivityLog;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
  * Finance Core dashboard.
  *
- * All figures are dummy data until the finance domain models exist.
+ * Stats, chart and transactions are sample data until the finance domain models exist;
+ * the "Latest updates" feed reads the real audit trail.
  */
 class DashboardController extends Controller
 {
@@ -34,7 +39,7 @@ class DashboardController extends Controller
             ],
             'stats' => $this->stats($request->period()),
             'volumeTrend' => $this->volumeTrend($request->trendPeriod()),
-            'activities' => Inertia::defer(fn (): array => $this->activities(), 'feed'),
+            'activities' => Inertia::defer(fn (): array => $this->activities($request), 'feed'),
             'transactions' => Inertia::defer(fn (): array => $this->transactions(), 'table'),
         ]);
     }
@@ -100,29 +105,39 @@ class DashboardController extends Controller
     }
 
     /**
+     * Latest audit trail entries for the "Latest updates" feed, grouped by day in the display timezone.
+     * People without `activity.view` only see their own actions.
+     *
      * @return array<string, list<array{id: string, type: string, title: string, description: string, time: string}>>
      */
-    private function activities(): array
+    private function activities(Request $request): array
     {
-        return [
-            'today' => [
-                ['id' => 'a1', 'type' => 'transaction', 'title' => 'Transaction Updated', 'description' => 'TRX-2319 payment status updated', 'time' => '11:20 AM'],
-                ['id' => 'a2', 'type' => 'client', 'title' => 'New Client Added', 'description' => 'PT. Alpha Indonesia registered', 'time' => '11:15 AM'],
-                ['id' => 'a3', 'type' => 'reassignment', 'title' => 'Approver Reassigned', 'description' => 'TRX-2322 moved to Michael Wong', 'time' => '11:00 AM'],
-                ['id' => 'a4', 'type' => 'risk', 'title' => 'Overdue Risk', 'description' => 'TRX-2320 "Invoice settlement"', 'time' => '10:45 AM'],
-                ['id' => 'a5', 'type' => 'knowledge', 'title' => 'Knowledge Base', 'description' => 'New policy published: "Refund Procedure"', 'time' => '10:30 AM'],
-                ['id' => 'a6', 'type' => 'feedback', 'title' => 'Client Feedback', 'description' => '"Fast reconciliation, thanks Sarah!"', 'time' => '10:30 AM'],
-            ],
-            'yesterday' => [
-                ['id' => 'b1', 'type' => 'transaction', 'title' => 'Transaction Approved', 'description' => 'TRX-2301 approved by Finance Lead', 'time' => '04:10 PM'],
-                ['id' => 'b2', 'type' => 'risk', 'title' => 'Budget Alert', 'description' => 'Marketing budget reached 90%', 'time' => '01:25 PM'],
-                ['id' => 'b3', 'type' => 'client', 'title' => 'Client Updated', 'description' => 'CV. Maju Jaya changed billing address', 'time' => '09:05 AM'],
-            ],
-            'this_week' => [
-                ['id' => 'c1', 'type' => 'knowledge', 'title' => 'Knowledge Base', 'description' => 'Article updated: "Month-end Closing"', 'time' => 'Mon'],
-                ['id' => 'c2', 'type' => 'reassignment', 'title' => 'Team Changed', 'description' => 'Sarah Lee joined Treasury team', 'time' => 'Mon'],
-            ],
-        ];
+        $timezone = config('app.display_timezone');
+        $today = now($timezone)->startOfDay();
+        $groups = ['today' => [], 'yesterday' => [], 'this_week' => []];
+
+        ActivityLog::query()
+            ->with('causer')
+            ->when(! $request->user()->can(Permission::ActivityView->value), fn (Builder $query) => $query->where('causer_id', $request->user()->id))
+            ->where('created_at', '>=', $today->copy()->subDays(6)->utc())
+            ->latest('created_at')
+            ->latest('id')
+            ->limit(40)
+            ->get()
+            ->each(function (ActivityLog $log) use (&$groups, $today, $timezone): void {
+                $at = $log->created_at->copy()->setTimezone($timezone);
+                $group = $at->gte($today) ? 'today' : ($at->gte($today->copy()->subDay()) ? 'yesterday' : 'this_week');
+
+                $groups[$group][] = [
+                    'id' => (string) $log->id,
+                    'type' => $log->event,
+                    'title' => $log->description,
+                    'description' => collect([$log->causer?->name, $log->subject_label])->filter()->unique()->implode(' · '),
+                    'time' => $group === 'this_week' ? $at->locale(app()->getLocale())->translatedFormat('D H:i') : $at->format('H:i'),
+                ];
+            });
+
+        return $groups;
     }
 
     /**
