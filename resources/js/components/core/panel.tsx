@@ -76,5 +76,13 @@ export function PanelBody({ padding = 'md', className, children, ...props }: Pan
     );
 }
 
+/**
+ * Optional row between the header and the body, e.g. filter tabs on the left and extra options on the right.
+ */
+export function PanelToolbar({ className, ...props }: ComponentProps<'div'>) {
+    return <div className={cn('flex flex-wrap items-center justify-between gap-2 px-3 pb-2', className)} {...props} />;
+}
+
 Panel.Header = PanelHeader;
+Panel.Toolbar = PanelToolbar;
 Panel.Body = PanelBody;

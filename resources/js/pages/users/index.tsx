@@ -1,5 +1,4 @@
 import { DataTable, type DataTableColumn } from '@/components/admin/data-table';
-import { PageHeader } from '@/components/admin/page-header';
 import {
     Avatar,
     Badge,
@@ -7,27 +6,29 @@ import {
     Dropdown,
     DropdownContent,
     DropdownItem,
+    DropdownLabel,
     DropdownSeparator,
     DropdownTrigger,
-    Grid,
+    FilterTabs,
     Input,
     Modal,
     ModalFooter,
     Pagination,
     Panel,
-    Select,
     buttonVariants,
     iconButtonVariants,
     type BadgeProps,
     type BreadcrumbEntry,
+    type FilterTabOption,
 } from '@/components/core';
 import { useTableQuery } from '@/hooks/use-table-query';
 import AdminLayout from '@/layouts/admin-layout';
+import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { type TableSort } from '@/types/table';
 import { type ManagedUser, type UserIndexProps, type UserRole, type UserStatus } from '@/types/user-management';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { LoaderCircle, MoreVertical, Pencil, Plus, Search, Trash2, Users } from 'lucide-react';
+import { Check, Filter, LoaderCircle, MoreHorizontal, Pencil, Plus, Search, Trash2, Users } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 
 const breadcrumbs: BreadcrumbEntry[] = [{ title: 'Users', href: '/users', icon: Users }];
@@ -62,15 +63,18 @@ const columns: DataTableColumn<ManagedUser>[] = [
         key: 'role',
         header: 'Role',
         skeleton: 'badge',
-        cell: (user) => <Badge tone={roleTones[user.role]}>{user.roleLabel}</Badge>,
+        cell: (user) => (
+            <Badge shape="pill" tone={roleTones[user.role]}>
+                {user.roleLabel}
+            </Badge>
+        ),
     },
     {
         key: 'status',
         header: 'Status',
         skeleton: 'badge',
         cell: (user) => (
-            <Badge tone={statusTones[user.status]}>
-                <span className="size-1.5 rounded-full bg-current" />
+            <Badge shape="pill" tone={statusTones[user.status]}>
                 {user.statusLabel}
             </Badge>
         ),
@@ -78,26 +82,39 @@ const columns: DataTableColumn<ManagedUser>[] = [
     { key: 'created_at', header: 'Joined', sortable: true, cell: (user) => user.createdAt },
 ];
 
+type StatusTab = 'all' | UserStatus;
+
 /** Parses the server sort (`name` or `-name`) into the table sort state. */
 function parseSort(sort: string): TableSort {
     return sort.startsWith('-') ? { key: sort.slice(1), direction: 'desc' } : { key: sort, direction: 'asc' };
 }
 
-export default function UsersIndex({ users, filters, roleOptions }: UserIndexProps) {
+export default function UsersIndex({ users, filters, statusCounts, roleOptions, statusOptions }: UserIndexProps) {
     const { auth } = usePage<SharedData>().props;
     const [userToDelete, setUserToDelete] = useState<ManagedUser | null>(null);
     const [deletingIds, setDeletingIds] = useState<string[]>([]);
 
-    const table = useTableQuery<{ role: string | null }>({
+    const table = useTableQuery<{ role: string | null; status: string | null }>({
         url: route('users.index'),
-        only: ['users', 'filters'],
+        only: ['users', 'filters', 'statusCounts'],
         initial: {
             search: filters.search ?? '',
             sort: parseSort(filters.sort),
             page: users.currentPage,
-            filters: { role: filters.role },
+            perPage: filters.perPage,
+            filters: { role: filters.role, status: filters.status },
         },
     });
+
+    const activeRole = table.query.filters.role;
+    const statusTabs: FilterTabOption<StatusTab>[] = [
+        { value: 'all', label: 'All', count: statusCounts.all },
+        ...statusOptions.map((option) => ({
+            value: option.value as UserStatus,
+            label: option.label,
+            count: statusCounts[option.value as UserStatus],
+        })),
+    ];
 
     const confirmDelete = () => {
         if (!userToDelete) {
@@ -110,117 +127,127 @@ export default function UsersIndex({ users, filters, roleOptions }: UserIndexPro
         router.delete(route('users.destroy', userToDelete.id), {
             preserveScroll: true,
             preserveState: true,
-            only: ['users'],
+            only: ['users', 'statusCounts'],
             onStart: () => setDeletingIds((ids) => [...ids, rowId]),
             onFinish: () => setDeletingIds((ids) => ids.filter((id) => id !== rowId)),
         });
     };
 
-    const toolbar = (
+    const headerActions = (
         <>
             <Input
                 type="search"
-                placeholder="Name or email"
+                placeholder="Search name or email…"
                 aria-label="Search users"
                 leadingIcon={table.isSearching ? <LoaderCircle className="animate-spin" /> : <Search />}
                 value={table.query.search}
                 onChange={(event) => table.setSearch(event.target.value)}
-                wrapperClassName="h-8 w-44 sm:w-60"
+                wrapperClassName="h-8 w-48 sm:w-64"
             />
-            <Select
-                size="sm"
-                aria-label="Filter by role"
-                placeholder="All roles"
-                options={roleOptions}
-                value={table.query.filters.role ?? ''}
-                onChange={(event) => table.setFilter('role', event.target.value || null)}
-                wrapperClassName="w-36"
-            />
+            <Dropdown>
+                <DropdownTrigger className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), activeRole && 'border-brand')}>
+                    <Filter />
+                    {activeRole ? roleOptions.find((option) => option.value === activeRole)?.label : 'Filter'}
+                </DropdownTrigger>
+                <DropdownContent>
+                    <DropdownLabel>Role</DropdownLabel>
+                    <DropdownItem onSelect={() => table.setFilter('role', null)} icon={activeRole === null ? <Check /> : <span className="size-4" />}>
+                        All roles
+                    </DropdownItem>
+                    <DropdownSeparator />
+                    {roleOptions.map((option) => (
+                        <DropdownItem
+                            key={option.value}
+                            onSelect={() => table.setFilter('role', option.value)}
+                            icon={activeRole === option.value ? <Check /> : <span className="size-4" />}
+                        >
+                            {option.label}
+                        </DropdownItem>
+                    ))}
+                </DropdownContent>
+            </Dropdown>
+            <Link href={route('users.create')} prefetch className={buttonVariants({ size: 'sm' })}>
+                <Plus />
+                Add user
+            </Link>
         </>
     );
 
     return (
         <>
             <Head title="Users" />
-            <div className="space-y-6">
-                <PageHeader
-                    title="Users"
-                    description="Manage who can access Finance Core and what they can do."
-                    actions={
-                        <Link href={route('users.create')} prefetch className={buttonVariants()}>
-                            <Plus />
-                            Add user
-                        </Link>
-                    }
-                />
 
-                <Grid stagger>
-                    <Grid.Item>
-                        <Panel>
-                            <Panel.Header title={`All users (${users.total})`} icon={Users} actions={toolbar} />
-                            <Panel.Body padding="none">
-                                <DataTable
-                                    rows={users.data}
-                                    columns={columns}
-                                    getRowId={(user) => String(user.id)}
-                                    sort={table.query.sort}
-                                    onSortChange={table.setSort}
-                                    isLoading={table.isLoading}
-                                    pendingRowIds={deletingIds}
-                                    rowActions={(user) => (
-                                        <Dropdown>
-                                            <DropdownTrigger
-                                                aria-label={`Actions for ${user.name}`}
-                                                className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}
-                                            >
-                                                <MoreVertical />
-                                            </DropdownTrigger>
-                                            <DropdownContent>
-                                                <DropdownItem icon={<Pencil />} href={route('users.edit', user.id)}>
-                                                    Edit
-                                                </DropdownItem>
-                                                <DropdownSeparator />
-                                                <DropdownItem
-                                                    icon={<Trash2 />}
-                                                    tone="danger"
-                                                    disabled={user.id === auth.user.id}
-                                                    onSelect={() => setUserToDelete(user)}
-                                                >
-                                                    Delete
-                                                </DropdownItem>
-                                            </DropdownContent>
-                                        </Dropdown>
-                                    )}
-                                    emptyState={
-                                        <>
-                                            <p className="text-ink text-sm font-medium">No users found</p>
-                                            <p className="text-ink-muted text-sm">Try a different keyword or role.</p>
-                                            {table.hasActiveFilters && (
-                                                <Button variant="secondary" size="sm" className="mt-2" onClick={table.reset}>
-                                                    Reset filters
-                                                </Button>
-                                            )}
-                                        </>
-                                    }
-                                />
-                                {users.lastPage > 1 && (
-                                    <div className="border-line border-t px-3 py-2">
-                                        <Pagination
-                                            currentPage={users.currentPage}
-                                            lastPage={users.lastPage}
-                                            onPageChange={table.setPage}
-                                            loadingPage={table.loadingPage}
-                                            from={users.from}
-                                            to={users.to}
-                                            total={users.total}
-                                        />
-                                    </div>
+            <Panel>
+                <Panel.Header title="Users" icon={Users} actions={headerActions} />
+                <Panel.Toolbar>
+                    <FilterTabs
+                        label="Filter by status"
+                        options={statusTabs}
+                        value={(table.query.filters.status as StatusTab | null) ?? 'all'}
+                        onChange={(status) => table.setFilter('status', status === 'all' ? null : status)}
+                    />
+                </Panel.Toolbar>
+                <Panel.Body padding="none">
+                    <DataTable
+                        rows={users.data}
+                        columns={columns}
+                        getRowId={(user) => String(user.id)}
+                        rowNumberOffset={(users.currentPage - 1) * users.perPage}
+                        sort={table.query.sort}
+                        onSortChange={table.setSort}
+                        isLoading={table.isLoading}
+                        pendingRowIds={deletingIds}
+                        rowActions={(user) => (
+                            <Dropdown>
+                                <DropdownTrigger
+                                    aria-label={`Actions for ${user.name}`}
+                                    className={iconButtonVariants({ variant: 'ghost', size: 'sm' })}
+                                >
+                                    <MoreHorizontal />
+                                </DropdownTrigger>
+                                <DropdownContent>
+                                    <DropdownItem icon={<Pencil />} href={route('users.edit', user.id)}>
+                                        Edit
+                                    </DropdownItem>
+                                    <DropdownSeparator />
+                                    <DropdownItem
+                                        icon={<Trash2 />}
+                                        tone="danger"
+                                        disabled={user.id === auth.user.id}
+                                        onSelect={() => setUserToDelete(user)}
+                                    >
+                                        Delete
+                                    </DropdownItem>
+                                </DropdownContent>
+                            </Dropdown>
+                        )}
+                        emptyState={
+                            <>
+                                <p className="text-ink text-sm font-medium">No users found</p>
+                                <p className="text-ink-muted text-sm">Try a different keyword, role or status.</p>
+                                {table.hasActiveFilters && (
+                                    <Button variant="secondary" size="sm" className="mt-2" onClick={table.reset}>
+                                        Reset filters
+                                    </Button>
                                 )}
-                            </Panel.Body>
-                        </Panel>
-                    </Grid.Item>
-                </Grid>
-            </div>
+                            </>
+                        }
+                    />
+                    <div className="border-line border-t px-3 py-2.5">
+                        <Pagination
+                            currentPage={users.currentPage}
+                            lastPage={users.lastPage}
+                            onPageChange={table.setPage}
+                            loadingPage={table.loadingPage}
+                            from={users.from}
+                            to={users.to}
+                            total={users.total}
+                            perPage={table.query.perPage ?? users.perPage}
+                            onPerPageChange={table.setPerPage}
+                        />
+                    </div>
+                </Panel.Body>
+            </Panel>
 
             <Modal
                 isOpen={userToDelete !== null}

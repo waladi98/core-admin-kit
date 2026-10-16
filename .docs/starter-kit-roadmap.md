@@ -122,13 +122,31 @@
 | 4 | Syarat `v1.0.0` | **Rekomendasi: S0, UI0, S1, S1b, S2, S3, S4, S5, S11.** S6–S10 menyusul di `v1.x` karena tidak semua project membutuhkannya. |
 | 5 | Kepadatan UI | **Compact/padat** → fase baru **UI0** (lihat di bawah), dikerjakan sebelum S1. |
 
-### Fase UI0 — Layout Compact (dikerjakan sebelum S1)
-- [ ] Hapus `PageHeader` (judul + deskripsi) di halaman: judul cukup dari **breadcrumb** di topbar.
-- [ ] Aksi utama halaman (mis. **Create**) dipindah ke **header Panel/tabel** (`Panel.Header actions`), sehingga konten langsung tampil di bagian atas.
-- [ ] Spasi lebih padat: padding `main`, gap `Grid`, padding `Panel`, tinggi baris tabel, tinggi input/tombol default (`sm`), ukuran font header.
-- [ ] Token kepadatan di satu tempat (mis. `--density-*` / varian `size` default) agar mudah disetel ulang.
-- [ ] Terapkan ke Dashboard, Users (index/create/edit), Settings.
-- [ ] Update aturan `AGENTS.md` (tanpa PageHeader, aksi di Panel header, ukuran compact).
+### Fase UI0 — Layout Compact & Minim Scroll (dikerjakan sebelum S1)
+
+**Aturan layout (berlaku untuk semua halaman):** *minim scroll, tetap nyaman dan responsif.*
+
+| # | Aturan | Desktop (≥ 1024px) | Tablet / HP (< 1024px) |
+|---|---|---|---|
+| L1 | **Shell setinggi layar** | Sidebar & topbar diam; hanya area konten yang bergerak. | Sama, sidebar jadi drawer. |
+| L2 | **Halaman index pas satu layar** | Panel tabel mengisi sisa tinggi layar; **header tabel & pagination selalu terlihat**, hanya baris tabel yang di-scroll di dalam panel. | Scroll halaman biasa (hindari scroll bersarang di HP). |
+| L3 | **Form tanpa scroll panjang** | Field grid 3 kolom (`xl`), section dikelompokkan; **tombol Save/Cancel menempel di bawah layar** (sticky) sehingga selalu terlihat. | 1 kolom; tombol tetap sticky di bawah. |
+| L4 | **Dashboard muat satu layar** (target 1440×900) | Tinggi chart & feed mengikuti tinggi layar; daftar panjang (activity feed) di-scroll di dalam panel. | Panel bertumpuk, scroll halaman biasa. |
+| L5 | **Kepadatan compact** | Padding konten 16px, gap grid 12px, baris tabel 40px, input/tombol 32–36px, teks 13–14px. | Sama; target sentuh minimal 32px. |
+| L6 | **Konten panjang di dalam komponen** | Modal, dropdown, sidebar, feed: `max-height` + scroll internal, bukan memanjangkan halaman. | Sama. |
+| L7 | **Tanpa judul ganda** | Judul dari breadcrumb / topbar `title`; tanpa `PageHeader`. | Sama. |
+| L8 | **Target layar uji** | 1366×768 (laptop kecil), 1440×900, 1920×1080. | 768×1024, 390×844. |
+
+**Tugas:**
+- [ ] Shell `h-dvh`: `AdminLayout` jadi kolom tinggi layar, `<main>` satu-satunya area scroll (desktop).
+- [ ] Prop `fill` di `Panel` (+ `DataTable` `stickyHeader` / body scroll internal) agar panel tabel mengisi sisa tinggi layar; pagination tetap di dasar panel.
+- [ ] `FormActions sticky`: bar tombol menempel di bawah area konten dengan latar & garis atas.
+- [ ] Dashboard: tinggi chart & feed berbasis tinggi layar (`clamp`/`dvh`), feed scroll internal.
+- [ ] Token kepadatan di satu tempat (`--density-*` / default `size`), terapkan ke `main`, `Grid`, `Panel`, `Table`, `Input`, `Button`, `Select`.
+- [ ] Hapus `PageHeader` di Dashboard & Settings (Users sudah).
+- [ ] Modal & dropdown: `max-h` + scroll internal.
+- [ ] Uji di ukuran layar L8; pastikan di < 1024px tidak ada scroll bersarang.
+- [ ] Update aturan `AGENTS.md` ("Layout Rules" L1–L8).
 
 ### Fase S1b — Multi-bahasa (setelah S1)
 - [ ] Sumber terjemahan Laravel (`lang/id`, `lang/en`) dibagikan ke frontend via Inertia.

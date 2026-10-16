@@ -13,6 +13,8 @@ export * from './collapsible';
 export * from './drawer';
 export * from './dropdown';
 export * from './fade-in';
+export * from './filter-tabs';
+export * from './form-section';
 export * from './grid';
 export * from './icon-button';
 export * from './input';

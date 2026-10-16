@@ -219,3 +219,36 @@ test('users index redirects to the last page when the requested page is past the
         ->get(route('users.index', ['page' => 3, 'role' => 'staff']))
         ->assertRedirect(route('users.index', ['page' => 1, 'role' => 'staff']));
 });
+
+test('users index filters by status and counts users per status tab', function () {
+    User::factory()->count(2)->create(['role' => UserRole::Manager]);
+    User::factory()->inactive()->create(['role' => UserRole::Manager]);
+    User::factory()->inactive()->create(['role' => UserRole::Staff]);
+
+    $this->actingAs($this->admin)
+        ->get(route('users.index', ['status' => 'inactive', 'role' => 'manager']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.status', 'inactive')
+            ->has('users.data', 1)
+            ->where('users.data.0.status', 'inactive')
+            ->where('statusCounts', ['all' => 3, 'active' => 2, 'inactive' => 1])
+        );
+});
+
+test('users index uses the requested page size', function () {
+    User::factory()->count(30)->create();
+
+    $this->actingAs($this->admin)
+        ->get(route('users.index', ['per_page' => 25]))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.perPage', 25)
+            ->where('users.perPage', 25)
+            ->has('users.data', 25)
+        );
+});
+
+test('users index rejects an unsupported page size and status', function () {
+    $this->actingAs($this->admin)
+        ->get(route('users.index', ['per_page' => 1000, 'status' => 'banned']))
+        ->assertSessionHasErrors(['per_page', 'status']);
+});

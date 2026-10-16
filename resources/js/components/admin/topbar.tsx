@@ -1,22 +1,40 @@
 import { Breadcrumb, IconButton, type BreadcrumbEntry } from '@/components/core';
 import { Link } from '@inertiajs/react';
-import { Bell, Menu, Settings } from 'lucide-react';
+import { Bell, CalendarDays, Menu, Settings } from 'lucide-react';
 
 export interface TopbarProps {
     breadcrumbs?: BreadcrumbEntry[];
+    /**
+     * Page title for detail pages such as create and edit forms. When set, the
+     * breadcrumb shrinks into a small line above the title.
+     */
+    title?: string;
     onOpenMenu: () => void;
 }
 
-export function Topbar({ breadcrumbs = [], onOpenMenu }: TopbarProps) {
+const todayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+export function Topbar({ breadcrumbs = [], title, onOpenMenu }: TopbarProps) {
     return (
         <header className="border-line bg-surface/90 sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b px-4 backdrop-blur lg:px-6">
             <IconButton label="Open menu" className="lg:hidden" onClick={onOpenMenu}>
                 <Menu />
             </IconButton>
 
-            <Breadcrumb items={breadcrumbs} className="min-w-0 flex-1" />
+            {title ? (
+                <div className="min-w-0 flex-1">
+                    <Breadcrumb items={breadcrumbs} size="sm" />
+                    <h1 className="text-ink truncate text-base leading-tight font-semibold">{title}</h1>
+                </div>
+            ) : (
+                <Breadcrumb items={breadcrumbs} className="min-w-0 flex-1" />
+            )}
 
             <div className="flex shrink-0 items-center gap-1">
+                <span className="text-ink-muted mr-2 hidden items-center gap-1.5 text-xs md:inline-flex">
+                    <CalendarDays className="size-3.5" />
+                    {todayFormatter.format(new Date())}
+                </span>
                 <IconButton label="Notifications" className="relative">
                     <Bell />
                     <span className="bg-danger ring-surface absolute top-1.5 right-1.5 size-1.5 rounded-full ring-2" />

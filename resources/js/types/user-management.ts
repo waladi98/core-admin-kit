@@ -30,14 +30,21 @@ export interface Paginated<T> {
 export interface UserFilters {
     search: string | null;
     role: UserRole | null;
+    status: UserStatus | null;
     /** `name`, `email` or `created_at`; prefixed with `-` for descending. */
     sort: string;
+    perPage: number;
 }
+
+/** Number of users per status tab, after search and role filters. */
+export type UserStatusCounts = Record<'all' | UserStatus, number>;
 
 export interface UserIndexProps {
     users: Paginated<ManagedUser>;
     filters: UserFilters;
+    statusCounts: UserStatusCounts;
     roleOptions: SelectOption[];
+    statusOptions: SelectOption[];
 }
 
 export interface UserFormOptions {

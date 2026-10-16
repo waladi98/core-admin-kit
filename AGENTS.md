@@ -224,6 +224,11 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 
 - Build every new CRUD module by following .docs/guide-new-module.md, using the Users module (/users) as the reference implementation.
 
+## Page Patterns
+
+- **Index (list) pages**: no `PageHeader`; the breadcrumb is the page title. One `Panel` holds everything: `Panel.Header` with icon + title on the left and search `Input`, Filter `Dropdown` and the primary action (e.g. "Add user", `buttonVariants({ size: 'sm' })`) on the right; `Panel.Toolbar` with `FilterTabs` (counts from the server) for the main status filter; `Panel.Body padding="none"` with `DataTable` (`rowNumberOffset`, `Badge shape="pill"`, row actions `MoreHorizontal`) and a footer `Pagination` with `perPage` / `onPerPageChange`. Reference: `resources/js/pages/users/index.tsx`, `.docs/image/index_crud.png`.
+- **Create / edit pages**: pass `title` to `AdminLayout` so the topbar shows a small breadcrumb above the page title; no `PageHeader`. Group fields in `FormSection` (icon, title, description) with `FormField` (`required`, `hint`, `error`) in a `md:grid-cols-2 xl:grid-cols-3` grid, then `FormActions` below the sections (Cancel as secondary link, submit `Button` with `Check` icon). Reference: `resources/js/components/admin/user-form.tsx`, `.docs/image/create.png`.
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.

@@ -1,8 +1,7 @@
-import { Button, Input, Label, Panel, Select } from '@/components/core';
-import InputError from '@/components/input-error';
+import { Button, FormActions, FormField, FormSection, Input, Select, buttonVariants } from '@/components/core';
 import { type UserFormData, type UserFormOptions } from '@/types/user-management';
 import { Link, useForm } from '@inertiajs/react';
-import { UserRound } from 'lucide-react';
+import { Check, KeyRound, UserRound } from 'lucide-react';
 import { type FormEventHandler } from 'react';
 
 export interface UserFormProps extends UserFormOptions {
@@ -24,105 +23,104 @@ export function UserForm({ initialValues, method, action, submitLabel, isPasswor
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Panel>
-                <Panel.Header title="Account details" icon={UserRound} />
-                <Panel.Body className="space-y-6">
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
-                            <Input
-                                id="name"
-                                value={data.name}
-                                onChange={(event) => setData('name', event.target.value)}
-                                required
-                                autoComplete="off"
-                                placeholder="Full name"
-                                invalid={Boolean(errors.name)}
-                            />
-                            <InputError message={errors.name} />
-                        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <FormSection icon={UserRound} title="User information" description="Basic profile, role and account status.">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    <FormField label="Name" htmlFor="name" required error={errors.name}>
+                        <Input
+                            id="name"
+                            value={data.name}
+                            onChange={(event) => setData('name', event.target.value)}
+                            required
+                            autoComplete="off"
+                            placeholder="Full name"
+                            invalid={Boolean(errors.name)}
+                        />
+                    </FormField>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                value={data.email}
-                                onChange={(event) => setData('email', event.target.value)}
-                                required
-                                autoComplete="off"
-                                placeholder="name@company.com"
-                                invalid={Boolean(errors.email)}
-                            />
-                            <InputError message={errors.email} />
-                        </div>
+                    <FormField label="Email address" htmlFor="email" required hint="Used to sign in." error={errors.email}>
+                        <Input
+                            id="email"
+                            type="email"
+                            value={data.email}
+                            onChange={(event) => setData('email', event.target.value)}
+                            required
+                            autoComplete="off"
+                            placeholder="name@company.com"
+                            invalid={Boolean(errors.email)}
+                        />
+                    </FormField>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="role">Role</Label>
-                            <Select
-                                id="role"
-                                options={roleOptions}
-                                value={data.role}
-                                onChange={(event) => setData('role', event.target.value as UserFormData['role'])}
-                                invalid={Boolean(errors.role)}
-                            />
-                            <InputError message={errors.role} />
-                        </div>
+                    <FormField label="Role" htmlFor="role" required hint="Determines what the user can access." error={errors.role}>
+                        <Select
+                            id="role"
+                            options={roleOptions}
+                            value={data.role}
+                            onChange={(event) => setData('role', event.target.value as UserFormData['role'])}
+                            invalid={Boolean(errors.role)}
+                        />
+                    </FormField>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="status">Status</Label>
-                            <Select
-                                id="status"
-                                options={statusOptions}
-                                value={data.status}
-                                onChange={(event) => setData('status', event.target.value as UserFormData['status'])}
-                                invalid={Boolean(errors.status)}
-                            />
-                            <InputError message={errors.status} />
-                        </div>
+                    <FormField label="Status" htmlFor="status" required hint="Inactive users cannot sign in." error={errors.status}>
+                        <Select
+                            id="status"
+                            options={statusOptions}
+                            value={data.status}
+                            onChange={(event) => setData('status', event.target.value as UserFormData['status'])}
+                            invalid={Boolean(errors.status)}
+                        />
+                    </FormField>
+                </div>
+            </FormSection>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={data.password}
-                                onChange={(event) => setData('password', event.target.value)}
-                                required={!isPasswordOptional}
-                                autoComplete="new-password"
-                                placeholder={isPasswordOptional ? 'Leave blank to keep current password' : 'Password'}
-                                invalid={Boolean(errors.password)}
-                            />
-                            <InputError message={errors.password} />
-                        </div>
+            <FormSection
+                icon={KeyRound}
+                title="Password"
+                description={isPasswordOptional ? 'Leave both fields empty to keep the current password.' : 'Set the password used to sign in.'}
+            >
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    <FormField label="Password" htmlFor="password" required={!isPasswordOptional} error={errors.password}>
+                        <Input
+                            id="password"
+                            type="password"
+                            value={data.password}
+                            onChange={(event) => setData('password', event.target.value)}
+                            required={!isPasswordOptional}
+                            autoComplete="new-password"
+                            placeholder={isPasswordOptional ? 'Keep current password' : 'Password'}
+                            invalid={Boolean(errors.password)}
+                        />
+                    </FormField>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm password</Label>
-                            <Input
-                                id="password_confirmation"
-                                type="password"
-                                value={data.password_confirmation}
-                                onChange={(event) => setData('password_confirmation', event.target.value)}
-                                required={!isPasswordOptional}
-                                autoComplete="new-password"
-                                placeholder="Confirm password"
-                                invalid={Boolean(errors.password_confirmation)}
-                            />
-                            <InputError message={errors.password_confirmation} />
-                        </div>
-                    </div>
+                    <FormField
+                        label="Confirm password"
+                        htmlFor="password_confirmation"
+                        required={!isPasswordOptional}
+                        error={errors.password_confirmation}
+                    >
+                        <Input
+                            id="password_confirmation"
+                            type="password"
+                            value={data.password_confirmation}
+                            onChange={(event) => setData('password_confirmation', event.target.value)}
+                            required={!isPasswordOptional}
+                            autoComplete="new-password"
+                            placeholder="Confirm password"
+                            invalid={Boolean(errors.password_confirmation)}
+                        />
+                    </FormField>
+                </div>
+            </FormSection>
 
-                    <div className="border-line flex items-center justify-end gap-2 border-t pt-4">
-                        <Link href={route('users.index')} className="text-ink-soft hover:text-ink px-3 text-sm font-medium">
-                            Cancel
-                        </Link>
-                        <Button type="submit" isLoading={processing}>
-                            {submitLabel}
-                        </Button>
-                    </div>
-                </Panel.Body>
-            </Panel>
+            <FormActions>
+                <Link href={route('users.index')} className={buttonVariants({ variant: 'secondary' })}>
+                    Cancel
+                </Link>
+                <Button type="submit" isLoading={processing}>
+                    {!processing && <Check />}
+                    {submitLabel}
+                </Button>
+            </FormActions>
         </form>
     );
 }

@@ -11,19 +11,23 @@ export interface BreadcrumbEntry {
 
 export interface BreadcrumbProps {
     items: BreadcrumbEntry[];
+    /** "sm" is a muted one-line trail, used above a page title. */
+    size?: 'sm' | 'md';
     className?: string;
 }
 
-export function Breadcrumb({ items, className }: BreadcrumbProps) {
+export function Breadcrumb({ items, size = 'md', className }: BreadcrumbProps) {
+    const isSmall = size === 'sm';
+
     return (
         <nav aria-label="Breadcrumb" className={className}>
-            <ol className="flex flex-wrap items-center gap-2 text-sm">
+            <ol className={cn('flex flex-wrap items-center', isSmall ? 'gap-1 text-[11px] leading-4' : 'gap-2 text-sm')}>
                 {items.map((item, index) => {
                     const isLast = index === items.length - 1;
                     const Icon = item.icon;
                     const content = (
                         <>
-                            {Icon && <Icon className="size-4 shrink-0" />}
+                            {Icon && !isSmall && <Icon className="size-4 shrink-0" />}
                             {item.title}
                         </>
                     );
@@ -34,7 +38,10 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
                                 {isLast || !item.href ? (
                                     <span
                                         aria-current={isLast ? 'page' : undefined}
-                                        className={cn('inline-flex items-center gap-1.5', isLast ? 'text-ink font-medium' : 'text-ink-muted')}
+                                        className={cn(
+                                            'inline-flex items-center gap-1.5',
+                                            isLast && !isSmall ? 'text-ink font-medium' : 'text-ink-muted',
+                                        )}
                                     >
                                         {content}
                                     </span>

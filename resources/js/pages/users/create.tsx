@@ -1,6 +1,5 @@
-import { PageHeader } from '@/components/admin/page-header';
 import { UserForm } from '@/components/admin/user-form';
-import { Grid, type BreadcrumbEntry } from '@/components/core';
+import { type BreadcrumbEntry } from '@/components/core';
 import AdminLayout from '@/layouts/admin-layout';
 import { type UserFormOptions } from '@/types/user-management';
 import { Head } from '@inertiajs/react';
@@ -16,32 +15,28 @@ export default function CreateUser({ roleOptions, statusOptions }: UserFormOptio
     return (
         <>
             <Head title="Add user" />
-            <div className="space-y-6">
-                <PageHeader title="Add user" description="Create a new account and assign its role." />
-
-                <Grid stagger>
-                    <Grid.Item span={{ base: 12, xl: 8 }}>
-                        <UserForm
-                            method="post"
-                            action={route('users.store')}
-                            submitLabel="Create user"
-                            roleOptions={roleOptions}
-                            statusOptions={statusOptions}
-                            initialValues={{
-                                name: '',
-                                email: '',
-                                role: 'staff',
-                                status: 'active',
-                                password: '',
-                                password_confirmation: '',
-                            }}
-                        />
-                    </Grid.Item>
-                </Grid>
-            </div>
+            <UserForm
+                method="post"
+                action={route('users.store')}
+                submitLabel="Save user"
+                roleOptions={roleOptions}
+                statusOptions={statusOptions}
+                initialValues={{
+                    name: '',
+                    email: '',
+                    role: 'staff',
+                    status: 'active',
+                    password: '',
+                    password_confirmation: '',
+                }}
+            />
         </>
     );
 }
 
 /** Persistent layout: the shell stays mounted while navigating between pages. */
-CreateUser.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;
+CreateUser.layout = (page: ReactNode) => (
+    <AdminLayout breadcrumbs={breadcrumbs} title="Add user">
+        {page}
+    </AdminLayout>
+);

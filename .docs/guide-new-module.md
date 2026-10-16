@@ -44,11 +44,13 @@
 1. **Tipe** di `types/client.ts` (ikuti `types/user-management.ts`: `Paginated<T>`, props halaman, data form).
 2. **Halaman daftar** (`pages/clients/index.tsx`), salin dari `pages/users/index.tsx`:
    - `useTableQuery({ url: route('clients.index'), only: ['clients', 'filters'], initial })`;
-   - toolbar di `Panel.Header actions`: `Input` search (ikon spinner saat `isSearching`) + `Select` filter;
+   - **tanpa `PageHeader`** (judul cukup dari breadcrumb); `Panel.Header`: ikon + judul, lalu search `Input` (ikon spinner saat `isSearching`), tombol Filter (`Dropdown`) dan tombol utama (mis. **Add client**);
+   - `Panel.Toolbar` berisi `FilterTabs` dengan jumlah per status dari server (lihat `statusCounts` di `UserController`);
    - `DataTable` dengan `sort` / `onSortChange` / `isLoading` / `pendingRowIds` / `emptyState`; kolom `sortable` harus sama dengan whitelist backend; set `skeleton` per kolom;
-   - `Pagination` dengan `loadingPage`;
+   - `DataTable rowNumberOffset` untuk kolom `#`, badge `shape="pill"`;
+   - `Pagination` di footer panel dengan `loadingPage`, `perPage` dan `onPerPageChange` (backend menerima `per_page` dari whitelist);
    - hapus lewat `Modal` + `router.delete(..., { only: ['clients'], preserveState: true, preserveScroll: true })`, id baris dimasukkan ke `pendingRowIds` selama request.
-3. **Form** — satu komponen form untuk tambah & edit (lihat `user-form.tsx`): `useForm`, `Label` + `Input`/`Select` + `InputError`, `Button type="submit" isLoading={processing}`.
+3. **Form** — satu komponen form untuk tambah & edit (lihat `user-form.tsx`): `useForm`, field dikelompokkan dalam `FormSection` + `FormField` (`required`, `hint`, `error`) grid 3 kolom, lalu `FormActions` (Cancel + Save dengan ikon `Check`). Halaman create/edit memberi `title` ke `AdminLayout` dan tidak memakai `PageHeader`.
 4. **Persistent layout** di setiap halaman:
    ```tsx
    ClientsIndex.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;

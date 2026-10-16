@@ -4,10 +4,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type TableFilters = Record<string, string | null>;
 
+export const DEFAULT_PER_PAGE = 10;
+
 export interface TableQuery<TFilters extends TableFilters> {
     search: string;
     sort: TableSort | null;
     page: number;
+    /** Rows per page. Sent as `per_page` only when it differs from DEFAULT_PER_PAGE. */
+    perPage?: number;
     filters: TFilters;
 }
 
@@ -30,6 +34,7 @@ export interface UseTableQueryResult<TFilters extends TableFilters> {
     setFilter: <K extends keyof TFilters>(key: K, value: TFilters[K]) => void;
     setSort: (sort: TableSort | null) => void;
     setPage: (page: number) => void;
+    setPerPage: (perPage: number) => void;
     reset: () => void;
     /** True while a reload is in flight (after `loadingDelay`). Pass to DataTable `isLoading`. */
     isLoading: boolean;
@@ -57,6 +62,10 @@ export function toQueryParams<TFilters extends TableFilters>(query: TableQuery<T
 
     if (query.page > 1) {
         params.page = query.page;
+    }
+
+    if (query.perPage && query.perPage !== DEFAULT_PER_PAGE) {
+        params.per_page = query.perPage;
     }
 
     Object.entries(query.filters).forEach(([key, value]) => {
@@ -164,6 +173,8 @@ export function useTableQuery<TFilters extends TableFilters>({
         [update],
     );
 
+    const setPerPage = useCallback((perPage: number) => update({ perPage, page: 1 }), [update]);
+
     const reset = useCallback(() => {
         const emptyFilters = Object.fromEntries(Object.keys(initialQuery.current.filters).map((key) => [key, null])) as TFilters;
         update({ search: '', sort: null, page: 1, filters: emptyFilters });
@@ -171,5 +182,5 @@ export function useTableQuery<TFilters extends TableFilters>({
 
     const hasActiveFilters = query.search.trim() !== '' || Object.values(query.filters).some((value) => value !== null && value !== '');
 
-    return { query, setSearch, setFilter, setSort, setPage, reset, isLoading, isSearching, loadingPage, hasActiveFilters };
+    return { query, setSearch, setFilter, setSort, setPage, setPerPage, reset, isLoading, isSearching, loadingPage, hasActiveFilters };
 }

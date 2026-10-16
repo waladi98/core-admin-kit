@@ -20,16 +20,21 @@ export const badgeVariants = cva('inline-flex items-center gap-1 whitespace-nowr
             soft: '',
             plain: 'bg-transparent px-0',
         },
+        shape: {
+            rounded: '',
+            pill: 'rounded-full px-2.5',
+        },
     },
     defaultVariants: {
         tone: 'neutral',
         size: 'md',
         appearance: 'soft',
+        shape: 'rounded',
     },
 });
 
 export interface BadgeProps extends ComponentProps<'span'>, VariantProps<typeof badgeVariants> {}
 
-export function Badge({ className, tone, size, appearance, ...props }: BadgeProps) {
-    return <span className={cn(badgeVariants({ tone, size, appearance }), className)} {...props} />;
+export function Badge({ className, tone, size, appearance, shape, ...props }: BadgeProps) {
+    return <span className={cn(badgeVariants({ tone, size, appearance, shape }), className)} {...props} />;
 }

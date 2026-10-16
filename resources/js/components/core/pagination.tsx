@@ -1,6 +1,9 @@
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, LoaderCircle } from 'lucide-react';
 import { type ReactNode } from 'react';
+import { Select } from './select';
+
+export const PER_PAGE_OPTIONS = [10, 25, 50, 100];
 
 export interface PaginationProps {
     currentPage: number;
@@ -12,6 +15,10 @@ export interface PaginationProps {
     from?: number | null;
     to?: number | null;
     total?: number;
+    /** Shows an "entries per page" select when both are set. */
+    perPage?: number;
+    onPerPageChange?: (perPage: number) => void;
+    perPageOptions?: number[];
     className?: string;
 }
 
@@ -47,14 +54,24 @@ export function getPageItems(currentPage: number, lastPage: number): PageItem[] 
 }
 
 const pageButtonClass =
-    'rounded-field inline-flex h-8 min-w-8 items-center justify-center px-2 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand/20 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4';
+    'rounded-field inline-flex h-7 min-w-7 items-center justify-center px-1.5 text-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand/20 disabled:pointer-events-none disabled:opacity-40 [&_svg]:size-3.5';
 
-export function Pagination({ currentPage, lastPage, onPageChange, loadingPage = null, from, to, total, className }: PaginationProps) {
+export function Pagination({
+    currentPage,
+    lastPage,
+    onPageChange,
+    loadingPage = null,
+    from,
+    to,
+    total,
+    perPage,
+    onPerPageChange,
+    perPageOptions = PER_PAGE_OPTIONS,
+    className,
+}: PaginationProps) {
     const isBusy = loadingPage !== null;
-
-    if (lastPage <= 1 && total === undefined) {
-        return null;
-    }
+    const pageCount = Math.max(lastPage, 1);
+    const hasPerPage = perPage !== undefined && onPerPageChange !== undefined;
 
     const renderNavButton = (page: number, label: string, icon: ReactNode, isDisabled: boolean) => (
         <button
@@ -62,66 +79,85 @@ export function Pagination({ currentPage, lastPage, onPageChange, loadingPage = 
             aria-label={label}
             onClick={() => onPageChange(page)}
             disabled={isDisabled || isBusy}
-            className={cn(pageButtonClass, 'text-ink-soft hover:bg-surface-hover')}
+            className={cn(pageButtonClass, 'text-ink-muted hover:bg-surface-hover hover:text-ink')}
         >
             {loadingPage === page ? <LoaderCircle className="animate-spin" /> : icon}
         </button>
     );
 
     return (
-        <nav aria-label="Pagination" className={cn('flex flex-col items-center justify-between gap-3 sm:flex-row', className)}>
-            {total !== undefined && (
-                <p className="text-ink-muted text-sm">
-                    {total === 0 ? (
-                        'No results'
-                    ) : (
-                        <>
-                            Showing <span className="text-ink font-medium">{from}</span>–<span className="text-ink font-medium">{to}</span> of{' '}
-                            <span className="text-ink font-medium">{total}</span>
-                        </>
-                    )}
-                </p>
-            )}
+        <nav aria-label="Pagination" className={cn('flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between', className)}>
+            <div className="text-ink-muted flex items-center gap-2 text-xs">
+                {hasPerPage && (
+                    <>
+                        <Select
+                            size="sm"
+                            aria-label="Entries per page"
+                            options={perPageOptions.map((option) => ({ value: String(option), label: String(option) }))}
+                            value={String(perPage)}
+                            onChange={(event) => onPerPageChange(Number(event.target.value))}
+                            disabled={isBusy}
+                            wrapperClassName="w-18"
+                        />
+                        <span>entries per page</span>
+                    </>
+                )}
+                {total !== undefined && (
+                    <span>
+                        {hasPerPage && <span className="text-line-strong mr-2">·</span>}
+                        {total === 0 ? (
+                            'No results'
+                        ) : (
+                            <>
+                                <span className="text-ink-soft font-medium">{from}</span>–<span className="text-ink-soft font-medium">{to}</span> of{' '}
+                                <span className="text-ink-soft font-medium">{total}</span>
+                            </>
+                        )}
+                    </span>
+                )}
+            </div>
 
-            {lastPage > 1 && (
-                <div className="flex items-center gap-1">
-                    {renderNavButton(currentPage - 1, 'Previous page', <ChevronLeft />, currentPage <= 1)}
-                    {getPageItems(currentPage, lastPage).map((item) => {
-                        if (typeof item !== 'number') {
-                            return (
-                                <span
-                                    key={item}
-                                    className="text-ink-subtle inline-flex h-8 min-w-8 items-center justify-center text-sm"
-                                    aria-hidden="true"
-                                >
-                                    …
-                                </span>
-                            );
-                        }
-
-                        const isCurrent = item === currentPage;
-
+            <div className="flex items-center gap-0.5">
+                {renderNavButton(1, 'First page', <ChevronsLeft />, currentPage <= 1)}
+                {renderNavButton(currentPage - 1, 'Previous page', <ChevronLeft />, currentPage <= 1)}
+                {getPageItems(currentPage, pageCount).map((item) => {
+                    if (typeof item !== 'number') {
                         return (
-                            <button
+                            <span
                                 key={item}
-                                type="button"
-                                onClick={() => onPageChange(item)}
-                                aria-current={isCurrent ? 'page' : undefined}
-                                aria-label={`Page ${item}`}
-                                disabled={isCurrent || isBusy}
-                                className={cn(
-                                    pageButtonClass,
-                                    isCurrent ? 'bg-brand text-brand-foreground disabled:opacity-100' : 'text-ink-soft hover:bg-surface-hover',
-                                    loadingPage === item && 'disabled:opacity-100',
-                                )}
+                                className="text-ink-subtle inline-flex h-7 min-w-7 items-center justify-center text-xs"
+                                aria-hidden="true"
                             >
-                                {loadingPage === item ? <LoaderCircle className="animate-spin" /> : item}
-                            </button>
+                                …
+                            </span>
                         );
-                    })}
-                    {renderNavButton(currentPage + 1, 'Next page', <ChevronRight />, currentPage >= lastPage)}
-                </div>
-            )}
+                    }
+
+                    const isCurrent = item === currentPage;
+
+                    return (
+                        <button
+                            key={item}
+                            type="button"
+                            onClick={() => onPageChange(item)}
+                            aria-current={isCurrent ? 'page' : undefined}
+                            aria-label={`Page ${item}`}
+                            disabled={isCurrent || isBusy}
+                            className={cn(
+                                pageButtonClass,
+                                isCurrent
+                                    ? 'bg-brand text-brand-foreground font-medium disabled:opacity-100'
+                                    : 'text-ink-soft hover:bg-surface-hover',
+                                loadingPage === item && 'disabled:opacity-100',
+                            )}
+                        >
+                            {loadingPage === item ? <LoaderCircle className="animate-spin" /> : item}
+                        </button>
+                    );
+                })}
+                {renderNavButton(currentPage + 1, 'Next page', <ChevronRight />, currentPage >= pageCount)}
+                {renderNavButton(pageCount, 'Last page', <ChevronsRight />, currentPage >= pageCount)}
+            </div>
         </nav>
     );
 }

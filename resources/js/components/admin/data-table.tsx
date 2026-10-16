@@ -38,6 +38,11 @@ export interface DataTableProps<T> {
     onSortChange?: (sort: TableSort | null) => void;
     emptyState?: ReactNode;
     emptyMessage?: string;
+    /**
+     * Shows a "#" column. Pass the number of rows before this page
+     * (e.g. (currentPage - 1) * perPage) so numbering continues across pages.
+     */
+    rowNumberOffset?: number;
 }
 
 /** Later rows share the last delay so long pages do not feel slow. */
@@ -87,7 +92,9 @@ export function DataTable<T>({
     onSortChange,
     emptyState,
     emptyMessage = 'No data found.',
+    rowNumberOffset,
 }: DataTableProps<T>) {
+    const showRowNumbers = rowNumberOffset !== undefined;
     const isServerSorted = controlledSort !== undefined;
     const [clientSort, setClientSort] = useState<TableSort | null>(null);
     const sort = isServerSorted ? controlledSort : clientSort;
@@ -159,7 +166,7 @@ export function DataTable<T>({
         onSelectionChange?.(selectedIds.includes(id) ? selectedIds.filter((selectedId) => selectedId !== id) : [...selectedIds, id]);
     };
 
-    const columnCount = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
+    const columnCount = columns.length + (selectable ? 1 : 0) + (showRowNumbers ? 1 : 0) + (rowActions ? 1 : 0);
     const isInitialLoading = isLoading && sortedRows.length === 0;
     const isReloading = isLoading && sortedRows.length > 0;
 
@@ -181,6 +188,7 @@ export function DataTable<T>({
                             />
                         </TableHeaderCell>
                     )}
+                    {showRowNumbers && <TableHeaderCell className="w-12">#</TableHeaderCell>}
                     {columns.map((column) => {
                         const isSortable = Boolean(column.sortValue) || Boolean(column.sortable && isServerSorted);
                         const isSorted = sort?.key === column.key;
@@ -230,6 +238,11 @@ export function DataTable<T>({
                             {selectable && (
                                 <TableCell>
                                     <Skeleton className="size-4" />
+                                </TableCell>
+                            )}
+                            {showRowNumbers && (
+                                <TableCell>
+                                    <Skeleton shape="text" className="w-4" />
                                 </TableCell>
                             )}
                             {columns.map((column, columnIndex) => (
@@ -286,6 +299,7 @@ export function DataTable<T>({
                                         <Checkbox checked={isSelected} onChange={() => toggleRow(id)} aria-label={`Select row ${id}`} />
                                     </TableCell>
                                 )}
+                                {showRowNumbers && <TableCell className="text-ink-muted tabular-nums">{rowNumberOffset + index + 1}</TableCell>}
                                 {columns.map((column) => (
                                     <TableCell key={column.key} className={column.className}>
                                         {column.cell(row)}

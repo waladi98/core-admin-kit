@@ -27,10 +27,12 @@ function storeCollapsedPreference(isCollapsed: boolean): void {
 
 export interface AdminLayoutProps {
     breadcrumbs?: BreadcrumbEntry[];
+    /** Page title shown in the topbar under the breadcrumb, e.g. on create and edit pages. */
+    title?: string;
     children: ReactNode;
 }
 
-export default function AdminLayout({ breadcrumbs, children }: AdminLayoutProps) {
+export default function AdminLayout({ breadcrumbs, title, children }: AdminLayoutProps) {
     const [isCollapsed, setIsCollapsed] = useState(() => (typeof window === 'undefined' ? false : readCollapsedPreference()));
     const mobileMenu = useDisclosure();
     const navigation = useNavigationPending();
@@ -59,7 +61,7 @@ export default function AdminLayout({ breadcrumbs, children }: AdminLayoutProps)
             </Drawer>
 
             <div className="flex min-w-0 flex-1 flex-col">
-                <Topbar breadcrumbs={breadcrumbs} onOpenMenu={mobileMenu.open} />
+                <Topbar breadcrumbs={breadcrumbs} title={title} onOpenMenu={mobileMenu.open} />
                 <main
                     aria-busy={navigation.isPending || undefined}
                     className={cn(

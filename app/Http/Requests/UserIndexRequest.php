@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,6 +17,15 @@ class UserIndexRequest extends FormRequest
     public const SORTABLE = ['name', 'email', 'created_at'];
 
     public const DEFAULT_SORT = 'name';
+
+    /**
+     * Allowed page sizes for the "entries per page" select.
+     *
+     * @var list<int>
+     */
+    public const PER_PAGE_OPTIONS = [10, 25, 50, 100];
+
+    public const DEFAULT_PER_PAGE = 10;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -37,6 +47,8 @@ class UserIndexRequest extends FormRequest
         return [
             'search' => ['nullable', 'string', 'max:100'],
             'role' => ['nullable', 'string', Rule::enum(UserRole::class)],
+            'status' => ['nullable', 'string', Rule::enum(UserStatus::class)],
+            'per_page' => ['nullable', 'integer', Rule::in(self::PER_PAGE_OPTIONS)],
             'sort' => ['nullable', 'string', Rule::in($sorts)],
         ];
     }
@@ -51,6 +63,16 @@ class UserIndexRequest extends FormRequest
     public function role(): ?UserRole
     {
         return UserRole::tryFrom((string) $this->validated('role'));
+    }
+
+    public function status(): ?UserStatus
+    {
+        return UserStatus::tryFrom((string) $this->validated('status'));
+    }
+
+    public function perPage(): int
+    {
+        return (int) ($this->validated('per_page') ?? self::DEFAULT_PER_PAGE);
     }
 
     public function sort(): string

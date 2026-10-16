@@ -20,20 +20,28 @@ use Inertia\Response;
  */
 class UserController extends Controller
 {
-    public const PER_PAGE = 10;
-
     public function index(UserIndexRequest $request): Response|RedirectResponse
     {
         $sort = $request->sort();
 
-        $users = User::query()
+        // Search and role apply to both the table and the status tab counts.
+        $filtered = User::query()
             ->when($request->search(), fn (Builder $query, string $search) => $query->where(
                 fn (Builder $query) => $query->whereLike('name', "%{$search}%")->orWhereLike('email', "%{$search}%")
             ))
-            ->when($request->role(), fn (Builder $query, UserRole $role) => $query->where('role', $role))
+            ->when($request->role(), fn (Builder $query, UserRole $role) => $query->where('role', $role));
+
+        $statusCounts = (clone $filtered)
+            ->toBase()
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $users = (clone $filtered)
+            ->when($request->status(), fn (Builder $query, UserStatus $status) => $query->where('status', $status))
             ->orderBy(ltrim($sort, '-'), Str::startsWith($sort, '-') ? 'desc' : 'asc')
             ->orderBy('id')
-            ->paginate(self::PER_PAGE)
+            ->paginate($request->perPage())
             ->withQueryString();
 
         // A page past the end (e.g. after deleting the last row of the last page) falls back to the last page.
@@ -54,8 +62,17 @@ class UserController extends Controller
             'filters' => [
                 'search' => $request->search(),
                 'role' => $request->role()?->value,
+                'status' => $request->status()?->value,
                 'sort' => $sort,
+                'perPage' => $request->perPage(),
             ],
+            'statusCounts' => [
+                'all' => (int) $statusCounts->sum(),
+                ...collect(UserStatus::cases())->mapWithKeys(fn (UserStatus $status): array => [
+                    $status->value => (int) ($statusCounts[$status->value] ?? 0),
+                ])->all(),
+            ],
+            'statusOptions' => $this->options(UserStatus::cases()),
             'roleOptions' => $this->options(UserRole::cases()),
         ]);
     }
