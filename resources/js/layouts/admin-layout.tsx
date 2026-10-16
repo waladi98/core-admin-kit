@@ -1,3 +1,4 @@
+import { ErrorBoundary } from '@/components/admin/error-boundary';
 import { FlashToasts } from '@/components/admin/flash-toasts';
 import { Sidebar } from '@/components/admin/sidebar/sidebar';
 import { SlowConnectionNotice } from '@/components/admin/slow-connection-notice';
@@ -9,6 +10,7 @@ import { useNavigationPending } from '@/hooks/use-navigation-pending';
 import { useSyncTranslations } from '@/hooks/use-translation';
 import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { usePage } from '@inertiajs/react';
 import { useCallback, useState, type ReactNode } from 'react';
 
 const COLLAPSED_STORAGE_KEY = 'finance-core.sidebar-collapsed';
@@ -42,6 +44,7 @@ export default function AdminLayout({ breadcrumbs, title, titleParams, children 
     const [isCollapsed, setIsCollapsed] = useState(() => (typeof window === 'undefined' ? false : readCollapsedPreference()));
     useSyncTranslations();
     const mobileMenu = useDisclosure();
+    const pageUrl = usePage().url;
     const navigation = useNavigationPending();
 
     const toggleCollapse = useCallback(() => {
@@ -80,7 +83,9 @@ export default function AdminLayout({ breadcrumbs, title, titleParams, children 
                                     navigation.isPending && 'pointer-events-none opacity-60',
                                 )}
                             >
-                                {children}
+                                <ErrorBoundary size="page" resetKey={pageUrl}>
+                                    {children}
+                                </ErrorBoundary>
                             </main>
                         </div>
 

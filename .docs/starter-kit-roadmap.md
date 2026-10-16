@@ -1,6 +1,6 @@
 # Finance Core — Starter Kit Roadmap
 
-> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, S3 ✅, berikutnya S4)** — keputusan kecil dicatat di `.docs/decisions-log.md`
+> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, S3 ✅, S4 ✅, berikutnya S5)** — keputusan kecil dicatat di `.docs/decisions-log.md`
 > Tujuan: template ini dipakai sebagai titik awal project-project berikutnya, sehingga fitur yang hampir selalu dibutuhkan sudah tersedia dan konsisten.
 
 ## 1. Kondisi Saat Ini
@@ -19,7 +19,7 @@
 | Multi-bahasa | ✅ Indonesia & Inggris, per pengguna |
 | Toast / flash message | ✅ `withToast()`, `useToast`, `useConfirm` |
 | Search `⌘K` & lonceng notifikasi | ❌ hanya tampilan |
-| Halaman error | ❌ masih bawaan Laravel |
+| Halaman error | ✅ 403/404/419/500/503 bergaya Finance Core |
 
 ## 2. Prinsip
 
@@ -49,7 +49,7 @@
 | 4 | **S1b** | Multi-bahasa (ID/EN) | ✅ | ✅ |
 | 5 | **S2** | Toast, flash message, `useConfirm` | ✅ | ✅ |
 | 6 | **S3** | Komponen form lengkap | ✅ | ✅ |
-| 7 | **S4** | Halaman error & error boundary | ⬜ | ✅ |
+| 7 | **S4** | Halaman error & error boundary | ✅ | ✅ |
 | 8 | **S5** | Format Rupiah, tanggal, locale & timezone | ⬜ | ✅ |
 | 9 | **S11** | Kesiapan starter kit & rilis `v1.0.0` | ⬜ | ✅ |
 | 10 | S6 | Command palette `⌘K` & notifikasi | ⬜ | v1.x |
@@ -125,10 +125,10 @@
 - [x] `Combobox` (searchable select, Headless UI), `DatePicker`, `FileUpload` (+ preview avatar).
 - [x] `CurrencyInput` (format Rupiah).
 
-### S4 — Halaman Error & State Global
-- [ ] Halaman 403, 404, 419, 500, 503 bergaya Finance Core.
-- [ ] Halaman maintenance.
-- [ ] Error boundary React untuk widget yang gagal render.
+### S4 — Halaman Error & State Global ✅
+- [x] Halaman 403, 404, 419, 500, 503 bergaya Finance Core.
+- [x] Halaman maintenance.
+- [x] Error boundary React untuk widget yang gagal render.
 
 ### S5 — Utilitas Format
 - [ ] `lib/format.ts`: Rupiah, angka, persen, tanggal & waktu, tanggal relatif (mengikuti locale S1b).

@@ -256,6 +256,12 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Client-only messages: `const toast = useToast(); toast.success(t('…'))`.
 - Destructive actions ask first with `const confirm = useConfirm(); if (await confirm({ title, description, confirmLabel, tone: 'danger' })) { … }` (English texts; the dialog translates them). Use a custom `Modal` only when the dialog needs inputs (e.g. password confirmation in `delete-user.tsx`).
 
+## Errors
+
+- HTTP errors render `resources/js/pages/error.tsx` via `$exceptions->respond()` in `bootstrap/app.php`: 403/404 always, 500/503 only when `APP_DEBUG=false` (so local debugging keeps Laravel's error screen). 419 (expired page) goes back with an error toast. Do not add Blade error views.
+- The error page is standalone (a 404 can happen before the web middleware runs); the handler passes `locale` and `translations` itself.
+- React rendering errors: `AdminLayout` wraps each page in `ErrorBoundary` (reset on navigation); wrap risky widgets (charts, embeds) in `<ErrorBoundary>` from `@/components/admin/error-boundary` so one failure does not blank the page.
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.

@@ -71,3 +71,14 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | FileUpload | Validasi jenis & ukuran di browser untuk umpan balik cepat; server tetap memvalidasi. | Keamanan tetap di server. |
 | Contoh nyata | Foto profil di Settings → Profile (`users.avatar_path`, disk `public`, `php artisan storage:link`). File lama dihapus saat diganti, dihapus, atau akun dihapus. | Menjadi acuan pola upload untuk modul lain. |
 | Form Users | Tidak diubah (sudah memakai `FormField`). | Tugas roadmap "refactor ke FormField" sudah terpenuhi sejak revisi Users. |
+
+## S4 — Halaman Error
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Kapan halaman ramah dipakai | 403/404 selalu; 500/503 hanya saat `APP_DEBUG=false`. | Developer tetap melihat detail error saat development; pengguna production melihat pesan yang jelas. |
+| 419 (CSRF/halaman kedaluwarsa) | Kembali ke halaman sebelumnya dengan toast error. | Lebih ramah daripada halaman error untuk kejadian umum (tab dibiarkan lama). |
+| Halaman maintenance | Halaman error yang sama dengan status 503 (`php artisan down`). | Satu desain untuk semua kondisi; tidak perlu view Blade terpisah. |
+| Bahasa halaman error | Ditentukan di handler (bahasa pengguna / session / default) dan dikirim bersama terjemahan. | 404 dapat terjadi sebelum middleware web (bahasa & shared props) berjalan. |
+| Tombol | "Kembali" + "Ke dasbor" (sudah login) / "Ke beranda" (tamu); tidak ada tombol beranda saat 503. | Selalu ada jalan keluar yang jelas. |
+| Error boundary | Per halaman (di `AdminLayout`, reset saat pindah halaman) dan per chart. | Satu widget rusak tidak membuat seluruh layar kosong. |
