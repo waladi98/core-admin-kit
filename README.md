@@ -84,9 +84,10 @@ Ikuti **`.docs/guide-new-module.md`** — langkah lengkap backend (migration, Fo
 
 | Yang diganti | Lokasi |
 |---|---|
-| Nama aplikasi (judul tab browser) | `APP_NAME` di `.env` |
-| Logo & nama di sidebar/login | `resources/js/components/admin/brand-logo.tsx` |
-| Warna brand, warna status, radius, kepadatan | token di `resources/css/app.css` (`--color-brand`, `--spacing-control`, dll.) |
+| Nama, logo & warna brand (tanpa ubah kode) | Menu **Settings → Application** (izin `settings.manage`) |
+| Nilai bawaan nama & warna brand | `config/branding.php` / `APP_NAME`, `BRAND_COLOR` di `.env` |
+| Judul tab browser | `APP_NAME` di `.env` |
+| Warna status, radius, kepadatan | token di `resources/css/app.css` (`--color-success`, `--spacing-control`, dll.) |
 | Bahasa default & zona waktu tampilan | `APP_LOCALE`, `APP_DISPLAY_TIMEZONE` di `.env` |
 | Akun admin awal | `database/seeders/DatabaseSeeder.php` |
 

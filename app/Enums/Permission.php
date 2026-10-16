@@ -19,6 +19,7 @@ enum Permission: string
     case UsersDelete = 'users.delete';
     case RolesView = 'roles.view';
     case RolesManage = 'roles.manage';
+    case SettingsManage = 'settings.manage';
 
     /**
      * Human-readable label shown next to the checkbox.
@@ -32,6 +33,7 @@ enum Permission: string
             self::UsersDelete => __('Delete users'),
             self::RolesView => __('View roles'),
             self::RolesManage => __('Create, edit and delete roles'),
+            self::SettingsManage => __('Change application name, logo and colors'),
         };
     }
 
@@ -43,6 +45,7 @@ enum Permission: string
         return match ($this) {
             self::UsersView, self::UsersCreate, self::UsersUpdate, self::UsersDelete => __('Users'),
             self::RolesView, self::RolesManage => __('Roles & Permissions'),
+            self::SettingsManage => __('Application settings'),
         };
     }
 

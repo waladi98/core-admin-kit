@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
+use App\Support\AppSettings;
 use App\Support\Translations;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -51,6 +52,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 'locale' => $locale,
                 'locales' => SetLocale::available(),
                 'translations' => Translations::forLocale($locale),
+                // The database may be the reason for the error, so branding falls back to config.
+                'branding' => rescue(fn (): array => AppSettings::branding(), fn (): array => ['name' => config('branding.name'), 'color' => config('branding.color'), 'logoUrl' => null], report: false),
             ])->toResponse($request)->setStatusCode($status);
         });
     })->create();

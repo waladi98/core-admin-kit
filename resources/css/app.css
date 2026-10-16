@@ -23,7 +23,8 @@
     --color-ink-muted: #4b5563;
     --color-ink-subtle: #6b7280;
     --color-brand: #1f2937;
-    --color-brand-hover: #111827;
+    /* Follows the brand color, also when it is changed at runtime (Settings → Application). */
+    --color-brand-hover: color-mix(in oklab, var(--color-brand) 82%, black);
     --color-brand-foreground: #ffffff;
     --color-success: #16a34a;
     --color-success-soft: #ecfdf3;

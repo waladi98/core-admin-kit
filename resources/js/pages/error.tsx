@@ -1,5 +1,6 @@
 import { BrandLogo } from '@/components/admin/brand-logo';
 import { buttonVariants } from '@/components/core';
+import { useBrandColor } from '@/hooks/use-brand-color';
 import { useSyncTranslations, useTranslation } from '@/hooks/use-translation';
 import { Head, Link } from '@inertiajs/react';
 import { ArrowLeft, Ban, FileQuestion, LayoutGrid, ServerCrash, Wrench, type LucideIcon } from 'lucide-react';
@@ -39,6 +40,7 @@ const content: Record<ErrorPageProps['status'], { icon: LucideIcon; title: strin
  */
 export default function ErrorPage({ status, isSignedIn }: ErrorPageProps) {
     useSyncTranslations();
+    useBrandColor();
     const { t } = useTranslation();
     const page = content[status] ?? content[500];
     const Icon = page.icon;

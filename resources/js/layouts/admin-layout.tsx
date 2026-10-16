@@ -6,6 +6,7 @@ import { SlowConnectionNotice } from '@/components/admin/slow-connection-notice'
 import { Topbar } from '@/components/admin/topbar';
 import { TopbarSlotProvider } from '@/components/admin/topbar-actions';
 import { ConfirmProvider, Drawer, ToastProvider, type BreadcrumbEntry } from '@/components/core';
+import { useBrandColor } from '@/hooks/use-brand-color';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useNavigationPending } from '@/hooks/use-navigation-pending';
 import { useSyncTranslations } from '@/hooks/use-translation';
@@ -44,6 +45,7 @@ export interface AdminLayoutProps {
 export default function AdminLayout({ breadcrumbs, title, titleParams, children }: AdminLayoutProps) {
     const [isCollapsed, setIsCollapsed] = useState(() => (typeof window === 'undefined' ? false : readCollapsedPreference()));
     useSyncTranslations();
+    useBrandColor();
     const mobileMenu = useDisclosure();
     const pageUrl = usePage().url;
     const navigation = useNavigationPending();

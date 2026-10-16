@@ -1,4 +1,4 @@
-import { type LucideIcon, KeyRound, Lock, UserPlus, UserRound } from 'lucide-react';
+import { type LucideIcon, KeyRound, Lock, Palette, UserPlus, UserRound } from 'lucide-react';
 
 export interface QuickAction {
     /** English text; translated in the palette. */
@@ -20,4 +20,11 @@ export const quickActions: QuickAction[] = [
     { title: 'Add role', href: '/roles/create', icon: Lock, permission: 'roles.manage', keywords: ['new', 'baru', 'tambah', 'permission', 'izin'] },
     { title: 'Profile settings', href: '/settings/profile', icon: UserRound, keywords: ['photo', 'foto', 'language', 'bahasa'] },
     { title: 'Password settings', href: '/settings/password', icon: KeyRound, keywords: ['security', 'keamanan'] },
+    {
+        title: 'Application settings',
+        href: '/settings/application',
+        icon: Palette,
+        permission: 'settings.manage',
+        keywords: ['brand', 'logo', 'color', 'warna'],
+    },
 ];

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\AppSettings;
 use App\Support\Translations;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -54,6 +55,7 @@ class HandleInertiaRequests extends Middleware
             // Unread count for the bell; the list itself is only loaded when the bell opens.
             'notifications' => fn (): array => ['unreadCount' => $request->user()?->unreadNotifications()->count() ?? 0],
             'notificationItems' => Inertia::optional(fn (): array => $this->notificationItemsOf($request->user())),
+            'branding' => fn (): array => AppSettings::branding(),
             'locale' => app()->getLocale(),
             'locales' => SetLocale::available(),
             'timezone' => config('app.display_timezone'),

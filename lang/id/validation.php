@@ -116,6 +116,8 @@ return [
         'status' => 'status',
         'locale' => 'bahasa',
         'avatar' => 'foto profil',
+        'logo' => 'logo',
+        'color' => 'warna',
         'permissions' => 'izin',
         'permissions.*' => 'izin',
         'search' => 'pencarian',

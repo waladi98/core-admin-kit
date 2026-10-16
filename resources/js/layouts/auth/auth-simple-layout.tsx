@@ -1,6 +1,7 @@
 import { BrandLogo } from '@/components/admin/brand-logo';
 import { FlashToasts } from '@/components/admin/flash-toasts';
 import { ToastProvider } from '@/components/core';
+import { useBrandColor } from '@/hooks/use-brand-color';
 import { useSyncTranslations, useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { Link, router } from '@inertiajs/react';
@@ -15,6 +16,7 @@ interface AuthLayoutProps {
 
 export default function AuthSimpleLayout({ children, title, description }: AuthLayoutProps) {
     useSyncTranslations();
+    useBrandColor();
     const { t, locale, locales } = useTranslation();
 
     return (

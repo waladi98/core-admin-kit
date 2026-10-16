@@ -19,6 +19,8 @@ export interface NotificationItem {
 export interface SharedData {
     name: string;
     auth: Auth;
+    /** Settings → Application (name, brand color, logo). Missing on the standalone error page. */
+    branding?: { name: string; color: string; logoUrl: string | null };
     notifications?: { unreadCount: number };
     /** Only present after a partial reload that asks for it (when the bell opens). */
     notificationItems?: NotificationItem[];

@@ -127,3 +127,14 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Aksi massal Users | Aktifkan, nonaktifkan, hapus; akun sendiri selalu dilewati; izin dicek per baris; hapus massal minta konfirmasi. | Aman dan konsisten dengan aturan hapus satu per satu. |
 | Pilihan baris | Tetap tersimpan saat pindah halaman tabel, dikosongkan setelah aksi massal berhasil. | Memungkinkan memilih baris dari beberapa halaman. |
 | Tampilan HP | Di bawah 768px baris tampil sebagai kartu (`mobileCard`). | Tabel lebar tidak nyaman di layar kecil. |
+
+## S8 — Pengaturan Aplikasi & Branding
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Penyimpanan | Tabel `settings` (key/value) via `App\Support\AppSettings` dengan cache; nilai bawaan di `config/branding.php`. | Admin bisa mengubah tanpa deploy; cache menjaga performa. |
+| Warna brand saat runtime | Token `--color-brand` di-override pada `<html>` oleh `useBrandColor()`; `--color-brand-hover` dihitung otomatis (`color-mix`). | Semua komponen (termasuk dialog & toast di luar layout) ikut berubah tanpa build ulang. |
+| Validasi warna | Hanya warna dengan kontras ≥ 4.5:1 terhadap teks putih (WCAG AA); pratinjau & rasio kontras ditampilkan saat memilih. | Mengikuti aturan keterbacaan untuk pengguna 30–70 tahun. |
+| Izin | Permission baru `settings.manage` (otomatis dimiliki Admin); menu Application tersembunyi tanpa izin. | Konsisten dengan S1. |
+| Halaman error | Ikut memakai branding; bila database bermasalah, jatuh ke nilai config. | Halaman error tidak boleh ikut gagal. |
+| Judul tab browser | Tetap dari `APP_NAME`. | Judul dibentuk saat aplikasi dimuat; ubah `APP_NAME` bila nama berubah permanen. |
