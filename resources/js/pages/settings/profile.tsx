@@ -1,4 +1,4 @@
-import { Button, FormActions, FormField, FormSection, Input, Select, type BreadcrumbEntry } from '@/components/core';
+import { Button, FileUpload, FormActions, FormField, FormSection, Input, Select, type BreadcrumbEntry } from '@/components/core';
 import DeleteUser from '@/components/delete-user';
 import AdminLayout from '@/layouts/admin-layout';
 import SettingsLayout from '@/layouts/settings/layout';
@@ -16,16 +16,31 @@ const breadcrumbs: BreadcrumbEntry[] = [
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
     const { auth, locale, locales } = usePage<SharedData>().props;
 
-    const { data, setData, patch, errors, processing } = useForm({
+    const { data, setData, post, errors, processing } = useForm<{
+        _method: 'patch';
+        name: string;
+        email: string;
+        locale: string;
+        avatar: File | null;
+        remove_avatar: boolean;
+    }>({
+        _method: 'patch',
         name: auth.user.name,
         email: auth.user.email,
         locale: (auth.user.locale as string | null) ?? locale,
+        avatar: null,
+        remove_avatar: false,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        // Files need multipart form data, which PHP only parses on POST; `_method` makes Laravel treat it as PATCH.
+        post(route('profile.update'), {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => setData((current) => ({ ...current, avatar: null, remove_avatar: false })),
+        });
     };
 
     return (
@@ -33,7 +48,36 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
             <Head title={__('Profile settings')} />
 
             <form onSubmit={submit}>
-                <FormSection icon={UserRound} title="Profile information" description="Update your name, email address and language.">
+                <FormSection icon={UserRound} title="Profile information" description="Update your photo, name, email address and language.">
+                    <FormField
+                        label="Profile photo"
+                        htmlFor="avatar"
+                        hint="JPG, PNG or WebP, up to 2 MB."
+                        error={errors.avatar}
+                        className="mb-4 max-w-xl"
+                    >
+                        <FileUpload
+                            id="avatar"
+                            variant="avatar"
+                            accept="image/jpeg,image/png,image/webp"
+                            maxSizeMb={2}
+                            name={data.name}
+                            currentUrl={data.remove_avatar ? null : (auth.user.avatar ?? null)}
+                            value={data.avatar}
+                            onChange={(file) => setData((current) => ({ ...current, avatar: file, remove_avatar: false }))}
+                            invalid={Boolean(errors.avatar)}
+                        />
+                        {auth.user.avatar && !data.avatar && !data.remove_avatar && (
+                            <button
+                                type="button"
+                                onClick={() => setData('remove_avatar', true)}
+                                className="text-danger justify-self-start text-xs font-medium underline underline-offset-4"
+                            >
+                                {__('Remove photo')}
+                            </button>
+                        )}
+                    </FormField>
+
                     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                         <FormField label="Name" htmlFor="name" required error={errors.name}>
                             <Input

@@ -59,3 +59,15 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Teks "Saved" inline di Settings | Dihapus, diganti toast. | Satu pola umpan balik di seluruh aplikasi. |
 | Hapus role yang masih dipakai | Kini toast error + kembali ke halaman (sebelumnya 409). | Pengguna melihat pesan jelas, bukan halaman error. |
 | `useConfirm` | Satu dialog bersama di `AdminLayout`, dipanggil dengan `await confirm({...})`; Modal hapus manual di Users & Roles diganti. | Kode halaman lebih pendek, tampilan konfirmasi seragam. Modal hapus akun (butuh input kata sandi) tetap Modal biasa. |
+
+## S3 — Komponen Form
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| DatePicker | Memakai picker bawaan browser (`<input type="date">`) yang distyle, nilai ISO `YYYY-MM-DD`. | Tanpa dependency; kalender otomatis mengikuti bahasa & format pengguna, aksesibel, nyaman di HP. Kalender kustom (rentang tanggal, dll.) bisa ditambah nanti bila dibutuhkan. |
+| Combobox | Wrapper Headless UI Combobox; filter lokal, atau `onSearch` untuk pencarian ke server. | Navigasi keyboard & ARIA sudah teruji; tampilan tetap Finance Core. |
+| Radio/Checkbox group | Input native yang distyle, varian `list` dan `cards`. | Aksesibel tanpa library; varian kartu cocok untuk pilihan dengan deskripsi. |
+| CurrencyInput | Ditampilkan dengan pemisah ribuan sesuai bahasa, nilai berupa angka bulat (tanpa desimal). | Rupiah praktis tidak memakai sen; aman dikirim ke kolom integer/decimal. |
+| FileUpload | Validasi jenis & ukuran di browser untuk umpan balik cepat; server tetap memvalidasi. | Keamanan tetap di server. |
+| Contoh nyata | Foto profil di Settings → Profile (`users.avatar_path`, disk `public`, `php artisan storage:link`). File lama dihapus saat diganti, dihapus, atau akun dihapus. | Menjadi acuan pola upload untuk modul lain. |
+| Form Users | Tidak diubah (sudah memakai `FormField`). | Tugas roadmap "refactor ke FormField" sudah terpenuhi sejak revisi Users. |

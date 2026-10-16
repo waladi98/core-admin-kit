@@ -1,6 +1,6 @@
 # Finance Core — Starter Kit Roadmap
 
-> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, berikutnya S3)** — keputusan kecil dicatat di `.docs/decisions-log.md`
+> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, S3 ✅, berikutnya S4)** — keputusan kecil dicatat di `.docs/decisions-log.md`
 > Tujuan: template ini dipakai sebagai titik awal project-project berikutnya, sehingga fitur yang hampir selalu dibutuhkan sudah tersedia dan konsisten.
 
 ## 1. Kondisi Saat Ini
@@ -48,7 +48,7 @@
 | 3 | **S1** | Hak akses: roles & permissions dari UI | ✅ | ✅ |
 | 4 | **S1b** | Multi-bahasa (ID/EN) | ✅ | ✅ |
 | 5 | **S2** | Toast, flash message, `useConfirm` | ✅ | ✅ |
-| 6 | **S3** | Komponen form lengkap | ⬜ | ✅ |
+| 6 | **S3** | Komponen form lengkap | ✅ | ✅ |
 | 7 | **S4** | Halaman error & error boundary | ⬜ | ✅ |
 | 8 | **S5** | Format Rupiah, tanggal, locale & timezone | ⬜ | ✅ |
 | 9 | **S11** | Kesiapan starter kit & rilis `v1.0.0` | ⬜ | ✅ |
@@ -120,10 +120,10 @@
 - [x] Hook `useConfirm()` → `await confirm({ title, description, tone: 'danger' })`.
 - [x] Users & Roles memakai toast & `useConfirm` sebagai contoh.
 
-### S3 — Komponen Form Lengkap
-- [ ] `Textarea`, `Switch`, `RadioGroup`, `CheckboxGroup` (`FormField` sudah ada).
-- [ ] `Combobox` (searchable select, Headless UI), `DatePicker`, `FileUpload` (+ preview avatar).
-- [ ] `CurrencyInput` (format Rupiah).
+### S3 — Komponen Form Lengkap ✅
+- [x] `Textarea`, `Switch`, `RadioGroup`, `CheckboxGroup` (`FormField` sudah ada).
+- [x] `Combobox` (searchable select, Headless UI), `DatePicker`, `FileUpload` (+ preview avatar).
+- [x] `CurrencyInput` (format Rupiah).
 
 ### S4 — Halaman Error & State Global
 - [ ] Halaman 403, 404, 419, 500, 503 bergaya Finance Core.

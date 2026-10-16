@@ -5,9 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserStatus;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -26,6 +28,7 @@ class User extends Authenticatable
         'password',
         'status',
         'locale',
+        'avatar_path',
     ];
 
     /**
@@ -36,6 +39,16 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'avatar_path',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'avatar',
     ];
 
     /**
@@ -50,5 +63,27 @@ class User extends Authenticatable
             'password' => 'hashed',
             'status' => UserStatus::class,
         ];
+    }
+
+    /**
+     * Remove the profile picture file together with the account.
+     */
+    protected static function booted(): void
+    {
+        static::deleted(function (User $user): void {
+            if ($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+        });
+    }
+
+    /**
+     * Public URL of the profile picture, or null to show initials.
+     *
+     * @return Attribute<string|null, never>
+     */
+    protected function avatar(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->avatar_path ? Storage::disk('public')->url($this->avatar_path) : null);
     }
 }

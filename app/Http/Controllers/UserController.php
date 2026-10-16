@@ -149,7 +149,7 @@ class UserController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'avatar' => null,
+            'avatar' => $user->avatar,
             'role' => $role->name ?? '',
             'roleLabel' => $role?->label() ?? '—',
             'status' => $user->status->value,

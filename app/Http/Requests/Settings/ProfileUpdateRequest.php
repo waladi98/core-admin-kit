@@ -30,6 +30,10 @@ class ProfileUpdateRequest extends FormRequest
             ],
 
             'locale' => ['nullable', 'string', Rule::in(array_keys(SetLocale::available()))],
+
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+
+            'remove_avatar' => ['boolean'],
         ];
     }
 }

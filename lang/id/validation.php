@@ -115,6 +115,7 @@ return [
         'role' => 'peran',
         'status' => 'status',
         'locale' => 'bahasa',
+        'avatar' => 'foto profil',
         'permissions' => 'izin',
         'permissions.*' => 'izin',
         'search' => 'pencarian',
