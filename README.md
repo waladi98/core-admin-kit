@@ -6,7 +6,7 @@ Starter kit aplikasi admin berbasis **Laravel 12 + Inertia v2 + React 19 + Tailw
 
 - **Layout admin** compact & minim scroll: sidebar (menu bertingkat, mode ciut, flyout), topbar dengan breadcrumb, grid 12 kolom, pola panel "card di dalam card".
 - **Design system** di `resources/js/components/core`: tombol, input, select, combobox, date picker, input rupiah, upload file, tabel, pagination, modal, dropdown, toast, dialog konfirmasi, skeleton, dll. Katalog lengkap di **`/ui`** (hanya environment `local`).
-- **Modul acuan CRUD**: Users (cari, filter, sort, pagination dari server, tambah/ubah/hapus).
+- **Modul acuan CRUD**: Users (form di halaman: cari, filter, sort, pagination dari server, tambah/ubah/hapus, ekspor, aksi massal) dan Vendors (pola campuran: tambah & ubah cepat di modal, ubah lengkap & detail di halaman sendiri).
 - **Roles & Permissions** (spatie/laravel-permission): role dan izin dicentang dari UI; menu & tombol tersembunyi otomatis sesuai izin.
 - **Multi-bahasa** (ID/EN) per pengguna; pesan validasi berbahasa Indonesia.
 - **Umpan balik**: toast setelah simpan/hapus, dialog konfirmasi, loading state & skeleton, indikator koneksi lambat.

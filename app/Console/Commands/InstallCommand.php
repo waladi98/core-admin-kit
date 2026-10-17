@@ -19,7 +19,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:install {--demo : Also seed 100 sample users}';
+    protected $signature = 'app:install {--demo : Also seed 100 sample users and 25 sample vendors}';
 
     /**
      * The console command description.
@@ -53,6 +53,7 @@ class InstallCommand extends Command
 
         if ($this->option('demo')) {
             $this->call('db:seed', ['--class' => 'Database\\Seeders\\UserSeeder', '--force' => true]);
+            $this->call('db:seed', ['--class' => 'Database\\Seeders\\VendorSeeder', '--force' => true]);
         }
 
         if (! File::exists(public_path('storage'))) {

@@ -7,6 +7,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Support\AboutController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
 
 // The app starts at the dashboard; guests are sent to the login page by the auth middleware.
@@ -21,6 +22,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->except('show');
     Route::resource('roles', RoleController::class)->except('show');
     Route::get('activity', [ActivityLogController::class, 'index'])->name('activity.index');
+
+    // Vendors: quick add/edit in a modal on the list, full edit and details on their own pages.
+    Route::patch('vendors/{vendor}/quick', [VendorController::class, 'quickUpdate'])->name('vendors.quick-update');
+    Route::patch('vendors/{vendor}/status', [VendorController::class, 'toggleStatus'])->name('vendors.toggle-status');
+    Route::resource('vendors', VendorController::class)->except('create');
 
     Route::post('notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
     Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');

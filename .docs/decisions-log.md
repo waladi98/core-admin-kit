@@ -194,3 +194,13 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Topik | Keputusan | Alasan |
 |---|---|---|
 | Menu dari database | Tidak dibuat; menu tetap di `resources/js/config/navigation.ts`. | Halaman baru tetap butuh kode, jadi menu di kode lebih cepat ditambahkan, tercatat di git, dan sama di semua environment (tanpa query/cache tambahan). Pertimbangkan lagi hanya bila non-developer perlu mengubah menu tanpa deploy. |
+## Modul Vendors (contoh CRUD campuran)
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Pola | Tambah & ubah cepat (4 field) di modal; ubah lengkap & detail di halaman. ""Simpan & lengkapi"" lanjut ke halaman edit. | Contoh kapan modal cukup dan kapan perlu halaman. |
+| Kode vendor | `VND-0001` dihitung dari id (accessor), bisa dicari; tidak disimpan. | Tanpa kolom & race condition penomoran. |
+| Izin default | Manager: lihat/tambah/ubah. Staff: lihat. Hapus: admin. Migrasi memberi izin ini ke role bawaan yang sudah ada. | `SyncPermissions` hanya memberi default ke role baru. |
+| Hapus dari detail | Kirim `from_detail` agar diarahkan ke daftar, bukan `back()` ke halaman yang sudah tidak ada. | Menghindari 404 setelah hapus. |
+| Data lengkap | Badge ""Belum lengkap"" bila NPWP atau rekening kosong. | Mendorong melengkapi data setelah tambah cepat. |
+| Demo | `app:install --demo` juga mengisi 25 vendor (`VendorSeeder`). | |

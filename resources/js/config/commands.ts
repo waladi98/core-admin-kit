@@ -1,4 +1,4 @@
-import { type LucideIcon, KeyRound, Lock, Palette, ShieldCheck, SunMoon, UserPlus, UserRound } from 'lucide-react';
+import { type LucideIcon, Building2, KeyRound, Lock, Palette, ShieldCheck, SunMoon, UserPlus, UserRound } from 'lucide-react';
 
 export interface QuickAction {
     /** English text; translated in the palette. */
@@ -17,6 +17,14 @@ export interface QuickAction {
  */
 export const quickActions: QuickAction[] = [
     { title: 'Add user', href: '/users/create', icon: UserPlus, permission: 'users.create', keywords: ['new', 'baru', 'tambah'] },
+    // Opens the quick-add modal on the vendors list.
+    {
+        title: 'Add vendor',
+        href: '/vendors?create=1',
+        icon: Building2,
+        permission: 'vendors.create',
+        keywords: ['new', 'baru', 'tambah', 'supplier', 'pemasok'],
+    },
     { title: 'Add role', href: '/roles/create', icon: Lock, permission: 'roles.manage', keywords: ['new', 'baru', 'tambah', 'permission', 'izin'] },
     { title: 'Profile settings', href: '/settings/profile', icon: UserRound, keywords: ['photo', 'foto', 'language', 'bahasa'] },
     { title: 'Password settings', href: '/settings/password', icon: KeyRound, keywords: ['security', 'keamanan'] },

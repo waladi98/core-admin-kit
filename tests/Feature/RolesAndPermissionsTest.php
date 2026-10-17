@@ -49,7 +49,7 @@ test('the signed-in user permissions are shared with the frontend', function () 
     $this->actingAs($manager)
         ->get(route('dashboard'))
         ->assertInertia(fn (Assert $page) => $page
-            ->where('auth.permissions', fn ($permissions) => collect($permissions)->sort()->values()->all() === ['roles.view', 'users.create', 'users.update', 'users.view'])
+            ->where('auth.permissions', fn ($permissions) => collect($permissions)->sort()->values()->all() === ['roles.view', 'users.create', 'users.update', 'users.view', 'vendors.create', 'vendors.update', 'vendors.view'])
         );
 
     $this->actingAs($this->admin)

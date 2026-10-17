@@ -21,6 +21,10 @@ enum Permission: string
     case RolesManage = 'roles.manage';
     case SettingsManage = 'settings.manage';
     case ActivityView = 'activity.view';
+    case VendorsView = 'vendors.view';
+    case VendorsCreate = 'vendors.create';
+    case VendorsUpdate = 'vendors.update';
+    case VendorsDelete = 'vendors.delete';
 
     /**
      * Human-readable label shown next to the checkbox.
@@ -36,6 +40,10 @@ enum Permission: string
             self::RolesManage => __('Create, edit and delete roles'),
             self::SettingsManage => __('Change application name, logo and colors'),
             self::ActivityView => __("View everyone's activity"),
+            self::VendorsView => __('View vendors'),
+            self::VendorsCreate => __('Create vendors'),
+            self::VendorsUpdate => __('Edit vendors'),
+            self::VendorsDelete => __('Delete vendors'),
         };
     }
 
@@ -49,6 +57,7 @@ enum Permission: string
             self::RolesView, self::RolesManage => __('Roles & Permissions'),
             self::SettingsManage => __('Application settings'),
             self::ActivityView => __('Activity log'),
+            self::VendorsView, self::VendorsCreate, self::VendorsUpdate, self::VendorsDelete => __('Vendors'),
         };
     }
 
@@ -61,7 +70,8 @@ enum Permission: string
     public static function defaultsFor(string $role): array
     {
         return match ($role) {
-            Role::MANAGER => [self::UsersView, self::UsersCreate, self::UsersUpdate, self::RolesView],
+            Role::MANAGER => [self::UsersView, self::UsersCreate, self::UsersUpdate, self::RolesView, self::VendorsView, self::VendorsCreate, self::VendorsUpdate],
+            Role::STAFF => [self::VendorsView],
             default => [],
         };
     }

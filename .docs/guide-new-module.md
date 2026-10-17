@@ -51,7 +51,10 @@
    - `DataTable rowNumberOffset` untuk kolom `#`, badge `shape="pill"`;
    - `Pagination` di footer panel dengan `loadingPage`, `perPage` dan `onPerPageChange` (backend menerima `per_page` dari whitelist);
    - hapus lewat `useConfirm()` (`tone: 'danger'`) lalu `router.delete(..., { only: ['clients'], preserveState: true, preserveScroll: true })`, id baris dimasukkan ke `pendingRowIds` selama request; toast dari server muncul otomatis.
-3. **Form** — satu komponen form untuk tambah & edit (lihat `user-form.tsx`): `useForm`, field dikelompokkan dalam `FormSection` + `FormField` (`required`, `hint`, `error`) grid 3 kolom, lalu `FormActions` (Cancel + Save dengan ikon `Check`). Halaman create/edit memberi `title` ke `AdminLayout` dan tidak memakai `PageHeader`.
+3. **Form** — pilih pola sesuai jumlah field (lihat juga aturan "Modal or page" di `AGENTS.md`):
+   - **Halaman** (acuan **Users**: `user-form.tsx`, `pages/users/create|edit.tsx`) untuk form panjang/bersection, upload, atau data yang perlu link sendiri. `useForm`, field dalam `FormSection` + `FormField` (`required`, `hint`, `error`) grid 3 kolom, lalu `FormActions sticky` (Cancel + Save dengan ikon `Check`). Halaman memberi `title` ke `AdminLayout`.
+   - **Modal** (acuan **Vendors**: `components/admin/vendor-quick-form.tsx`) untuk ≤ 5 field sederhana tanpa upload, agar pengguna tetap di daftar. `useForm` + `post/patch(..., { preserveState: true, preserveScroll: true, only: ['vendors', 'statusCounts'], onSuccess: onClose })`: error validasi tampil di modal, modal tertutup hanya saat sukses, server mengembalikan `back()->withToast(...)`. Simpan vendor yang sedang diedit terpisah dari status `isOpen` supaya judul tidak berubah saat animasi tutup.
+   - **Campuran** (Vendors): tambah/ubah cepat di modal, "Simpan & lengkapi" (`continue`) mengarah ke halaman edit lengkap; detail (`show`) selalu halaman. Aksi command palette bisa membuka modal lewat `/vendors?create=1`.
 4. **Persistent layout** di setiap halaman:
    ```tsx
    ClientsIndex.layout = (page: ReactNode) => <AdminLayout breadcrumbs={breadcrumbs}>{page}</AdminLayout>;

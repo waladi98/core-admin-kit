@@ -48,13 +48,14 @@ test('creating, updating and deleting a user is recorded with the changed fields
 test('role permission changes are recorded', function () {
     $this->actingAs($this->admin)->put(route('roles.update', Role::findByName(Role::STAFF)), [
         'name' => 'staff',
+        // Staff starts with vendors.view only.
         'permissions' => [Permission::UsersView->value],
     ]);
 
     $log = ActivityLog::query()->where('event', 'changed')->latest('id')->firstOrFail();
 
     expect($log->description)->toBe('Role permissions changed')
-        ->and($log->properties)->toEqualCanonicalizing(['added' => ['users.view'], 'removed' => []]);
+        ->and($log->properties)->toEqualCanonicalizing(['added' => ['users.view'], 'removed' => ['vendors.view']]);
 });
 
 test('signing in and out is recorded', function () {
