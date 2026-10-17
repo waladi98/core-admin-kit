@@ -2,12 +2,13 @@ import { usePermissions } from '@/hooks/use-can';
 import { __ } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Link, usePage } from '@inertiajs/react';
-import { KeyRound, MonitorSmartphone, Palette, UserRound, type LucideIcon } from 'lucide-react';
+import { KeyRound, MonitorSmartphone, Palette, ShieldCheck, UserRound, type LucideIcon } from 'lucide-react';
 import { type ReactNode } from 'react';
 
 const settingsNavigation: { title: string; href: string; icon: LucideIcon; permission?: string }[] = [
     { title: 'Profile', href: '/settings/profile', icon: UserRound },
     { title: 'Password', href: '/settings/password', icon: KeyRound },
+    { title: 'Two-factor', href: '/settings/two-factor', icon: ShieldCheck },
     { title: 'Sessions', href: '/settings/sessions', icon: MonitorSmartphone },
     { title: 'Application', href: '/settings/application', icon: Palette, permission: 'settings.manage' },
 ];

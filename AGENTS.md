@@ -278,6 +278,12 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Code that runs before the `activity_logs` table exists (old migrations) wraps writes in `ActivityLog::withoutRecording()`.
 - The Activity log page needs `activity.view`; without it the dashboard feed only shows the user's own actions. Entries older than `ActivityLog::RETENTION_DAYS` are pruned daily (`model:prune`, needs the scheduler: `php artisan schedule:work` locally, a cron entry in production).
 
+## Account Security
+
+- Laravel Fortify is installed for two-factor authentication only (`config/fortify.php`). Its routes are ignored (`Fortify::ignoreRoutes()`); the 2FA endpoints are registered by hand in `routes/settings.php` and `routes/auth.php`. Do not enable other Fortify features: sign-in, registration and password reset stay in our own controllers.
+- `LoginRequest::authenticate()` returns `true` when the two-factor challenge is still needed; checks for blocked/inactive users must run before that point.
+- Pages that show secrets (2FA setup, recovery codes) sit behind the `password.confirm` middleware.
+
 ## Navigation
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.

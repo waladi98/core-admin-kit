@@ -161,4 +161,15 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Keluar dari perangkat lain | Wajib konfirmasi kata sandi + dialog konfirmasi; `Auth::logoutOtherDevices()` dan baris sesi lain dihapus; dicatat di audit trail. | Mencegah penyalahgunaan bila perangkat ditinggal dalam keadaan login. |
 | Kebijakan password | Production: min. 8 karakter, huruf besar & kecil, angka. Non-production: min. 8. | Aman di production tanpa merepotkan development/test. Pemeriksaan kebocoran (`uncompromised`) tidak dipakai karena butuh akses internet ke layanan luar. |
 | Rate limit login | Sudah ada (5 percobaan per email + IP, bawaan starter kit). | — |
-| 2FA | Menunggu izin dependency Laravel Fortify. | Sesuai kesepakatan. |
+| 2FA | Dikerjakan di bagian 2 (Laravel Fortify). | Sesuai kesepakatan. |
+
+## S10 — Keamanan Akun (bagian 2, 2FA dengan Laravel Fortify)
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Cakupan Fortify | Hanya fitur 2FA (TOTP + kode pemulihan, wajib konfirmasi kode). `Fortify::ignoreRoutes()`; controller Fortify dipasang di route kita sendiri. Login, reset password, dll tetap milik aplikasi. | Halaman auth yang sudah ada tidak berubah; permukaan baru minimal. |
+| Alur login | `LoginRequest` memeriksa kata sandi & status aktif dulu; bila 2FA aktif, user belum login — `login.id` disimpan di session lalu diarahkan ke halaman kode. | User nonaktif tidak sampai ke tahap kode. |
+| Rate limit kode | 5 percobaan/menit per sesi login (`throttle:two-factor`). | Mencegah tebak kode. |
+| Halaman pengaturan | Settings → Dua faktor, di balik konfirmasi kata sandi; QR & kunci hanya tampil saat menunggu konfirmasi; kode pemulihan bisa disalin & dibuat ulang. | Rahasia tidak tampil tanpa verifikasi ulang. |
+| Audit | Aktivasi & penonaktifan 2FA dicatat di audit trail. | Jejak perubahan keamanan. |
+| Passkeys | Migrasi passkeys dari Fortify tidak dipakai. | Di luar cakupan. |

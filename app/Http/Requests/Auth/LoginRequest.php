@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use App\Enums\UserStatus;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -36,15 +37,23 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Attempt to authenticate the request's credentials.
+     * Check the credentials and sign the user in.
+     *
+     * Users with two-factor authentication are not signed in yet: they are remembered
+     * in the session (`login.id`, read by Fortify) and must pass the two-factor challenge.
+     *
+     * @return bool True when the two-factor challenge is still required.
      *
      * @throws ValidationException
      */
-    public function authenticate(): void
+    public function authenticate(): bool
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $provider = Auth::guard('web')->getProvider();
+        $user = $provider->retrieveByCredentials($this->only('email'));
+
+        if (! $user instanceof User || ! $provider->validateCredentials($user, $this->only('password'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -52,15 +61,26 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        if (Auth::user()?->status === UserStatus::Inactive) {
-            Auth::guard('web')->logout();
-
+        if ($user->status === UserStatus::Inactive) {
             throw ValidationException::withMessages([
                 'email' => __(EnsureUserIsActive::INACTIVE_MESSAGE),
             ]);
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        if ($user->hasEnabledTwoFactorAuthentication()) {
+            $this->session()->put([
+                'login.id' => $user->getKey(),
+                'login.remember' => $this->boolean('remember'),
+            ]);
+
+            return true;
+        }
+
+        Auth::guard('web')->login($user, $this->boolean('remember'));
+
+        return false;
     }
 
     /**

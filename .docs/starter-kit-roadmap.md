@@ -1,6 +1,6 @@
 # Finance Core — Starter Kit Roadmap
 
-> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, S3 ✅, S4 ✅, S5 ✅, S11 ✅ — v1.0.0 siap di-tag; v1.x: S6 ✅, S7 ✅, S8 ✅, S9 ✅, berikutnya S10)** — keputusan kecil dicatat di `.docs/decisions-log.md`
+> Status: **dikerjakan berurutan (S0 ✅, UI0 ✅, S1 ✅, S1b ✅, S2 ✅, S3 ✅, S4 ✅, S5 ✅, S11 ✅ — v1.0.0 siap di-tag; v1.x: S6 ✅, S7 ✅, S8 ✅, S9 ✅, S10 ✅, berikutnya S12)** — keputusan kecil dicatat di `.docs/decisions-log.md`
 > Tujuan: template ini dipakai sebagai titik awal project-project berikutnya, sehingga fitur yang hampir selalu dibutuhkan sudah tersedia dan konsisten.
 
 ## 1. Kondisi Saat Ini
@@ -56,7 +56,7 @@
 | 11 | S7 | DataTable lanjutan | ✅ | v1.x |
 | 12 | S8 | Pengaturan aplikasi & branding | ✅ | v1.x |
 | 13 | S9 | Audit log | ✅ | v1.x |
-| 14 | S10 | Keamanan akun (2FA, sesi) | ⬜ | v1.x |
+| 14 | S10 | Keamanan akun (2FA, sesi) | ✅ | v1.x |
 | 15 | S12 | Opsional: dark mode, test frontend | ⬜ | — |
 
 ## 5. Detail Fase
