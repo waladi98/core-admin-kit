@@ -18,7 +18,7 @@ export interface DrawerProps {
 export function Drawer({ isOpen, onClose, title, side = 'left', className, children }: DrawerProps) {
     return (
         <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-            <DialogBackdrop transition className="bg-ink/30 fixed inset-0 transition-opacity duration-200 data-closed:opacity-0" />
+            <DialogBackdrop transition className="bg-overlay fixed inset-0 transition-opacity duration-200 data-closed:opacity-0" />
             <div className={cn('fixed inset-y-0 flex', side === 'left' ? 'left-0' : 'right-0')}>
                 <DialogPanel
                     transition

@@ -1,4 +1,4 @@
-import { type LucideIcon, KeyRound, Lock, Palette, UserPlus, UserRound } from 'lucide-react';
+import { type LucideIcon, KeyRound, Lock, Palette, ShieldCheck, SunMoon, UserPlus, UserRound } from 'lucide-react';
 
 export interface QuickAction {
     /** English text; translated in the palette. */
@@ -20,6 +20,8 @@ export const quickActions: QuickAction[] = [
     { title: 'Add role', href: '/roles/create', icon: Lock, permission: 'roles.manage', keywords: ['new', 'baru', 'tambah', 'permission', 'izin'] },
     { title: 'Profile settings', href: '/settings/profile', icon: UserRound, keywords: ['photo', 'foto', 'language', 'bahasa'] },
     { title: 'Password settings', href: '/settings/password', icon: KeyRound, keywords: ['security', 'keamanan'] },
+    { title: 'Two-factor authentication', href: '/settings/two-factor', icon: ShieldCheck, keywords: ['2fa', 'otp', 'security', 'keamanan'] },
+    { title: 'Appearance', href: '/settings/appearance', icon: SunMoon, keywords: ['theme', 'tema', 'dark', 'gelap', 'light', 'terang'] },
     {
         title: 'Application settings',
         href: '/settings/application',

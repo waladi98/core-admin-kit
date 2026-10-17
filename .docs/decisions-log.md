@@ -173,3 +173,11 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Halaman pengaturan | Settings → Dua faktor, di balik konfirmasi kata sandi; QR & kunci hanya tampil saat menunggu konfirmasi; kode pemulihan bisa disalin & dibuat ulang. | Rahasia tidak tampil tanpa verifikasi ulang. |
 | Audit | Aktivasi & penonaktifan 2FA dicatat di audit trail. | Jejak perubahan keamanan. |
 | Passkeys | Migrasi passkeys dari Fortify tidak dipakai. | Di luar cakupan. |
+## S12 — Dark mode
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Mekanisme | Kelas `.dark` di `<html>` yang mengganti nilai token warna; komponen tidak diubah selain mengganti warna tetap (overlay, teks tombol bahaya, gradien chart, warna progress) menjadi token. | Satu sumber warna; modul baru otomatis mendukung dark mode. |
+| Pilihan | Terang / Gelap / Ikuti perangkat (default), di Settings → Tampilan dan command palette. Disimpan di `localStorage` per browser; script inline di `app.blade.php` memasang tema sebelum render pertama. | Tanpa migrasi & tanpa kedipan terang saat halaman dibuka. |
+| Warna brand | Brand pilihan admin disimpan di `--brand-source`; di dark mode tombol brand memakai tint terang dari warna itu dengan teks gelap. | Warna brand apa pun tetap terbaca di latar gelap. |
+| Kontras | Token teks dark lolos WCAG AA di surface & surface-muted (ink-subtle ≈ 7:1). | Aturan keterbacaan pengguna 30–70 tahun. |

@@ -26,7 +26,7 @@ const modalSizes = {
 export function Modal({ isOpen, onClose, title, description, size = 'md', className, children }: ModalProps) {
     return (
         <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-            <DialogBackdrop transition className="bg-ink/30 fixed inset-0 transition-opacity duration-200 data-closed:opacity-0" />
+            <DialogBackdrop transition className="bg-overlay fixed inset-0 transition-opacity duration-200 data-closed:opacity-0" />
             <div className="fixed inset-0 flex items-center justify-center p-4">
                 <DialogPanel
                     transition

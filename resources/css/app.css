@@ -4,14 +4,14 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-/* Dark mode is not supported yet; `dark:` only applies inside an explicit `.dark` ancestor. */
-@custom-variant dark (&:is(.dark *));
+/* Dark mode follows the `.dark` class on <html> (set by `useAppearance` and the inline script in app.blade.php). */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* Finance Core design tokens (light only) */
+    /* Finance Core design tokens (light; the dark set is under `.dark` below) */
     --color-surface: #ffffff;
     --color-surface-muted: #f7f7f8;
     --color-surface-hover: #f1f1f3;
@@ -22,18 +22,25 @@
     /* Text tokens meet WCAG AA (≥ 4.5:1) on white and surface-muted; muted and up meet AAA (≥ 7:1). */
     --color-ink-muted: #4b5563;
     --color-ink-subtle: #6b7280;
-    --color-brand: #1f2937;
+    /* `--brand-source` is the chosen brand color (Settings → Application); see `:root` below. */
+    --color-brand: var(--brand-source);
     /* Follows the brand color, also when it is changed at runtime (Settings → Application). */
     --color-brand-hover: color-mix(in oklab, var(--color-brand) 82%, black);
     --color-brand-foreground: #ffffff;
     --color-success: #16a34a;
     --color-success-soft: #ecfdf3;
     --color-danger: #dc2626;
+    --color-danger-foreground: #ffffff;
     --color-danger-soft: #fef2f2;
     --color-warning: #f59e0b;
     --color-warning-soft: #fffbeb;
     --color-info: #2563eb;
     --color-info-soft: #eff6ff;
+    --color-overlay: rgb(17 24 39 / 0.3);
+    --color-chart-idle: #e5e7eb;
+    --color-chart-idle-end: #f6f6f7;
+    --color-chart-active: #374151;
+    --color-chart-active-end: #111827;
 
     /*
      * Density tokens (compact layout). Change these to make the whole app
@@ -98,6 +105,47 @@
     }
 }
 
+:root {
+    --brand-source: #1f2937;
+    color-scheme: light;
+}
+
+/*
+ * Dark token set. Text tokens keep WCAG AA (≥ 4.5:1) on surface and surface-muted.
+ * The brand becomes a light tint of the chosen color with dark text, so any brand color
+ * stays readable on dark surfaces.
+ */
+.dark {
+    color-scheme: dark;
+    --color-surface: #1a1d23;
+    --color-surface-muted: #121418;
+    --color-surface-hover: #262a31;
+    --color-line: #2c3038;
+    --color-line-strong: #3d424c;
+    --color-ink: #f3f4f6;
+    --color-ink-soft: #e5e7eb;
+    --color-ink-muted: #c4c9d1;
+    --color-ink-subtle: #a3a9b3;
+    --color-brand: color-mix(in oklab, var(--brand-source) 25%, #f3f4f6);
+    --color-brand-hover: color-mix(in oklab, var(--color-brand) 85%, white);
+    --color-brand-foreground: #111827;
+    --color-success: #4ade80;
+    --color-success-soft: #12271a;
+    --color-danger: #f87171;
+    --color-danger-foreground: #111827;
+    --color-danger-soft: #2c1517;
+    --color-warning: #fbbf24;
+    --color-warning-soft: #2a2110;
+    --color-info: #60a5fa;
+    --color-info-soft: #111f35;
+    --color-overlay: rgb(0 0 0 / 0.6);
+    --color-chart-idle: #2c3038;
+    --color-chart-idle-end: #23262d;
+    --color-chart-active: #e5e7eb;
+    --color-chart-active-end: #9ca3af;
+    --shadow-panel: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-pop: 0 8px 24px -6px rgb(0 0 0 / 0.5), 0 2px 6px -2px rgb(0 0 0 / 0.4);
+}
 /*
  * Thin, quiet scrollbar for scrollable areas inside the shell (sidebar, panels, menus).
  * The thumb only shows while the pointer is over the area.

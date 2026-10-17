@@ -3,8 +3,8 @@ import { usePage } from '@inertiajs/react';
 import { useLayoutEffect } from 'react';
 
 /**
- * Applies the brand color from Settings → Application by overriding the `--color-brand`
- * token on <html>, so every `bg-brand`/`text-brand` utility (including dialogs and toasts
+ * Applies the brand color from Settings → Application by overriding the `--brand-source`
+ * variable on <html> (`--color-brand` derives from it, also in dark mode), so every `bg-brand`/`text-brand` utility (including dialogs and toasts
  * rendered outside the layout) follows it. Called by the layouts.
  */
 export function useBrandColor(): void {
@@ -12,9 +12,9 @@ export function useBrandColor(): void {
 
     useLayoutEffect(() => {
         if (color) {
-            document.documentElement.style.setProperty('--color-brand', color);
+            document.documentElement.style.setProperty('--brand-source', color);
         } else {
-            document.documentElement.style.removeProperty('--color-brand');
+            document.documentElement.style.removeProperty('--brand-source');
         }
     }, [color]);
 }

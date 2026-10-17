@@ -11,7 +11,7 @@ export const buttonVariants = cva(
                 primary: 'bg-brand text-brand-foreground hover:bg-brand-hover',
                 secondary: 'border border-line bg-surface text-ink-soft shadow-panel hover:bg-surface-hover',
                 ghost: 'text-ink-soft hover:bg-surface-hover',
-                danger: 'bg-danger text-white hover:bg-danger/90',
+                danger: 'bg-danger text-danger-foreground hover:bg-danger/90',
                 link: 'text-ink underline-offset-4 hover:underline',
             },
             size: {

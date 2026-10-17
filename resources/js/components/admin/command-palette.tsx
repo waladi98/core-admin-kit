@@ -108,7 +108,7 @@ export function CommandPaletteProvider({ children }: { children: ReactNode }) {
             {children}
 
             <Dialog open={isOpen} onClose={close} className="relative z-50">
-                <DialogBackdrop transition className="bg-ink/30 fixed inset-0 transition-opacity duration-150 data-closed:opacity-0" />
+                <DialogBackdrop transition className="bg-overlay fixed inset-0 transition-opacity duration-150 data-closed:opacity-0" />
                 <div className="fixed inset-0 flex items-start justify-center p-4 pt-[12vh]">
                     <DialogPanel
                         transition

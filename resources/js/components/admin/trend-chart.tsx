@@ -34,12 +34,12 @@ export function TrendChart({ points, highlightIndex, className }: TrendChartProp
                 >
                     <defs>
                         <linearGradient id="trend-bar-idle" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#e5e7eb" />
-                            <stop offset="100%" stopColor="#f6f6f7" />
+                            <stop offset="0%" stopColor="var(--color-chart-idle)" />
+                            <stop offset="100%" stopColor="var(--color-chart-idle-end)" />
                         </linearGradient>
                         <linearGradient id="trend-bar-active" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#374151" />
-                            <stop offset="100%" stopColor="#111827" />
+                            <stop offset="0%" stopColor="var(--color-chart-active)" />
+                            <stop offset="100%" stopColor="var(--color-chart-active-end)" />
                         </linearGradient>
                     </defs>
                     <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-ink-muted)' }} dy={8} />

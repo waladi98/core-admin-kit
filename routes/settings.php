@@ -27,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('user/two-factor-authentication', [TwoFactorAuthenticationController::class, 'destroy'])->name('two-factor.disable');
     Route::post('user/two-factor-recovery-codes', [RecoveryCodeController::class, 'store'])->name('two-factor.regenerate-recovery-codes');
 
+    // Theme choice is stored in the browser (localStorage), so the page needs no data.
+    Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
+
     Route::get('settings/sessions', [SessionController::class, 'index'])->name('sessions.index');
     Route::delete('settings/sessions/others', [SessionController::class, 'destroyOthers'])->name('sessions.destroy-others');
 

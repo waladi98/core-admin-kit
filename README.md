@@ -13,6 +13,7 @@ Starter kit aplikasi admin berbasis **Laravel 12 + Inertia v2 + React 19 + Tailw
 - **Keamanan akun**: autentikasi dua faktor (aplikasi autentikator + kode pemulihan, via Laravel Fortify), daftar sesi login & keluar dari perangkat lain, kebijakan password production.
 - **Halaman error** 403/404/500/503 dan sesi kedaluwarsa (419) yang ramah.
 - **Format** rupiah, angka, tanggal & waktu sesuai bahasa dan zona waktu tampilan (default Asia/Jakarta).
+- **Tema terang & gelap** (atau ikuti perangkat), dipilih per browser di Settings → Tampilan.
 - **Keterbacaan** untuk pengguna 30–70 tahun: kontras teks WCAG AA, teks minimal 12px.
 
 ## Kebutuhan
