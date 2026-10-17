@@ -54,7 +54,7 @@ test('the signed-in user permissions are shared with the frontend', function () 
 
     $this->actingAs($this->admin)
         ->get(route('dashboard'))
-        ->assertInertia(fn (Assert $page) => $page->has('auth.permissions', count(Permission::cases())));
+        ->assertInertia(fn (Assert $page) => $page->has('auth.permissions', count(Permission::cases()) + 1)); // + the role:admin menu marker
 });
 
 test('roles index lists roles with user and permission counts', function () {

@@ -87,8 +87,14 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
+     * Frontend-only marker for pages that only admins may open (not a real permission).
+     */
+    public const ADMIN_MARKER = 'role:admin';
+
+    /**
      * Permission names the frontend uses to show or hide menus and buttons.
-     * Admins get every permission (they pass all checks through Gate::before).
+     * Admins get every permission (they pass all checks through Gate::before) plus the
+     * marker `role:admin` for admin-only pages such as Support → About template.
      *
      * @return list<string>
      */
@@ -99,7 +105,7 @@ class HandleInertiaRequests extends Middleware
         }
 
         if ($user->hasRole(Role::ADMIN)) {
-            return Permission::values();
+            return [...Permission::values(), self::ADMIN_MARKER];
         }
 
         return $user->getAllPermissions()->pluck('name')->values()->all();

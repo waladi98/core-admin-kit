@@ -242,6 +242,7 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 - Backend: one Policy per model calling `$user->can(Permission::X->value)`; controllers call `Gate::authorize(...)`, Form Requests `authorize()` with `$this->user()->can(...)`. Rules that must hold even for admins (e.g. not deleting yourself) are enforced in the controller.
 - Frontend: `auth.permissions` is shared by `HandleInertiaRequests`. Hide what the user cannot use with `useCan('users.create')`, `usePermissions()` or `<Can permission="…">` (`@/components/admin/can`); add `permission` to entries in `config/navigation.ts`. The UI only hides things — the server always enforces.
 - Passwords: always validate with `Password::defaults()` (stricter in production, set in `AppServiceProvider`). Sensitive account actions (signing out other devices, deleting the account) require `current_password`.
+- Admin-only pages (e.g. Support → About template): the controller checks `hasRole(Role::ADMIN)` and the menu entry uses `permission: 'role:admin'`, a frontend-only marker that `HandleInertiaRequests` adds for admins. It is not a real permission and cannot be granted to other roles.
 - Tests: users get the `staff` role by default; use `User::factory()->admin()` or `->role(Role::MANAGER)`.
 
 ## Translations (Indonesian & English)
@@ -289,6 +290,7 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 
 - Add sidebar menu entries in `resources/js/config/navigation.ts` (type `AdminNavGroup[]`). Entries without `href` are placeholders.
 - The component catalog at `/ui` (`resources/js/pages/ui.tsx`, local environment only) shows every core component; add new core components there. It is developer-only and stays in English.
+- Support → About template (`/support/about`, admins only) lists the icons in use, the design tokens and the installed package versions. When you add a notable package, add it to `App\Support\TemplateInfo::PACKAGES` (purpose in English + `lang/id.json`).
 - Setup & commands for humans are in `README.md` (`composer setup`, `app:install`, `app:sync-permissions`, deploy steps).
 
 ## Backend

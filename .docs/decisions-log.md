@@ -181,3 +181,11 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Pilihan | Terang / Gelap / Ikuti perangkat (default), di Settings → Tampilan dan command palette. Disimpan di `localStorage` per browser; script inline di `app.blade.php` memasang tema sebelum render pertama. | Tanpa migrasi & tanpa kedipan terang saat halaman dibuka. |
 | Warna brand | Brand pilihan admin disimpan di `--brand-source`; di dark mode tombol brand memakai tint terang dari warna itu dengan teks gelap. | Warna brand apa pun tetap terbaca di latar gelap. |
 | Kontras | Token teks dark lolos WCAG AA di surface & surface-muted (ink-subtle ≈ 7:1). | Aturan keterbacaan pengguna 30–70 tahun. |
+## Support — Halaman Tentang Template
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Akses | Hanya role admin (cek `hasRole` di controller). Menu memakai penanda `role:admin` yang hanya dikirim ke admin; bukan izin sungguhan, jadi tidak bisa diberikan ke role lain. | Permintaan pengguna: hanya admin yang melihat. |
+| Versi paket | Dibaca dari `composer.lock` & `package-lock.json` saat halaman dibuka. | Selalu sesuai yang terpasang, tanpa diperbarui manual. |
+| Ikon | Daftar diambil dari import `lucide-react` di `resources/js`; ditampilkan lewat peta `icons` Lucide. Chunk halaman ±120 KB gzip, hanya dimuat di halaman ini. | Daftar otomatis mengikuti kode; hanya ikon yang dipakai (sesuai rekomendasi). |
+| Token | Nilai warna & ukuran dibaca dari CSS variable aktif, sehingga ikut tema terang/gelap. | Satu sumber kebenaran: `app.css`. |
