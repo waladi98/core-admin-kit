@@ -12,6 +12,16 @@ test('currency is shown in rupiah without decimals, following the language', fun
     expect(Format::currency(1250000))->toBe("IDR\u{A0}1,250,000");
 });
 
+test('compact currency shortens large amounts, following the language', function () {
+    app()->setLocale('id');
+    expect(Format::currencyCompact(3_484_000_000))->toBe("Rp\u{A0}3,5\u{A0}M")
+        ->and(Format::currencyCompact(1_500_000))->toBe("Rp\u{A0}1,5\u{A0}jt")
+        ->and(Format::currencyCompact(750))->toBe(Format::currency(750));
+
+    app()->setLocale('en');
+    expect(Format::currencyCompact(3_484_000_000))->toBe("IDR\u{A0}3.5B");
+});
+
 test('numbers and percentages follow the language', function () {
     app()->setLocale('id');
     expect(Format::number(1250000.5))->toBe('1.250.000,5')

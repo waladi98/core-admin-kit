@@ -7,6 +7,8 @@
  */
 import { currentTimezone, intlLocale } from '@/lib/i18n';
 
+/** Non-breaking space, so "Rp 3,5 M" never wraps. */
+const NBSP = String.fromCharCode(160);
 const EMPTY = '—';
 
 type Numeric = number | null | undefined;
@@ -40,6 +42,37 @@ export function formatCurrency(value: Numeric, currency = 'IDR'): string {
     }
 
     return new Intl.NumberFormat(intlLocale(), { style: 'currency', currency, maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(value);
+}
+
+/** Short rupiah for cards and charts: "Rp 3,5 M" (id) / "IDR 3.5B" (en). Below one thousand it equals formatCurrency(). */
+export function formatCurrencyCompact(value: Numeric, currency = 'IDR'): string {
+    if (value === null || value === undefined) {
+        return EMPTY;
+    }
+
+    const isIndonesian = intlLocale().startsWith('id');
+    const units: [number, string][] = isIndonesian
+        ? [
+              [1e12, ' T'],
+              [1e9, ' M'],
+              [1e6, ' jt'],
+              [1e3, ' rb'],
+          ]
+        : [
+              [1e12, 'T'],
+              [1e9, 'B'],
+              [1e6, 'M'],
+              [1e3, 'K'],
+          ];
+    const unit = units.find(([size]) => Math.abs(value) >= size);
+
+    if (!unit) {
+        return formatCurrency(value, currency);
+    }
+
+    const symbol = isIndonesian && currency === 'IDR' ? 'Rp' : currency;
+
+    return [symbol, formatNumber(value / unit[0], 1) + unit[1]].join(NBSP).replace(' ', NBSP);
 }
 
 /** "1.250.000" (id) / "1,250,000" (en). */

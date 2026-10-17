@@ -33,7 +33,7 @@ class SampleDashboardData
             [
                 'key' => 'current_balance',
                 'label' => __('Current Balance'),
-                'value' => Format::currency(round(3_484_000_000 * $scale)),
+                'value' => Format::currencyCompact(round(3_484_000_000 * $scale)),
                 'change' => 7.1,
                 'trend' => [12, 18, 14, 22, 16, 24, 19, 21, 17, 20],
             ],

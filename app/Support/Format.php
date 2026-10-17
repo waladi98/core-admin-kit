@@ -24,6 +24,31 @@ class Format
     }
 
     /**
+     * Short rupiah for cards and charts: "Rp 3,5 M" (id) / "IDR 3.5B" (en). Below one thousand it equals currency().
+     */
+    public static function currencyCompact(int|float|null $amount, string $currency = 'IDR'): string
+    {
+        if ($amount === null) {
+            return '—';
+        }
+
+        $isIndonesian = self::locale() === 'id';
+        $units = $isIndonesian
+            ? [1e12 => ' T', 1e9 => ' M', 1e6 => ' jt', 1e3 => ' rb']
+            : [1e12 => 'T', 1e9 => 'B', 1e6 => 'M', 1e3 => 'K'];
+
+        foreach ($units as $size => $suffix) {
+            if (abs($amount) >= $size) {
+                $symbol = $isIndonesian && $currency === 'IDR' ? 'Rp' : $currency;
+
+                return $symbol."\u{A0}".self::number($amount / $size, 1).str_replace(' ', "\u{A0}", $suffix);
+            }
+        }
+
+        return self::currency($amount, $currency);
+    }
+
+    /**
      * "1.250.000" (id) / "1,250,000" (en).
      */
     public static function number(int|float|null $value, int $maxDecimals = 2): string
