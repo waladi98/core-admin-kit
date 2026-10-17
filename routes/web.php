@@ -34,6 +34,11 @@ Route::middleware(['auth'])->group(function () {
     // Icons, styling and packages of the starter kit. Admins only.
     Route::get('support/about', AboutController::class)->name('support.about');
 
+    // Modules made with php artisan make:module (one route file each).
+    foreach (glob(__DIR__.'/modules/*.php') ?: [] as $moduleRoutes) {
+        require $moduleRoutes;
+    }
+
     // Component catalog for developers (resources/js/pages/ui.tsx). Only available locally.
     if (app()->environment('local')) {
         Route::inertia('ui', 'ui')->name('ui');

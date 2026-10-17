@@ -1,0 +1,42 @@
+import { {{ Model }}Form } from '@/components/admin/{{ slugSingular }}-form';
+import { type BreadcrumbEntry } from '@/components/core';
+import AdminLayout from '@/layouts/admin-layout';
+import { __ } from '@/lib/i18n';
+import { type {{ Model }}EditProps } from '@/types/{{ slugSingular }}';
+import { Head } from '@inertiajs/react';
+import { {{ icon }} } from 'lucide-react';
+import { type ReactElement } from 'react';
+
+function editBreadcrumbs(record: {{ Model }}EditProps['{{ model }}']): BreadcrumbEntry[] {
+    return [
+        { title: '{{ Titles }}', href: '/{{ slug }}', icon: {{ icon }} },
+        { title: record.{{ titleFieldCamel }}, href: {{ recordHref }} },
+        { title: 'Edit', href: route('{{ slug }}.edit', record.id) },
+    ];
+}
+
+export default function Edit{{ Model }}({ {{ model }}: record, ...options }: {{ Model }}EditProps) {
+    return (
+        <>
+            <Head title={__('Edit :name', { name: record.{{ titleFieldCamel }} })} />
+            <{{ Model }}Form
+                {...options}
+                method="put"
+                action={route('{{ slug }}.update', record.id)}
+                submitLabel="Save changes"
+                cancelHref={ {{ recordHref }} }
+                initialValues={{
+                    {{ tsRecordValues }}
+                    status: record.status,
+                }}
+            />
+        </>
+    );
+}
+
+/** Persistent layout: the shell stays mounted while navigating between pages. */
+Edit{{ Model }}.layout = (page: ReactElement<{{ Model }}EditProps>) => (
+    <AdminLayout breadcrumbs={editBreadcrumbs(page.props.{{ model }})} title="Edit {{ title }} · :name" titleParams={{ name: page.props.{{ model }}.{{ titleFieldCamel }} }}>
+        {page}
+    </AdminLayout>
+);

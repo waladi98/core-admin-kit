@@ -12,6 +12,8 @@ test('admins see the packages and icons the template uses', function () {
             ->where('packages', fn ($packages) => collect($packages)->firstWhere('name', 'tailwindcss')['version'] !== null
                 && collect($packages)->firstWhere('name', 'laravel/framework')['version'] !== null)
             ->where('icons', fn ($icons) => collect($icons)->contains('UserCog') && ! collect($icons)->contains('LucideIcon'))
+            ->has('generator.types', 9)
+            ->has('generator.patterns', 2)
         );
 });
 

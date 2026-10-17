@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Requests;
+
+{{ enumImports }}
+use App\Models\{{ Model }};
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+/**
+ * {{ storeRequestPurpose }}
+ */
+class {{ storeRequestClass }} extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        /** @var {{ Model }}|null ${{ model }} */
+        ${{ model }} = $this->route('{{ routeParameter }}');
+
+        return ${{ model }} === null
+            ? ($this->user()?->can('create', {{ Model }}::class) ?? false)
+            : ($this->user()?->can('update', ${{ model }}) ?? false);
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, array<int, mixed>>
+     */
+    public function rules(): array
+    {
+        return [
+            {{ storeRules }}
+        ];
+    }
+}

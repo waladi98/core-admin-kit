@@ -1,5 +1,22 @@
 # Panduan Membuat Modul CRUD Baru
 
+## Cara cepat: generator (disarankan)
+
+```bash
+php artisan make:module Client --pattern=mixed \
+  --fields="name:string, email:email?, kind:select(retail,corporate), credit_limit:currency, notes:text?" \
+  --group="Master Data" --icon=Briefcase
+php artisan migrate && php artisan app:sync-permissions
+```
+
+- Tanpa opsi → ditanya satu per satu. `--dry-run` menampilkan file tanpa menulis.
+- Pola `page` = seperti Users, `mixed` = seperti Vendors. Tipe field: `string`, `text`, `email`, `phone`, `integer`, `currency`, `date`, `boolean`, `select(a,b)`; akhiran `?` = opsional.
+- Hasilnya kode biasa yang mengikuti panduan di bawah; sesuaikan dengan aturan bisnis. Izin awalnya hanya untuk admin (centang untuk role lain di Roles & Permissions). Teks baru masuk `lang/id.json` berisi teks Inggris → terjemahkan.
+- Template di `stubs/module/*.stub`; file bersama hanya diubah di komentar `// @module-generator:*`. Panduan lengkap juga ada di **Support → Tentang template → Generator**.
+- Relasi antar modul belum didukung generator; tambahkan manual mengikuti langkah di bawah.
+
+## Cara manual
+
 > Modul acuan: **Users** (`/users`). Salin polanya, ganti nama entitas.
 > Contoh di bawah memakai entitas fiktif **Client** (`clients`).
 

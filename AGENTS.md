@@ -227,7 +227,8 @@ These rules apply to every admin page and module. Full design reference: `.docs/
 
 ## New Modules
 
-- Build every new CRUD module by following .docs/guide-new-module.md, using the Users module (/users) as the reference for page forms and the Vendors module (/vendors) for the mixed modal + page pattern.
+- Start every new CRUD module with `php artisan make:module {Name} --pattern=page|mixed --fields="…"` (`--dry-run` first), then adapt the generated code; see .docs/guide-new-module.md. Keep the `// @module-generator:*` marker comments in `Permission.php`, `navigation.ts` and `commands.ts`. Generated modules use `App\Enums\RecordStatus` and register routes in `routes/modules/{slug}.php`. When you change a reference module's pattern, update `stubs/module` too.
+- Build modules by hand by following .docs/guide-new-module.md, using the Users module (/users) as the reference for page forms and the Vendors module (/vendors) for the mixed modal + page pattern.
 
 ## Page Patterns
 

@@ -1,0 +1,21 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\{{ Model }};
+use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Database\Seeder;
+
+class {{ Model }}Seeder extends Seeder
+{
+    /**
+     * Seed 25 sample {{ titles }}; about 1 in 5 is inactive.
+     */
+    public function run(): void
+    {
+        {{ Model }}::factory()
+            ->count(25)
+            ->state(new Sequence(fn (Sequence $sequence): array => $sequence->index % 5 === 4 ? ['status' => 'inactive'] : []))
+            ->create();
+    }
+}

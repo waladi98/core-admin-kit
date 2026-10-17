@@ -1,0 +1,143 @@
+<?php
+
+use App\Enums\RecordStatus;
+use App\Models\{{ Model }};
+use App\Models\Role;
+use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
+
+beforeEach(function () {
+    $this->admin = User::factory()->admin()->create();
+});
+
+/**
+ * Fields of the quick add modal.
+ *
+ * @return array<string, mixed>
+ */
+function quick{{ Model }}Data(array $overrides = []): array
+{
+    return [
+        {{ testQuickPayload }}
+        ...$overrides,
+    ];
+}
+
+/**
+ * Every field of the full edit page.
+ *
+ * @return array<string, mixed>
+ */
+function full{{ Model }}Data(array $overrides = []): array
+{
+    return [
+        {{ testPayload }}
+        'status' => 'active',
+        ...$overrides,
+    ];
+}
+
+test('guests are redirected to the login page', function () {
+    $this->get(route('{{ slug }}.index'))->assertRedirect(route('login'));
+});
+
+test('users without permission cannot open {{ titles }}', function () {
+    $this->actingAs(User::factory()->role(Role::STAFF)->create())->get(route('{{ slug }}.index'))->assertForbidden();
+});
+
+test('the list shows {{ titles }} with status counts and search', function () {
+    {{ Model }}::factory()->count(11)->create();
+    {{ Model }}::factory()->inactive()->create(['{{ titleField }}' => 'Zeta unique']);
+
+    $this->actingAs($this->admin)
+        ->get(route('{{ slug }}.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('{{ slug }}/index')
+            ->has('{{ models }}.data', 10)
+            ->where('statusCounts', ['all' => 12, 'active' => 11, 'inactive' => 1])
+        );
+
+    $this->actingAs($this->admin)
+        ->get(route('{{ slug }}.index', ['search' => 'zeta unique']))
+        ->assertInertia(fn (Assert $page) => $page->has('{{ models }}.data', 1));
+});
+
+test('quick add from the modal stays on the list', function () {
+    $this->actingAs($this->admin)
+        ->from(route('{{ slug }}.index'))
+        ->post(route('{{ slug }}.store'), quick{{ Model }}Data())
+        ->assertRedirect(route('{{ slug }}.index'))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect({{ Model }}::sole()->status)->toBe(RecordStatus::Active);
+});
+
+test('save and complete details opens the full edit page', function () {
+    $this->actingAs($this->admin)
+        ->from(route('{{ slug }}.index'))
+        ->post(route('{{ slug }}.store'), quick{{ Model }}Data(['continue' => true]))
+        ->assertRedirect(route('{{ slug }}.edit', {{ Model }}::sole()));
+});
+
+test('quick add validates the modal fields', function () {
+    $this->actingAs($this->admin)
+        ->from(route('{{ slug }}.index'))
+        ->post(route('{{ slug }}.store'), quick{{ Model }}Data(['{{ titleField }}' => '']))
+        ->assertSessionHasErrors(['{{ titleField }}']);
+
+    expect({{ Model }}::count())->toBe(0);
+});
+
+test('quick edit changes the record and stays on the list', function () {
+    $record = {{ Model }}::factory()->create();
+
+    $this->actingAs($this->admin)
+        ->from(route('{{ slug }}.index'))
+        ->patch(route('{{ slug }}.quick-update', $record), quick{{ Model }}Data(['{{ titleField }}' => 'Renamed']))
+        ->assertRedirect(route('{{ slug }}.index'));
+
+    expect($record->fresh()->{{ titleField }})->toBe('Renamed');
+});
+
+test('the full edit page saves every field and opens the detail page', function () {
+    $record = {{ Model }}::factory()->create();
+
+    $this->actingAs($this->admin)->get(route('{{ slug }}.edit', $record))->assertInertia(fn (Assert $page) => $page->component('{{ slug }}/edit'));
+
+    $this->actingAs($this->admin)
+        ->put(route('{{ slug }}.update', $record), full{{ Model }}Data(['status' => 'inactive']))
+        ->assertRedirect(route('{{ slug }}.show', $record));
+
+    expect($record->fresh()->status)->toBe(RecordStatus::Inactive);
+});
+
+test('the detail page defers its history', function () {
+    $record = {{ Model }}::factory()->create();
+
+    $this->actingAs($this->admin)
+        ->get(route('{{ slug }}.show', $record))
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('{{ slug }}/show')
+            ->missing('history')
+            ->loadDeferredProps(fn (Assert $reload) => $reload->has('history', 1))
+        );
+});
+
+test('status can be switched from the table row', function () {
+    $record = {{ Model }}::factory()->create();
+
+    $this->actingAs($this->admin)->from(route('{{ slug }}.index'))->patch(route('{{ slug }}.toggle-status', $record))->assertRedirect(route('{{ slug }}.index'));
+
+    expect($record->fresh()->status)->toBe(RecordStatus::Inactive);
+});
+
+test('deleting from the detail page goes back to the list', function () {
+    $record = {{ Model }}::factory()->create();
+
+    $this->actingAs($this->admin)
+        ->from(route('{{ slug }}.show', $record))
+        ->delete(route('{{ slug }}.destroy', $record), ['from_detail' => true])
+        ->assertRedirect(route('{{ slug }}.index'));
+
+    expect({{ Model }}::count())->toBe(0);
+});

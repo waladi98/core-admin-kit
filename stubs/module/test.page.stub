@@ -1,0 +1,89 @@
+<?php
+
+use App\Enums\RecordStatus;
+use App\Models\{{ Model }};
+use App\Models\Role;
+use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
+
+beforeEach(function () {
+    $this->admin = User::factory()->admin()->create();
+});
+
+/**
+ * @return array<string, mixed>
+ */
+function valid{{ Model }}Data(array $overrides = []): array
+{
+    return [
+        {{ testPayload }}
+        'status' => 'active',
+        ...$overrides,
+    ];
+}
+
+test('guests are redirected to the login page', function () {
+    $this->get(route('{{ slug }}.index'))->assertRedirect(route('login'));
+});
+
+test('users without permission cannot open {{ titles }}', function () {
+    $this->actingAs(User::factory()->role(Role::STAFF)->create())->get(route('{{ slug }}.index'))->assertForbidden();
+});
+
+test('the list shows {{ titles }} with status counts and search', function () {
+    {{ Model }}::factory()->count(11)->create();
+    {{ Model }}::factory()->inactive()->create(['{{ titleField }}' => 'Zeta unique']);
+
+    $this->actingAs($this->admin)
+        ->get(route('{{ slug }}.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('{{ slug }}/index')
+            ->has('{{ models }}.data', 10)
+            ->where('{{ models }}.total', 12)
+            ->where('statusCounts', ['all' => 12, 'active' => 11, 'inactive' => 1])
+        );
+
+    $this->actingAs($this->admin)
+        ->get(route('{{ slug }}.index', ['search' => 'zeta unique']))
+        ->assertInertia(fn (Assert $page) => $page->has('{{ models }}.data', 1)->where('{{ models }}.data.0.{{ titleFieldCamel }}', 'Zeta unique'));
+});
+
+test('the create page renders and a valid {{ title }} is saved', function () {
+    $this->actingAs($this->admin)->get(route('{{ slug }}.create'))->assertInertia(fn (Assert $page) => $page->component('{{ slug }}/create'));
+
+    $this->actingAs($this->admin)
+        ->post(route('{{ slug }}.store'), valid{{ Model }}Data())
+        ->assertRedirect(route('{{ slug }}.index'))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect({{ Model }}::sole()->{{ titleField }})->toBe({{ titleFieldTestValue }});
+});
+
+test('invalid data is rejected', function () {
+    $this->actingAs($this->admin)
+        ->from(route('{{ slug }}.create'))
+        ->post(route('{{ slug }}.store'), valid{{ Model }}Data(['{{ titleField }}' => '', 'status' => 'unknown']))
+        ->assertSessionHasErrors(['{{ titleField }}', 'status']);
+
+    expect({{ Model }}::count())->toBe(0);
+});
+
+test('a {{ title }} can be edited', function () {
+    $record = {{ Model }}::factory()->create();
+
+    $this->actingAs($this->admin)->get(route('{{ slug }}.edit', $record))->assertInertia(fn (Assert $page) => $page->component('{{ slug }}/edit'));
+
+    $this->actingAs($this->admin)
+        ->put(route('{{ slug }}.update', $record), valid{{ Model }}Data(['status' => 'inactive']))
+        ->assertRedirect(route('{{ slug }}.index'));
+
+    expect($record->fresh()->status)->toBe(RecordStatus::Inactive);
+});
+
+test('a {{ title }} can be deleted', function () {
+    $record = {{ Model }}::factory()->create();
+
+    $this->actingAs($this->admin)->from(route('{{ slug }}.index'))->delete(route('{{ slug }}.destroy', $record))->assertRedirect(route('{{ slug }}.index'));
+
+    expect({{ Model }}::count())->toBe(0);
+});

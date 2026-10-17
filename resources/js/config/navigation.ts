@@ -29,6 +29,7 @@ export const mainNavigation: AdminNavGroup[] = [
         label: 'Master Data',
         items: [{ title: 'Vendors', icon: Building2, href: '/vendors', permission: 'vendors.view' }],
     },
+    // @module-generator:groups (new menu groups are added above Administration)
     {
         label: 'Administration',
         items: [

@@ -1,0 +1,39 @@
+import { {{ Model }}Form } from '@/components/admin/{{ slugSingular }}-form';
+import { type BreadcrumbEntry } from '@/components/core';
+import AdminLayout from '@/layouts/admin-layout';
+import { __ } from '@/lib/i18n';
+import { type {{ Model }}FormOptions } from '@/types/{{ slugSingular }}';
+import { Head } from '@inertiajs/react';
+import { {{ icon }} } from 'lucide-react';
+import { type ReactNode } from 'react';
+
+const breadcrumbs: BreadcrumbEntry[] = [
+    { title: '{{ Titles }}', href: '/{{ slug }}', icon: {{ icon }} },
+    { title: 'Add {{ title }}', href: '/{{ slug }}/create' },
+];
+
+export default function Create{{ Model }}(options: {{ Model }}FormOptions) {
+    return (
+        <>
+            <Head title={__('Add {{ title }}')} />
+            <{{ Model }}Form
+                {...options}
+                method="post"
+                action={route('{{ slug }}.store')}
+                submitLabel="Save"
+                cancelHref={route('{{ slug }}.index')}
+                initialValues={{
+                    {{ tsEmptyValues }}
+                    status: 'active',
+                }}
+            />
+        </>
+    );
+}
+
+/** Persistent layout: the shell stays mounted while navigating between pages. */
+Create{{ Model }}.layout = (page: ReactNode) => (
+    <AdminLayout breadcrumbs={breadcrumbs} title="Add {{ title }}">
+        {page}
+    </AdminLayout>
+);

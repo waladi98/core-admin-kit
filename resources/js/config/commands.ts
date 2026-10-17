@@ -37,4 +37,5 @@ export const quickActions: QuickAction[] = [
         permission: 'settings.manage',
         keywords: ['brand', 'logo', 'color', 'warna'],
     },
+    // @module-generator:quick-actions
 ];

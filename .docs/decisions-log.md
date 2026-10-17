@@ -204,3 +204,14 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Hapus dari detail | Kirim `from_detail` agar diarahkan ke daftar, bukan `back()` ke halaman yang sudah tidak ada. | Menghindari 404 setelah hapus. |
 | Data lengkap | Badge ""Belum lengkap"" bila NPWP atau rekening kosong. | Mendorong melengkapi data setelah tambah cepat. |
 | Demo | `app:install --demo` juga mengisi 25 vendor (`VendorSeeder`). | |
+## Generator Modul (`make:module`)
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Pola | `page` (seperti Users) dan `mixed` (seperti Vendors); stub di `stubs/module` bisa diubah per proyek. | Dua acuan yang sudah teruji. |
+| Field | 9 tipe (`string`, `text`, `email`, `phone`, `integer`, `currency`, `date`, `boolean`, `select(...)`), `?` = opsional; field string pertama = judul data. Relasi belum didukung. | Cakupan yang disetujui; relasi menambah kerumitan. |
+| Status | Semua modul hasil generator memakai `App\Enums\RecordStatus` (aktif/nonaktif). | Tidak membuat enum status per modul. |
+| Izin | Hanya admin di awal; role lain dicentang manual. | Lebih aman (keputusan pengguna). |
+| Terjemahan | Teks khusus modul ditambahkan ke `lang/id.json` berisi teks Inggris; teks generik sudah diterjemahkan. | Aplikasi tetap jalan; daftar teks yang perlu diterjemahkan dicetak. |
+| File bersama | Hanya diubah di komentar `// @module-generator:*`; route per modul di `routes/modules/*.php` yang dimuat otomatis. | `web.php` dan bagian lain file tidak tersentuh. |
+| Hasil | Dirapikan Pint + Prettier (organize-imports menghapus import yang tidak terpakai). Diuji dengan modul percobaan (mixed 9 tipe field + page dengan select): Pint, tsc, ESLint, build, dan 18 test hasil generate lolos, lalu dihapus. | Kode hasil generate siap dipakai. |

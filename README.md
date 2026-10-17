@@ -13,7 +13,8 @@ Starter kit aplikasi admin berbasis **Laravel 12 + Inertia v2 + React 19 + Tailw
 - **Keamanan akun**: autentikasi dua faktor (aplikasi autentikator + kode pemulihan, via Laravel Fortify), daftar sesi login & keluar dari perangkat lain, kebijakan password production.
 - **Halaman error** 403/404/500/503 dan sesi kedaluwarsa (419) yang ramah.
 - **Format** rupiah, angka, tanggal & waktu sesuai bahasa dan zona waktu tampilan (default Asia/Jakarta).
-- **Tentang template** (Support → Tentang template, khusus admin): ikon yang dipakai, token Tailwind, dan versi paket terpasang.
+- **Tentang template** (Support → Tentang template, khusus admin): ikon yang dipakai, token Tailwind, versi paket terpasang, dan panduan generator modul.
+- **Generator modul** `php artisan make:module`: modul CRUD lengkap dalam satu perintah.
 - **Tema terang & gelap** (atau ikuti perangkat), dipilih per browser di Settings → Tampilan.
 - **Keterbacaan** untuk pengguna 30–70 tahun: kontras teks WCAG AA, teks minimal 12px.
 
@@ -81,7 +82,9 @@ AGENTS.md                            # aturan kode & UI (dibaca juga oleh AI ass
 
 ## Membuat Modul Baru
 
-Ikuti **`.docs/guide-new-module.md`** — langkah lengkap backend (migration, Form Request, Policy, controller, izin), frontend (halaman index/create/edit, menu, tombol sesuai izin) dan test, dengan modul Users sebagai acuan. Aturan desain & kode ada di **`AGENTS.md`**.
+Cara tercepat: `php artisan make:module Client --pattern=mixed --fields="name:string, email:email?, credit_limit:currency"` lalu `php artisan migrate && php artisan app:sync-permissions`. Generator membuat migrasi, model, izin, controller, halaman, menu, terjemahan, dan test sekaligus (pola `page` seperti Users atau `mixed` seperti Vendors). Daftar opsi & tipe field: **Support → Tentang template → Generator**.
+
+Untuk cara manual, ikuti **`.docs/guide-new-module.md`** — langkah lengkap backend (migration, Form Request, Policy, controller, izin), frontend (halaman index/create/edit, menu, tombol sesuai izin) dan test, dengan modul Users sebagai acuan. Aturan desain & kode ada di **`AGENTS.md`**.
 
 ## Dashboard Contoh
 

@@ -1,9 +1,10 @@
 import { DataTable, type DataTableColumn } from '@/components/admin/data-table';
+import { ModuleGeneratorGuide, type ModuleGeneratorInfo } from '@/components/admin/module-generator-guide';
 import { Badge, Input, Panel, SegmentedControl, useToast, type BreadcrumbEntry } from '@/components/core';
 import AdminLayout from '@/layouts/admin-layout';
 import { __ } from '@/lib/i18n';
 import { Link } from '@inertiajs/react';
-import { Info, icons as lucideIcons, Package, Palette, Search, Shapes, SquareArrowOutUpRight } from 'lucide-react';
+import { Info, icons as lucideIcons, Package, Palette, Search, Shapes, SquareArrowOutUpRight, Wand2 } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 interface TemplatePackage {
@@ -17,9 +18,10 @@ interface TemplatePackage {
 interface AboutProps {
     packages: TemplatePackage[];
     icons: string[];
+    generator: ModuleGeneratorInfo;
 }
 
-type AboutTab = 'icons' | 'styling' | 'packages';
+type AboutTab = 'icons' | 'styling' | 'packages' | 'generator';
 
 const breadcrumbs: BreadcrumbEntry[] = [
     { title: 'Support', href: '/support/about' },
@@ -30,6 +32,7 @@ const tabOptions: { value: AboutTab; label: string }[] = [
     { value: 'icons', label: 'Icons' },
     { value: 'styling', label: 'Styling' },
     { value: 'packages', label: 'Packages' },
+    { value: 'generator', label: 'Generator' },
 ];
 
 const colorTokens = [
@@ -258,9 +261,9 @@ function PackagesTab({ packages }: { packages: TemplatePackage[] }) {
     return <DataTable stickyHeader rows={packages} columns={columns} getRowId={(row) => row.name} />;
 }
 
-export default function About({ packages, icons }: AboutProps) {
+export default function About({ packages, icons, generator }: AboutProps) {
     const [tab, setTab] = useState<AboutTab>('icons');
-    const tabIcon = { icons: Shapes, styling: Palette, packages: Package }[tab];
+    const tabIcon = { icons: Shapes, styling: Palette, packages: Package, generator: Wand2 }[tab];
 
     return (
         <Panel fill>
@@ -280,6 +283,7 @@ export default function About({ packages, icons }: AboutProps) {
                 {tab === 'icons' && <IconsTab icons={icons} />}
                 {tab === 'styling' && <StylingTab />}
                 {tab === 'packages' && <PackagesTab packages={packages} />}
+                {tab === 'generator' && <ModuleGeneratorGuide generator={generator} />}
             </Panel.Body>
         </Panel>
     );

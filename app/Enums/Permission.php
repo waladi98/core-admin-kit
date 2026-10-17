@@ -25,6 +25,7 @@ enum Permission: string
     case VendorsCreate = 'vendors.create';
     case VendorsUpdate = 'vendors.update';
     case VendorsDelete = 'vendors.delete';
+    // @module-generator:cases
 
     /**
      * Human-readable label shown next to the checkbox.
@@ -44,6 +45,7 @@ enum Permission: string
             self::VendorsCreate => __('Create vendors'),
             self::VendorsUpdate => __('Edit vendors'),
             self::VendorsDelete => __('Delete vendors'),
+            // @module-generator:labels
         };
     }
 
@@ -58,6 +60,7 @@ enum Permission: string
             self::SettingsManage => __('Application settings'),
             self::ActivityView => __('Activity log'),
             self::VendorsView, self::VendorsCreate, self::VendorsUpdate, self::VendorsDelete => __('Vendors'),
+            // @module-generator:groups
         };
     }
 
