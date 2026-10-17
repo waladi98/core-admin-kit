@@ -189,3 +189,8 @@ Keputusan kecil yang diambil saat mengerjakan roadmap (`.docs/starter-kit-roadma
 | Versi paket | Dibaca dari `composer.lock` & `package-lock.json` saat halaman dibuka. | Selalu sesuai yang terpasang, tanpa diperbarui manual. |
 | Ikon | Daftar diambil dari import `lucide-react` di `resources/js`; ditampilkan lewat peta `icons` Lucide. Chunk halaman ±120 KB gzip, hanya dimuat di halaman ini. | Daftar otomatis mengikuti kode; hanya ikon yang dipakai (sesuai rekomendasi). |
 | Token | Nilai warna & ukuran dibaca dari CSS variable aktif, sehingga ikut tema terang/gelap. | Satu sumber kebenaran: `app.css`. |
+## Menu Management — dibatalkan
+
+| Topik | Keputusan | Alasan |
+|---|---|---|
+| Menu dari database | Tidak dibuat; menu tetap di `resources/js/config/navigation.ts`. | Halaman baru tetap butuh kode, jadi menu di kode lebih cepat ditambahkan, tercatat di git, dan sama di semua environment (tanpa query/cache tambahan). Pertimbangkan lagi hanya bila non-developer perlu mengubah menu tanpa deploy. |
