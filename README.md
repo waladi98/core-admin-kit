@@ -82,6 +82,16 @@ AGENTS.md                            # aturan kode & UI (dibaca juga oleh AI ass
 
 Ikuti **`.docs/guide-new-module.md`** — langkah lengkap backend (migration, Form Request, Policy, controller, izin), frontend (halaman index/create/edit, menu, tombol sesuai izin) dan test, dengan modul Users sebagai acuan. Aturan desain & kode ada di **`AGENTS.md`**.
 
+## Dashboard Contoh
+
+Statistik, chart volume, dan tabel transaksi di dashboard memakai **data contoh** dari `app/Support/SampleDashboardData.php` (ditandai badge "Data contoh" di topbar). Feed "Pembaruan terbaru" sudah memakai audit trail asli.
+
+Saat proyek punya data sendiri:
+
+1. Ganti panggilan `SampleDashboardData::…` di `app/Http/Controllers/DashboardController.php` dengan query ke model proyek (bentuk data tetap sama, lihat tipe di `resources/js/types/dashboard.ts`), lalu hapus `app/Support/SampleDashboardData.php`.
+2. Hapus badge `Sample data` di `resources/js/pages/dashboard.tsx`.
+3. Widget yang tidak dipakai (mis. `TransactionTable`, `PriorityBadge`, `StatusBadge` di `components/admin`) boleh dihapus bersama propnya.
+4. Sesuaikan `tests/Feature/DashboardTest.php` (saat ini memeriksa nilai contoh seperti `#TRX-2319`).
 ## Mengganti Brand
 
 | Yang diganti | Lokasi |
